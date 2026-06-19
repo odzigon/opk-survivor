@@ -1,3 +1,7 @@
-fixs et ameliorations du jeu
-ajout de la base de donée/connection via discord
+Correctif du bug. L'erreur venait d'une zone morte temporelle : la capacité Impulsion s'enregistrait avant que la liste des capacités ne soit déclarée. Je l'ai déplacée après toutes les déclarations — le jeu se charge de nouveau normalement.
+Page d'aide. Nouveau bouton Aide dans le menu, qui ouvre un écran expliquant tout : le but du jeu (survivre aux vagues infinies, le tir est automatique, ton rôle est le placement et les choix), les contrôles, la montée en puissance (XP → niveaux → évolutions ultimes), l'or et la boutique, les opérateurs/personnalisation, les ennemis et boss, et une section conseils.
+Nouveau contenu.
 
+Arme — Grêle (❉, 8 niveaux) : fait pleuvoir des frappes explosives sur des positions aléatoires autour de toi, du vrai contrôle de zone. Prévisualisable à tous les niveaux (déblocage 1 100 or).
+Ennemis : le Goliath (gros tank qui se scinde en deux Colosses à sa mort) et la Vrille (petit fonceur rapide qui charge en zigzag).
+Boss — PULSAR (★ doré) : nouveau pattern, des salves radiales pulsées dont l'orientation alterne (effet d'étoile clignotante) et, tous les trois cycles, une onde de choc rapprochée qui punit le corps-à-corps. Il rejoint la rotation des boss.
