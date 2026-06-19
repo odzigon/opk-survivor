@@ -1387,6 +1387,9 @@ const Audio = {
       return a;
     };
     this._mA = make(); this._mB = make();
+    this._mBoss = document.createElement('audio');
+    this._mBoss.preload = 'auto'; this._mBoss.loop = true; this._mBoss.volume = 0;
+    this._mBoss.addEventListener('error', () => { if (this._bossMode) this._bossFallback(); });
     this._mActive = this._mA;
     this._shuffleOrder();
   },
@@ -1435,6 +1438,7 @@ const Audio = {
     this._bossMode = false; this._bossUrl = null;
     if (this._mA) { try { this._mA.pause(); this._mA.loop = false; } catch (e) {} }
     if (this._mB) { try { this._mB.pause(); this._mB.loop = false; } catch (e) {} }
+    if (this._mBoss) { try { this._mBoss.pause(); } catch (e) {} }
   },
   toggleMusic() {
     this.musicOn = !this.musicOn;
@@ -1443,7 +1447,7 @@ const Audio = {
     return this.musicOn;
   },
   setMusic(on) { this.musicOn = on; if (on) this.startMusic(); else this.stopMusic(); },
-  setMusicVolume(v) { this._mTargetVol = v; this._mVol = v; if (this._mActive && !this._mFade) this._mActive.volume = v; },
+  setMusicVolume(v) { this._mTargetVol = v; this._mVol = v; if (this._mActive && !this._mFade) this._mActive.volume = v; if (this._mBoss && this._bossMode) this._mBoss.volume = v; },
   bossMusic(on) { this.setMusicVolume(on ? 0.68 : 0.5); },
   // Pistes dédiées par boss : remplacent l'ambiance à l'arrivée du boss, en boucle, puis reprise.
   bossTracks: {
@@ -1451,35 +1455,53 @@ const Audio = {
     boss_ring: 'https://files.catbox.moe/5q6163.mp3',
     boss_summon: 'https://files.catbox.moe/f5ktsa.mp3',
   },
-  _bossMode: false, _bossUrl: null,
+  _bossMode: false, _bossUrl: null, _bossKey: null,
   bossMusicStart(key) {
+    this._bossKey = key;
     if (!this.enabled || !this.musicOn) { this._bossMode = true; this._bossUrl = null; return; }
     this._initMusic();
     const url = this.bossTracks[key];
     this._bossMode = true;
     if (!url) {
       this._bossUrl = null;
-      this._mTargetVol = Math.min(1, this._mVol * 1.25);
+      this._mTargetVol = Math.min(1, this._mVol * 1.3);
       if (this._mActive && !this._mFade) this._mActive.volume = this._mTargetVol;
       return;
     }
     this._bossUrl = url;
-    this._mStarted = true;
-    this._crossfadeTo(url);
-    if (this._mActive) this._mActive.loop = true;
+    if (this._mFade) { clearInterval(this._mFade); this._mFade = null; }
+    if (this._mA) { try { this._mA.pause(); } catch (e) {} }
+    if (this._mB) { try { this._mB.pause(); } catch (e) {} }
+    try {
+      if (this._mBoss.src !== url) this._mBoss.src = url;
+      this._mBoss.currentTime = 0;
+      this._mBoss.loop = true;
+      this._mBoss.volume = this._mVol;
+      const pr = this._mBoss.play();
+      if (pr && pr.catch) pr.catch(() => this._bossFallback());
+    } catch (e) { this._bossFallback(); }
     if (this.onTrack) this.onTrack('BOSS');
+  },
+  _bossFallback() {
+    this._bossUrl = null;
+    if (!this.enabled || !this.musicOn) return;
+    this._mTargetVol = Math.min(1, this._mVol * 1.3);
+    if (this._mStarted) {
+      if (this._mActive && this._mActive.paused) { const p = this._mActive.play(); if (p && p.catch) p.catch(() => {}); }
+      if (this._mActive) this._mActive.volume = this._mTargetVol;
+    } else { this.startMusic(); }
   },
   bossMusicEnd() {
     if (!this._bossMode) return;
     this._bossMode = false;
-    if (this._mA) this._mA.loop = false;
-    if (this._mB) this._mB.loop = false;
+    if (this._mBoss) { try { this._mBoss.pause(); this._mBoss.currentTime = 0; } catch (e) {} }
     if (!this.enabled || !this.musicOn) { this._bossUrl = null; return; }
+    this._mTargetVol = this._mVol;
     if (this._bossUrl) {
       this._bossUrl = null;
       if (this._mStarted) this._playPos(this._mPos + 1);
+      else this.startMusic();
     } else {
-      this._mTargetVol = this._mVol;
       if (this._mActive && !this._mFade) this._mActive.volume = this._mTargetVol;
     }
   },
@@ -2237,7 +2259,18 @@ class Enemy {
   _bossUpdate(dt, p, slowMul) {
     this.phaseT += dt;
     const baseAng = angleTo(this.x, this.y, p.x, p.y);
-    const rage = 1 + (1 - clamp(this.hp / (this.maxHp || 1), 0, 1)) * 0.7;
+    const __hpr = clamp(this.hp / (this.maxHp || 1), 0, 1);
+    const rage = 1 + (1 - __hpr) * 0.95;
+    if (this._phaseStage === undefined) this._phaseStage = 0;
+    const __stage = __hpr <= 0.3 ? 2 : (__hpr <= 0.6 ? 1 : 0);
+    if (__stage > this._phaseStage) {
+      this._phaseStage = __stage;
+      const __n = 24, __o = rand(0, TAU);
+      for (let i = 0; i < __n; i++) { const a = __o + (i / __n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 230, this.dmg * 0.55, COLORS.danger); }
+      G.rings.push({ x: this.x, y: this.y, from: 0, to: 200, life: 0.5, max: 0.5, color: COLORS.danger });
+      Audio.explosion(); Camera.shake(8, 0.4);
+      if (__stage === 2 && UI && UI.announce) UI.announce('⚠ ' + (this.bossName || 'BOSS') + ' — FUREUR');
+    }
 
     if (this.pattern === 'charge') {
       this.dashT -= dt;
@@ -2351,6 +2384,21 @@ class Enemy {
           if (dist2(this.x, this.y, p.x, p.y) <= 155 * 155) p.takeDamage(this.dmg * 0.9);
           Audio.explosion();
         }
+      }
+    } else if (this.pattern === 'scythe') {
+      const s = this.speed * slowMul * 0.7;
+      this.x += Math.cos(baseAng) * s * dt; this.y += Math.sin(baseAng) * s * dt;
+      this._scytheA = (this._scytheA || 0) + dt * (2.2 + (rage - 1) * 1.6);
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 0.05;
+        for (let r = 0; r < 2; r++) { const a = this._scytheA + r * Math.PI; G.spawnEnemyProjectile(this.x, this.y, a, 240, this.dmg * 0.45, this.color); }
+      }
+      this._scytheShot = (this._scytheShot || 0) + dt;
+      if (this._scytheShot >= 1.6 / rage) {
+        this._scytheShot = 0;
+        for (let k = -1; k <= 1; k++) G.spawnEnemyProjectile(this.x, this.y, baseAng + k * 0.2, 300, this.dmg * 0.6, COLORS.emberHi);
+        Audio.shootBig();
       }
     }
     this.angle = baseAng;
@@ -3625,9 +3673,9 @@ const ENEMIES = {
   splitter:{ name: 'Diviseur',  hp: 26, speed: 52,  dmg: 10, radius: 16, xp: 3, shape: 'diamond', color: '#bd5a4d', splits: 'mite', splitCount: 3 },
   mite:    { name: 'Mite',      hp: 6,  speed: 86,  dmg: 6,  radius: 9,  xp: 1, shape: 'tri',     color: '#caa093' },
 
-  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 46, dmg: 14, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 26, bossScale: 2.6 },
-  boss_ring:   { name: 'ORACLE',    hp: 46, speed: 40, dmg: 12, radius: 15, xp: 50, shape: 'octa',  color: COLORS.frost, pattern: 'ringShot', bossHpMult: 30, bossScale: 2.8 },
-  boss_summon: { name: 'ESSAIMEUR', hp: 48, speed: 44, dmg: 14, radius: 15, xp: 50, shape: 'penta', color: COLORS.gold,  pattern: 'summon',   bossHpMult: 28, bossScale: 2.7 },
+  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 48, dmg: 17, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 40, bossScale: 2.6 },
+  boss_ring:   { name: 'ORACLE',    hp: 46, speed: 42, dmg: 15, radius: 15, xp: 50, shape: 'octa',  color: COLORS.frost, pattern: 'ringShot', bossHpMult: 44, bossScale: 2.8 },
+  boss_summon: { name: 'ESSAIMEUR', hp: 48, speed: 46, dmg: 16, radius: 15, xp: 50, shape: 'penta', color: COLORS.gold,  pattern: 'summon',   bossHpMult: 42, bossScale: 2.7 },
 };
 
 const BOSS_CYCLE = ['boss_charge', 'boss_ring', 'boss_summon'];
@@ -3649,6 +3697,8 @@ function enemyWeights(t) {
   if (t > 92) w.push({ key: 'wraith', weight: 0.7 + t / 155 });
   if (t > 58) w.push({ key: 'vrille', weight: 0.9 + t / 130 });
   if (t > 100) w.push({ key: 'goliath', weight: 0.55 + t / 175 });
+  if (t > 75) w.push({ key: 'hornet', weight: 0.8 + t / 140 });
+  if (t > 130) w.push({ key: 'colossus', weight: 0.4 + t / 210 });
   return w;
 }
 
@@ -5778,7 +5828,7 @@ EVOLUTIONS.barrage = {
 ENEMIES.bomber = { name: 'Kamikaze', hp: 16, speed: 132, dmg: 14, radius: 13, xp: 2, shape: 'tri', color: '#ff7a4d', kamikaze: true, blast: 84 };
 
 /* --- VORTEX : boss à tirs en spirale --- */
-ENEMIES.boss_spiral = { name: 'VORTEX', hp: 50, speed: 38, dmg: 13, radius: 15, xp: 50, shape: 'star', color: COLORS.frost, pattern: 'spiral', bossHpMult: 30, bossScale: 2.7 };
+ENEMIES.boss_spiral = { name: 'VORTEX', hp: 50, speed: 40, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.frost, pattern: 'spiral', bossHpMult: 46, bossScale: 2.7 };
 
 BOSS_CYCLE.push('boss_spiral');
 
@@ -5786,7 +5836,7 @@ BOSS_CYCLE.push('boss_spiral');
 ENEMIES.healer = { name: 'Séraphin',    hp: 34, speed: 60, dmg: 8,  radius: 15, xp: 5, shape: 'penta',  color: COLORS.heal, healer: true, healCd: 2.4, healRad: 165, healAmt: 12 };
 ENEMIES.dasher = { name: 'Lacérateur',  hp: 20, speed: 62, dmg: 12, radius: 13, xp: 3, shape: 'tri',    color: '#b07fd0', dasher: true };
 ENEMIES.turret = { name: 'Tourelle',    hp: 56, speed: 24, dmg: 7,  radius: 16, xp: 4, shape: 'square', color: '#8aa0b8', shoot: true, shootCd: 1.5, projSpeed: 250 };
-ENEMIES.boss_siege = { name: 'MITOSE',  hp: 52, speed: 36, dmg: 13, radius: 15, xp: 50, shape: 'octa',  color: '#b07fd0', pattern: 'siege', bossHpMult: 32, bossScale: 2.8 };
+ENEMIES.boss_siege = { name: 'MITOSE',  hp: 52, speed: 38, dmg: 16, radius: 15, xp: 50, shape: 'octa',  color: '#b07fd0', pattern: 'siege', bossHpMult: 48, bossScale: 2.8 };
 
 /* ===========================================================================
  * AJOUTS DE CONTENU — opérateur, capacité, arme, ennemis
@@ -5795,7 +5845,10 @@ ENEMIES.wraith = { name: 'Spectre', hp: 22, speed: 70, dmg: 11, radius: 13, xp: 
 ENEMIES.weaver = { name: 'Tisseur', hp: 24, speed: 96, dmg: 9, radius: 12, xp: 3, shape: 'penta', color: '#5fb0a0', orbiter: true, orbitR: 215, shoot: true, shootCd: 2.8, projSpeed: 210 };
 ENEMIES.goliath = { name: 'Goliath', hp: 92, speed: 34, dmg: 20, radius: 26, xp: 6, shape: 'square', color: '#5a616b', splits: 'brute', splitCount: 2 };
 ENEMIES.vrille = { name: 'Vrille', hp: 14, speed: 78, dmg: 10, radius: 11, xp: 2, shape: 'tri', color: '#d08a5a', dasher: true };
-ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 40, dmg: 13, radius: 15, xp: 50, shape: 'star', color: COLORS.gold, pattern: 'pulsar', bossHpMult: 30, bossScale: 2.7 };
+ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 42, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.gold, pattern: 'pulsar', bossHpMult: 46, bossScale: 2.7 };
+ENEMIES.boss_scythe = { name: 'FAUCHEUR', hp: 56, speed: 42, dmg: 16, radius: 15, xp: 55, shape: 'star', color: COLORS.danger, pattern: 'scythe', bossHpMult: 46, bossScale: 2.85 };
+ENEMIES.colossus = { name: 'Colosse', hp: 160, speed: 28, dmg: 24, radius: 32, xp: 9, shape: 'square', color: '#4a505a' };
+ENEMIES.hornet = { name: 'Frelon', hp: 16, speed: 104, dmg: 9, radius: 10, xp: 3, shape: 'tri', color: '#d0a85a', shoot: true, shootCd: 2.2, projSpeed: 240 };
 
 CHARACTERS.nyx = {
   key: 'nyx', name: 'NYX', color: '#b07fd0', icon: '☾',
@@ -6009,8 +6062,33 @@ WEAPONS.ballista = {
   },
 };
 WEAPON_INFO.ballista = { pattern: 'rail', range: 'Très longue', effect: 'Empalement', how: 'Décoche un trait massif à très grande vitesse qui empale tous les ennemis sur sa ligne. Cadence lente, dégâts et perforation au sommet — idéale pour percer les rangs et les élites.' };
+
+WEAPONS.bolt = {
+  name: 'Foudre', icon: '↯', color: COLORS.frost, tag: 'Orage en chaîne',
+  desc: 'Des éclairs frappent et rebondissent entre les ennemis en les ralentissant.',
+  maxLevel: 8, unlock: { gold: 1300 },
+  levels: [
+    { dmg: 12, jumps: 3, cd: 0.90, range: 210 },
+    { dmg: 15, jumps: 3, cd: 0.85, range: 220 },
+    { dmg: 18, jumps: 4, cd: 0.80, range: 230 },
+    { dmg: 22, jumps: 4, cd: 0.75, range: 240 },
+    { dmg: 27, jumps: 5, cd: 0.70, range: 255 },
+    { dmg: 33, jumps: 6, cd: 0.65, range: 270 },
+    { dmg: 40, jumps: 7, cd: 0.60, range: 285 },
+    { dmg: 49, jumps: 8, cd: 0.55, range: 300 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const c = p.rollCrit();
+    g.chainLightning(p.x, p.y, lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1),
+      lv.jumps + p.stats.amount, lv.range * p.stats.areaMul, COLORS.frost, c, 0.4);
+    Audio.shoot();
+  },
+};
+WEAPON_INFO.bolt = { pattern: 'arc', range: 'Moyenne', effect: 'Chaîne + ralenti', how: 'Frappe l’ennemi le plus proche puis ricoche en chaîne sur plusieurs cibles autour, en les ralentissant. Le nombre de rebonds, la portée et les dégâts montent avec les niveaux.' };
 BOSS_CYCLE.push('boss_siege');
 BOSS_CYCLE.push('boss_pulsar');
+BOSS_CYCLE.push('boss_scythe');
 
 /* ===========================================================================
  * 16b. CAPACITÉS ACTIVES (équipables, déclenchées par la touche de capacité)
