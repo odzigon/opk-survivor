@@ -5737,6 +5737,152 @@ WEAPONS.hail = {
   },
 };
 WEAPON_INFO.hail = { pattern: 'strike', range: 'Zone', effect: 'Frappes explosives', how: 'Déclenche une pluie de frappes explosives sur des positions aléatoires autour de vous. Idéal pour le contrôle de zone et les groupes ; le nombre de frappes et le rayon augmentent avec les niveaux.' };
+
+/* --- 5 nouvelles armes (auto-intégrées au menu de personnalisation + aperçu live) --- */
+WEAPONS.repeater = {
+  name: 'Mitrailleuse', icon: '✣', color: COLORS.ember, tag: 'Flux soutenu',
+  desc: 'Un flux de balles rapides à très haute cadence.',
+  maxLevel: 8, unlock: { gold: 1000 },
+  levels: [
+    { dmg: 5,  count: 1, cd: 0.16, speed: 720, pierce: 1, life: 0.8 },
+    { dmg: 6,  count: 1, cd: 0.15, speed: 730, pierce: 1, life: 0.8 },
+    { dmg: 7,  count: 1, cd: 0.14, speed: 740, pierce: 2, life: 0.85 },
+    { dmg: 8,  count: 2, cd: 0.14, speed: 750, pierce: 2, life: 0.85 },
+    { dmg: 10, count: 2, cd: 0.13, speed: 770, pierce: 2, life: 0.9 },
+    { dmg: 12, count: 2, cd: 0.12, speed: 790, pierce: 3, life: 0.9 },
+    { dmg: 14, count: 3, cd: 0.11, speed: 810, pierce: 3, life: 0.95 },
+    { dmg: 17, count: 3, cd: 0.10, speed: 840, pierce: 4, life: 1.0 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (Math.random() - 0.5) * 0.10 + (count > 1 ? (i / (count - 1) - 0.5) * 0.06 : 0);
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 4, size: 4.5,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.emberHi, kind: 'bullet', isCrit: c, knock: 40 });
+    }
+  },
+};
+WEAPON_INFO.repeater = { pattern: 'spread', range: 'Longue', effect: 'Cadence extrême', how: 'Crache un flux ininterrompu de balles à très haute cadence. Faibles dégâts par tir, mais un DPS soutenu colossal une fois la cadence et la perforation montées.' };
+
+WEAPONS.flamer = {
+  name: 'Lance-Flammes', icon: '❋', color: COLORS.ember, tag: 'Cône incendiaire',
+  desc: 'Projette un cône de flammes courtes qui embrasent les ennemis.',
+  maxLevel: 8, unlock: { gold: 1200 },
+  levels: [
+    { dmg: 4,  count: 4, cd: 0.50, speed: 360, pierce: 2, life: 0.34, burn: 6,  spread: 0.50 },
+    { dmg: 5,  count: 4, cd: 0.48, speed: 365, pierce: 2, life: 0.35, burn: 7,  spread: 0.50 },
+    { dmg: 6,  count: 5, cd: 0.46, speed: 370, pierce: 3, life: 0.36, burn: 9,  spread: 0.55 },
+    { dmg: 7,  count: 5, cd: 0.44, speed: 375, pierce: 3, life: 0.37, burn: 11, spread: 0.55 },
+    { dmg: 9,  count: 6, cd: 0.42, speed: 380, pierce: 3, life: 0.38, burn: 13, spread: 0.60 },
+    { dmg: 11, count: 6, cd: 0.40, speed: 385, pierce: 4, life: 0.40, burn: 16, spread: 0.60 },
+    { dmg: 13, count: 7, cd: 0.38, speed: 390, pierce: 4, life: 0.42, burn: 19, spread: 0.65 },
+    { dmg: 16, count: 8, cd: 0.36, speed: 400, pierce: 5, life: 0.44, burn: 24, spread: 0.65 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount * 2;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * lv.spread + (Math.random() - 0.5) * 0.12;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul * rand(0.85, 1.05),
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 6, size: 7,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: '#ff8a3d', kind: 'bullet', isCrit: c, knock: 20, burnOnHit: lv.burn * p.stats.damageMul });
+    }
+  },
+};
+WEAPON_INFO.flamer = { pattern: 'spread', range: 'Courte', effect: 'Brûlure en cône', how: 'Souffle un cône de flammes à courte portée : chaque langue de feu inflige des dégâts puis enflamme la cible (poison persistant). Dévastateur sur les groupes serrés.' };
+
+WEAPONS.wardisc = {
+  name: 'Disque de Guerre', icon: '◉', color: COLORS.steel, tag: 'Disque dévastateur',
+  desc: 'De lourds disques tranchants qui transpercent tout en tournoyant.',
+  maxLevel: 8, unlock: { gold: 1300 },
+  levels: [
+    { dmg: 18, count: 1, cd: 0.80, speed: 380, pierce: 5,  life: 1.4 },
+    { dmg: 22, count: 1, cd: 0.76, speed: 390, pierce: 6,  life: 1.4 },
+    { dmg: 27, count: 1, cd: 0.72, speed: 400, pierce: 7,  life: 1.5 },
+    { dmg: 33, count: 2, cd: 0.70, speed: 410, pierce: 8,  life: 1.5 },
+    { dmg: 40, count: 2, cd: 0.66, speed: 420, pierce: 9,  life: 1.6 },
+    { dmg: 49, count: 2, cd: 0.62, speed: 430, pierce: 11, life: 1.6 },
+    { dmg: 60, count: 3, cd: 0.58, speed: 440, pierce: 13, life: 1.7 },
+    { dmg: 74, count: 3, cd: 0.54, speed: 460, pierce: 16, life: 1.8 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.28;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 13, size: 14,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.frost, kind: 'blade', isCrit: c, spin: 22, knock: 180 });
+    }
+  },
+};
+WEAPON_INFO.wardisc = { pattern: 'spread', range: 'Moyenne', effect: 'Perforation lourde', how: 'Lance d’énormes disques rotatifs qui traversent des files entières d’ennemis en les projetant. Cadence lente, mais perforation et dégâts colossaux.' };
+
+WEAPONS.plasma = {
+  name: 'Canon Plasma', icon: '❂', color: COLORS.frost, tag: 'Orbe explosif',
+  desc: 'Une lourde sphère de plasma qui explose à l’impact.',
+  maxLevel: 8, unlock: { gold: 1400 },
+  levels: [
+    { dmg: 22, count: 1, cd: 0.95, speed: 360, pierce: 1, life: 1.3,  blast: 60 },
+    { dmg: 27, count: 1, cd: 0.92, speed: 365, pierce: 1, life: 1.3,  blast: 64 },
+    { dmg: 33, count: 1, cd: 0.88, speed: 370, pierce: 1, life: 1.35, blast: 68 },
+    { dmg: 40, count: 1, cd: 0.84, speed: 375, pierce: 2, life: 1.4,  blast: 74 },
+    { dmg: 49, count: 1, cd: 0.80, speed: 380, pierce: 2, life: 1.4,  blast: 80 },
+    { dmg: 60, count: 2, cd: 0.78, speed: 385, pierce: 2, life: 1.45, blast: 86 },
+    { dmg: 73, count: 2, cd: 0.74, speed: 390, pierce: 3, life: 1.5,  blast: 92 },
+    { dmg: 90, count: 2, cd: 0.70, speed: 400, pierce: 3, life: 1.5,  blast: 100 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.18;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 10, size: 11,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: '#9fd4e3', kind: 'bullet', isCrit: c, knock: 120, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+WEAPON_INFO.plasma = { pattern: 'spread', range: 'Moyenne', effect: 'Explosion à l’impact', how: 'Tire une lourde sphère de plasma qui explose au contact en infligeant des dégâts de zone. Parfaite pour pulvériser les paquets ; le rayon d’explosion grimpe avec les niveaux.' };
+
+WEAPONS.ballista = {
+  name: 'Arbalète Lourde', icon: '↣', color: COLORS.gold, tag: 'Trait perforant',
+  desc: 'Un trait surpuissant qui empale tout sur sa trajectoire.',
+  maxLevel: 8, unlock: { gold: 1500 },
+  levels: [
+    { dmg: 30,  count: 1, cd: 0.85, speed: 1000, pierce: 8,  life: 0.70 },
+    { dmg: 37,  count: 1, cd: 0.82, speed: 1020, pierce: 9,  life: 0.70 },
+    { dmg: 45,  count: 1, cd: 0.78, speed: 1040, pierce: 10, life: 0.72 },
+    { dmg: 55,  count: 1, cd: 0.74, speed: 1060, pierce: 12, life: 0.74 },
+    { dmg: 67,  count: 1, cd: 0.70, speed: 1080, pierce: 14, life: 0.76 },
+    { dmg: 82,  count: 1, cd: 0.66, speed: 1100, pierce: 16, life: 0.78 },
+    { dmg: 100, count: 2, cd: 0.62, speed: 1120, pierce: 18, life: 0.80 },
+    { dmg: 124, count: 2, cd: 0.58, speed: 1150, pierce: 22, life: 0.82 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.10;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 6, size: 7,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.goldHi, kind: 'rail', isCrit: c, knock: 220 });
+    }
+  },
+};
+WEAPON_INFO.ballista = { pattern: 'rail', range: 'Très longue', effect: 'Empalement', how: 'Décoche un trait massif à très grande vitesse qui empale tous les ennemis sur sa ligne. Cadence lente, dégâts et perforation au sommet — idéale pour percer les rangs et les élites.' };
 BOSS_CYCLE.push('boss_siege');
 BOSS_CYCLE.push('boss_pulsar');
 
