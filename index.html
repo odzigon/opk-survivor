@@ -771,6 +771,38 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
   font-family:var(--f-display);font-size:20px;line-height:1;cursor:pointer;transition:background .12s,border-color .12s,transform .1s;-webkit-tap-highlight-color:transparent;}
 .pd-lvl .pl-btn:hover{background:var(--panel-3);border-color:color-mix(in srgb,var(--accent) 55%,transparent);}
 .pd-lvl .pl-btn:active{transform:scale(.92);}
+/* === Accueil épuré + écran Opérateurs === */
+#screen-start .menu-inner{gap:26px;justify-content:flex-start;padding-top:8px;}
+.menu-mast{margin-top:2px;}
+#screen-start .hero-logo{max-height:30vh;width:min(560px,86vw);}
+.menu-mast .subtitle{max-width:560px;}
+.menu-deck{display:flex;flex-direction:column;gap:13px;width:100%;max-width:460px;padding:20px;position:relative;
+  border:1px solid var(--line-2);border-radius:20px;
+  background:linear-gradient(180deg,var(--panel-2),rgba(11,11,14,.92));box-shadow:0 22px 56px -26px rgba(0,0,0,.75);}
+.menu-deck::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:20px 20px 0 0;
+  background:linear-gradient(90deg,transparent,var(--ember),transparent);opacity:.6;}
+.op-current{--accent:var(--ember);pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:14px;
+  text-align:left;padding:14px 16px;border:1px solid var(--line-2);border-radius:14px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));transition:transform .2s,border-color .2s;}
+.op-current::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.9;}
+.op-current:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 55%,var(--line-2));}
+.op-glyph{font-size:30px;line-height:1;color:var(--accent);width:46px;height:46px;flex:none;
+  display:flex;align-items:center;justify-content:center;border-radius:12px;
+  border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 12%,transparent);
+  text-shadow:0 0 16px color-mix(in srgb,var(--accent) 60%,transparent);}
+.op-info{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1;}
+.op-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);}
+.op-name{font-family:var(--f-display);font-size:18px;letter-spacing:.04em;color:var(--bone);}
+.op-role{font-family:var(--f-mono);font-size:11px;color:color-mix(in srgb,var(--accent) 80%,var(--bone));}
+.op-go{font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap;align-self:center;}
+.op-current:hover .op-go{color:var(--bone);}
+.roster-grid{max-width:880px;margin:18px auto 0;}
+.op-action{margin-top:12px;font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;text-align:center;
+  padding:9px;border-radius:10px;border:1px solid var(--line-2);color:var(--bone);
+  background:color-mix(in srgb,var(--accent) 14%,transparent);transition:background .2s;}
+.char-card:hover .op-action{background:color-mix(in srgb,var(--accent) 24%,transparent);}
+.op-action.eq{background:transparent;letter-spacing:.2em;border-color:color-mix(in srgb,var(--accent) 60%,transparent);color:color-mix(in srgb,var(--accent) 90%,var(--bone));}
+@media (max-width:560px){ .menu-deck{max-width:440px;padding:16px;} #screen-start .hero-logo{max-height:24vh;} }
 </style>
 </head>
 <body data-state="menu">
@@ -842,23 +874,25 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
       <div class="best-line" id="bestLine"></div>
     </div>
 
-    <div class="menu-cols">
-      <section class="menu-main">
-        <div class="select-label"><span>Choisissez votre opérateur</span></div>
-        <div class="char-cards" id="charCards"></div>
-      </section>
-      <aside class="menu-side">
-        <div class="panel-eyebrow"><span>Votre déploiement</span></div>
-        <button class="daily" id="dailyBanner" type="button" hidden></button>
-        <div class="loadout">
-          <button class="load-slot" id="slotWeapon"><span class="ls-k">Arme</span><span class="ls-v" id="slotWeaponName">—</span><span class="ls-go">changer ›</span></button>
-          <button class="load-slot" id="slotAbility"><span class="ls-k">Capacité</span><span class="ls-v" id="slotAbilityName">—</span><span class="ls-go">changer ›</span></button>
-        </div>
-        <div class="btn-row">
-          <button class="btn btn-primary" id="btnPlay">Déployer</button>
-          <button class="btn btn-ghost" id="btnShop">Boutique</button>
-        </div>
-      </aside>
+    <div class="menu-deck">
+      <button class="op-current" id="currentOp" type="button">
+        <span class="op-glyph" id="opGlyph">◆</span>
+        <span class="op-info">
+          <span class="op-k">Opérateur</span>
+          <span class="op-name" id="opName">ODZIGON</span>
+          <span class="op-role" id="opRole">Équilibré</span>
+        </span>
+        <span class="op-go">Opérateurs ›</span>
+      </button>
+      <button class="daily" id="dailyBanner" type="button" hidden></button>
+      <div class="loadout">
+        <button class="load-slot" id="slotWeapon"><span class="ls-k">Arme</span><span class="ls-v" id="slotWeaponName">—</span><span class="ls-go">changer ›</span></button>
+        <button class="load-slot" id="slotAbility"><span class="ls-k">Capacité</span><span class="ls-v" id="slotAbilityName">—</span><span class="ls-go">changer ›</span></button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnPlay">Déployer</button>
+        <button class="btn btn-ghost" id="btnShop">Boutique</button>
+      </div>
     </div>
 
     <div class="menu-footer">
@@ -979,6 +1013,20 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
       <div class="cl-li">Les boss laissent des coffres et des ramassages : récupérez-les après la victoire.</div>
     </div>
     <div class="btn-row"><button class="btn btn-ghost" id="helpBack">Retour</button></div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN : OPÉRATEURS ============ -->
+<div class="screen" id="screen-roster">
+  <div class="screen-inner">
+    <div class="eyebrow">UNITÉS DISPONIBLES</div>
+    <div class="shop-head">
+      <h1 class="title" style="font-size:clamp(28px,6vw,44px)">Opérateurs</h1>
+      <span class="shop-gold" id="rosterGold">0 or</span>
+    </div>
+    <p class="subtitle" style="margin-top:0">Achetez de nouvelles unités avec votre or, puis équipez celle qui colle à votre style. L’opérateur équipé est déployé à chaque partie.</p>
+    <div class="char-cards roster-grid" id="rosterGrid"></div>
+    <div class="btn-row"><button class="btn btn-ghost" id="rosterBack">Retour</button></div>
   </div>
 </div>
 
@@ -1384,8 +1432,9 @@ const Audio = {
     }, 55);
   },
   stopMusic() {
-    if (this._mA) { try { this._mA.pause(); } catch (e) {} }
-    if (this._mB) { try { this._mB.pause(); } catch (e) {} }
+    this._bossMode = false; this._bossUrl = null;
+    if (this._mA) { try { this._mA.pause(); this._mA.loop = false; } catch (e) {} }
+    if (this._mB) { try { this._mB.pause(); this._mB.loop = false; } catch (e) {} }
   },
   toggleMusic() {
     this.musicOn = !this.musicOn;
@@ -1396,6 +1445,44 @@ const Audio = {
   setMusic(on) { this.musicOn = on; if (on) this.startMusic(); else this.stopMusic(); },
   setMusicVolume(v) { this._mTargetVol = v; this._mVol = v; if (this._mActive && !this._mFade) this._mActive.volume = v; },
   bossMusic(on) { this.setMusicVolume(on ? 0.68 : 0.5); },
+  // Pistes dédiées par boss : remplacent l'ambiance à l'arrivée du boss, en boucle, puis reprise.
+  bossTracks: {
+    boss_charge: 'https://files.catbox.moe/9uhmwe.mp3',
+    boss_ring: 'https://files.catbox.moe/5q6163.mp3',
+    boss_summon: 'https://files.catbox.moe/f5ktsa.mp3',
+  },
+  _bossMode: false, _bossUrl: null,
+  bossMusicStart(key) {
+    if (!this.enabled || !this.musicOn) { this._bossMode = true; this._bossUrl = null; return; }
+    this._initMusic();
+    const url = this.bossTracks[key];
+    this._bossMode = true;
+    if (!url) {
+      this._bossUrl = null;
+      this._mTargetVol = Math.min(1, this._mVol * 1.25);
+      if (this._mActive && !this._mFade) this._mActive.volume = this._mTargetVol;
+      return;
+    }
+    this._bossUrl = url;
+    this._mStarted = true;
+    this._crossfadeTo(url);
+    if (this._mActive) this._mActive.loop = true;
+    if (this.onTrack) this.onTrack('BOSS');
+  },
+  bossMusicEnd() {
+    if (!this._bossMode) return;
+    this._bossMode = false;
+    if (this._mA) this._mA.loop = false;
+    if (this._mB) this._mB.loop = false;
+    if (!this.enabled || !this.musicOn) { this._bossUrl = null; return; }
+    if (this._bossUrl) {
+      this._bossUrl = null;
+      if (this._mStarted) this._playPos(this._mPos + 1);
+    } else {
+      this._mTargetVol = this._mVol;
+      if (this._mActive && !this._mFade) this._mActive.volume = this._mTargetVol;
+    }
+  },
   setEnabled(on) {
     this.enabled = on;
     if (!on) this.stopMusic();
@@ -2150,21 +2237,31 @@ class Enemy {
   _bossUpdate(dt, p, slowMul) {
     this.phaseT += dt;
     const baseAng = angleTo(this.x, this.y, p.x, p.y);
+    const rage = 1 + (1 - clamp(this.hp / (this.maxHp || 1), 0, 1)) * 0.7;
 
     if (this.pattern === 'charge') {
       this.dashT -= dt;
       if (!this.dashing && this.dashT <= 0) {
         this.dashing = true;
         this.dashT = 0.55;
-        this.dashVX = Math.cos(baseAng) * this.speed * 5.5;
-        this.dashVY = Math.sin(baseAng) * this.speed * 5.5;
+        const cs = this.speed * (5.0 + rage);
+        this.dashVX = Math.cos(baseAng) * cs;
+        this.dashVY = Math.sin(baseAng) * cs;
+        G.rings.push({ x: this.x, y: this.y, from: this.radius, to: this.radius + 28, life: 0.3, max: 0.3, color: this.color });
         Audio.warn();
       } else if (this.dashing) {
         this.x += this.dashVX * dt;
         this.y += this.dashVY * dt;
         this.dashVX *= Math.pow(0.9, dt * 60);
         this.dashVY *= Math.pow(0.9, dt * 60);
-        if (this.dashT <= 0) { this.dashing = false; this.dashT = rand(1.6, 2.6); }
+        if (this.dashT <= 0) {
+          this.dashing = false; this.dashT = rand(1.6, 2.6) / rage;
+          G.rings.push({ x: this.x, y: this.y, from: 0, to: 120, life: 0.35, max: 0.35, color: this.color });
+          if (dist2(this.x, this.y, p.x, p.y) <= 120 * 120) p.takeDamage(this.dmg * 0.8);
+          const m = 8, o = rand(0, TAU);
+          for (let i = 0; i < m; i++) { const a = o + (i / m) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 180, this.dmg * 0.5, this.color); }
+          Audio.explosion(); Camera.shake(6, 0.25);
+        }
         G.particle({ x: this.x, y: this.y, vx: 0, vy: 0, life: 0.3, max: 0.3, size: this.radius * 0.7,
           color: hexA(this.color, 0.4), drag: 0.9 });
       } else {
@@ -2178,13 +2275,15 @@ class Enemy {
       this.y += Math.sin(baseAng) * s * dt;
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 2.6;
-        const n = 16;
-        const off = rand(0, TAU);
+        this.shootTimer = 2.6 / rage;
+        this._ringTog = (this._ringTog || 0) + 1;
+        const n = 16 + (rage > 1.4 ? 4 : 0);
+        const off = (this._ringTog % 2) * (Math.PI / n);
         for (let i = 0; i < n; i++) {
           const a = off + (i / n) * TAU;
           G.spawnEnemyProjectile(this.x, this.y, a, 200, this.dmg * 0.6, COLORS.ember);
         }
+        for (let k = -1; k <= 1; k++) G.spawnEnemyProjectile(this.x, this.y, baseAng + k * 0.16, 300, this.dmg * 0.7, COLORS.emberHi);
         Audio.shootBig();
         Camera.shake(5, 0.2);
       }
@@ -2194,12 +2293,15 @@ class Enemy {
       this.y += Math.sin(baseAng) * s * dt;
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 4.5;
-        for (let i = 0; i < 5; i++) {
+        this.shootTimer = 4.5 / rage;
+        const cnt = 5 + (rage > 1.4 ? 2 : 0);
+        for (let i = 0; i < cnt; i++) {
           const a = rand(0, TAU);
           const d = rand(40, 90);
           G.spawnEnemy('swarm', this.x + Math.cos(a) * d, this.y + Math.sin(a) * d, {});
         }
+        const m = 10, o = rand(0, TAU);
+        for (let i = 0; i < m; i++) { const a = o + (i / m) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 175, this.dmg * 0.5, this.color); }
         Audio.warn();
       }
     } else if (this.pattern === 'spiral') {
@@ -2209,8 +2311,9 @@ class Enemy {
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
         this.shootTimer = 0.11;
-        this._spiralA = (this._spiralA || 0) + 0.42;
-        const arms = 3;
+        const dir = (Math.floor(this.phaseT / 4) % 2 === 0) ? 1 : -1;
+        this._spiralA = (this._spiralA || 0) + 0.42 * dir * (0.9 + (rage - 1));
+        const arms = 3 + (rage > 1.35 ? 1 : 0);
         for (let k = 0; k < arms; k++) {
           const a = this._spiralA + (k / arms) * TAU;
           G.spawnEnemyProjectile(this.x, this.y, a, 215, this.dmg * 0.5, COLORS.frost);
@@ -2222,10 +2325,11 @@ class Enemy {
       this.y += Math.sin(baseAng) * s * dt;
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 1.9;
+        this.shootTimer = 1.9 / rage;
         this._siegeN = (this._siegeN || 0) + 1;
         const n = 12, off = rand(0, TAU);
         for (let i = 0; i < n; i++) { const a = off + (i / n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 190, this.dmg * 0.55, COLORS.ember); }
+        for (let k = -1; k <= 1; k++) G.spawnEnemyProjectile(this.x, this.y, baseAng + k * 0.14, 260, this.dmg * 0.6, COLORS.emberHi);
         Audio.shootBig(); Camera.shake(4, 0.18);
         if (this._siegeN % 3 === 0) {
           for (let i = 0; i < 4; i++) { const a = rand(0, TAU), d = rand(40, 80); G.spawnEnemy('mite', this.x + Math.cos(a) * d, this.y + Math.sin(a) * d, {}); }
@@ -2236,10 +2340,11 @@ class Enemy {
       this.x += Math.cos(baseAng) * s * dt; this.y += Math.sin(baseAng) * s * dt;
       this.shootTimer -= dt;
       if (this.shootTimer <= 0) {
-        this.shootTimer = 1.5;
+        this.shootTimer = 1.5 / rage;
         this._pulseN = (this._pulseN || 0) + 1;
         const n = 14, off = (this._pulseN % 2) * (Math.PI / n);
         for (let i = 0; i < n; i++) { const a = off + (i / n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 210, this.dmg * 0.55, this.color); }
+        for (let k = -1; k <= 1; k += 2) G.spawnEnemyProjectile(this.x, this.y, baseAng + k * 0.12, 280, this.dmg * 0.6, COLORS.goldHi);
         Audio.shootBig(); Camera.shake(4, 0.18);
         if (this._pulseN % 3 === 0) {
           G.rings.push({ x: this.x, y: this.y, from: 0, to: 155, life: 0.4, max: 0.4, color: this.color });
@@ -3895,7 +4000,7 @@ Game.prototype.spawnBoss = function () {
   this.activeBoss = e;
   this.rings.push({ x: pos.x, y: pos.y, from: 0, to: e.radius + 70, life: 0.9, max: 0.9, color: e.color });
   this.stats.bosses++;
-  Audio.bossSpawn(); Audio.bossMusic(true); Camera.shake(11, 0.7);
+  Audio.bossSpawn(); Audio.bossMusicStart(key); Camera.shake(11, 0.7);
   UI.flash(); UI.announce('⚠ BOSS — ' + e.bossName);
 };
 
@@ -3926,7 +4031,7 @@ Game.prototype.onEnemyKilled = function (e) {
 
   if (e.isBoss) {
     this.activeBoss = null;
-    Audio.bossMusic(false);
+    Audio.bossMusicEnd();
     for (let i = 0; i < 7; i++) { const a = rand(0, TAU), d = rand(20, 70); this.spawnGem(e.x + Math.cos(a) * d, e.y + Math.sin(a) * d, 12); }
     this.spawnPickup(e.x, e.y, 'chest');
     this.spawnPickup(e.x + 36, e.y, 'heal');
@@ -5008,13 +5113,15 @@ const UI = {
       'pdLvl', 'pdLvlVal', 'pdLvlUp', 'pdLvlDown',
       'acctChip', 'acctAv', 'acctNm', 'dailyBanner', 'btnDiscord', 'btnSettings', 'btnChangelog', 'btnGithub',
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
-      'changelogBody', 'changelogBack', 'btnHelp', 'helpBack'];
+      'changelogBody', 'changelogBack', 'btnHelp', 'helpBack',
+      'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
     // sélection courante + cartes d'opérateurs + arsenal
     this.selectedChar = Meta.loadout.char || 'odzigon';
     this._buildChars();
+    this._refreshCurrentOp();
     this._refreshLoadout();
 
     if (this.el.slotWeapon) this.el.slotWeapon.addEventListener('click', () => { Audio.ui(); this.openPicker('weapon'); });
@@ -5042,6 +5149,8 @@ const UI = {
     if (this.el.btnChangelog) this.el.btnChangelog.addEventListener('click', () => { Audio.ui(); this.openChangelog(); });
     if (this.el.btnHelp) this.el.btnHelp.addEventListener('click', () => { Audio.ui(); this.show('screen-help'); });
     if (this.el.helpBack) this.el.helpBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.currentOp) this.el.currentOp.addEventListener('click', () => { Audio.ui(); this._buildChars(); this._refreshRosterGold(); this.show('screen-roster'); });
+    if (this.el.rosterBack) this.el.rosterBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshCurrentOp(); this._refreshBest(); });
     if (this.el.btnGithub) this.el.btnGithub.addEventListener('click', () => { Audio.ui(); window.open(GITHUB_URL, '_blank', 'noopener,noreferrer'); });
     if (this.el.settingsBack) this.el.settingsBack.addEventListener('click', () => { Audio.uiBack(); this._armReset(false); this.show('screen-start'); this._refreshBest(); });
     if (this.el.changelogBack) this.el.changelogBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
@@ -5113,13 +5222,14 @@ const UI = {
   },
 
   _buildChars() {
-    const cc = this.el.charCards;
+    const cc = this.el.rosterGrid; if (!cc) return;
     cc.innerHTML = '';
     for (const key in CHARACTERS) {
       const c = CHARACTERS[key];
       const st = Meta.unlockState('char', key, c);
+      const equipped = (this.selectedChar === key) && st.unlocked;
       const div = document.createElement('div');
-      div.className = 'char-card' + (st.unlocked ? '' : ' locked');
+      div.className = 'char-card' + (st.unlocked ? '' : ' locked') + (equipped ? ' selected' : '');
       div.dataset.key = key;
       div.style.setProperty('--accent', c.color);
       let html =
@@ -5128,24 +5238,39 @@ const UI = {
         '<div class="char-role">' + c.role + '</div>' +
         '<div class="char-blurb">' + c.blurb + '</div>' +
         '<ul class="char-perks">' + c.perks.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
-      if (!st.unlocked) {
+      if (st.unlocked) {
+        html += '<div class="op-action' + (equipped ? ' eq' : '') + '">' + (equipped ? '✓ Équipé' : 'Équiper') + '</div>';
+      } else {
         html += '<div class="lock-chip">VERROUILLÉ</div>';
-        const txt = st.type === 'gold' ? (st.canDo ? 'Débloquer · ' + st.label : st.label) : st.label;
+        const txt = st.type === 'gold' ? (st.canDo ? 'Acheter · ' + st.label : st.label) : st.label;
         html += '<div class="lock-tag' + (st.canDo ? ' can' : '') + '">' + txt + '</div>';
       }
       div.innerHTML = html;
       div.addEventListener('click', () => {
         const s = Meta.unlockState('char', key, c);
-        if (s.unlocked) { this.selectedChar = key; Meta.equip('char', key); Audio.ui(); this._refreshCharSel(); }
-        else if (Meta.tryUnlock('char', key, c)) { this.selectedChar = key; Meta.equip('char', key); Audio.evolve(); this._buildChars(); this._refreshBest(); }
-        else { Audio.uiBack(); }
+        if (s.unlocked) {
+          if (this.selectedChar === key) { Audio.uiBack(); return; }
+          this.selectedChar = key; Meta.equip('char', key); Audio.ui(); this._buildChars(); this._refreshCurrentOp();
+        } else if (Meta.tryUnlock('char', key, c)) {
+          this.selectedChar = key; Meta.equip('char', key); Audio.evolve(); this._buildChars(); this._refreshCurrentOp(); this._refreshRosterGold(); this._refreshBest();
+        } else { Audio.uiBack(); }
       });
       cc.appendChild(div);
     }
-    this._refreshCharSel();
+    this._refreshRosterGold();
+  },
+  _refreshCurrentOp() {
+    const c = CHARACTERS[this.selectedChar] || CHARACTERS.odzigon;
+    if (this.el.opGlyph) this.el.opGlyph.textContent = c.icon || '◆';
+    if (this.el.opName) this.el.opName.textContent = c.name;
+    if (this.el.opRole) this.el.opRole.textContent = c.role;
+    if (this.el.currentOp) this.el.currentOp.style.setProperty('--accent', c.color || COLORS.ember);
+  },
+  _refreshRosterGold() {
+    if (this.el.rosterGold) this.el.rosterGold.textContent = formatNum(Meta.gold) + ' or';
   },
   _refreshCharSel() {
-    const cards = this.el.charCards.children;
+    const cards = this.el.rosterGrid ? this.el.rosterGrid.children : [];
     for (let i = 0; i < cards.length; i++) {
       const key = cards[i].dataset.key;
       cards[i].classList.toggle('selected', key === this.selectedChar && Meta.isUnlocked('char', key));
@@ -5316,6 +5441,7 @@ const UI = {
   _refreshAll() {
     this.selectedChar = Meta.loadout.char || 'odzigon';
     if (this._buildChars) this._buildChars();
+    if (this._refreshCurrentOp) this._refreshCurrentOp();
     if (this._refreshLoadout) this._refreshLoadout();
     this._refreshAccount(); this._refreshDaily(); this._syncSettings(); this._refreshBest();
   },
@@ -5368,7 +5494,7 @@ const UI = {
 
   show(screenId) {
     if (screenId !== 'screen-picker' && typeof WPreview !== 'undefined' && WPreview.running) WPreview.stop();
-    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help'];
+    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
       if (s) s.classList.toggle('visible', screens[i] === screenId);
