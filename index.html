@@ -132,12 +132,12 @@ body[data-state="playing"] #hud, body[data-state="gameover"] #hud{opacity:1;}
 
 /* ============ écrans (overlays) ============ */
 .screen{position:absolute;inset:0;z-index:20;display:none;flex-direction:column;
-  align-items:center;justify-content:center;padding:28px 20px;overflow-y:auto;
+  align-items:center;justify-content:flex-start;padding:28px 20px;overflow-y:auto;
   background:radial-gradient(120% 90% at 50% 0%, rgba(20,20,24,.86) 0%, rgba(10,10,11,.95) 70%);
   backdrop-filter:blur(3px);}
 .screen.visible{display:flex;animation:scrIn .35s ease;}
 @keyframes scrIn{from{opacity:0;}to{opacity:1;}}
-.screen-inner{width:100%;max-width:920px;display:flex;flex-direction:column;align-items:center;}
+.screen-inner{width:100%;max-width:920px;display:flex;flex-direction:column;align-items:center;margin:auto 0;}
 .eyebrow{font-family:var(--f-display);font-weight:500;font-size:12px;letter-spacing:.42em;
   color:var(--ember);text-transform:uppercase;margin-bottom:10px;}
 .title{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,9vw,76px);line-height:.92;
@@ -1469,37 +1469,25 @@ const Audio = {
       return;
     }
     this._bossUrl = url;
-    // Couper l'ambiance : les deux éléments + tout fondu en cours.
-    if (this._mFade) { clearInterval(this._mFade); this._mFade = null; }
-    if (this._mA) { try { this._mA.pause(); } catch (e) {} }
-    if (this._mB) { try { this._mB.pause(); } catch (e) {} }
-    // Lancer le thème du boss sur l'élément dédié, sans forcer currentTime sur une src non chargée.
-    const b = this._mBoss;
-    b.loop = true;
-    b.volume = this._mVol;
-    if (b.src !== url) { b.src = url; }
-    else { try { b.currentTime = 0; } catch (e) {} }
-    const tryPlay = () => { const pr = b.play(); if (pr && pr.catch) pr.catch(() => {}); };
-    tryPlay();
-    if (b.readyState < 2) {
-      const onReady = () => { b.removeEventListener('canplay', onReady); if (this._bossMode && this._bossUrl === url && b.paused) tryPlay(); };
-      b.addEventListener('canplay', onReady);
-    }
+    // On bascule via le fondu enchaîné, sur un élément <audio> DÉJÀ débloqué par le navigateur
+    // (les éléments d'ambiance ont déjà joué) : l'ambiance s'éteint, le thème du boss démarre en boucle.
+    this._mStarted = true;
+    this._crossfadeTo(url);
+    if (this._mActive) this._mActive.loop = true;
     if (this.onTrack) this.onTrack('BOSS');
   },
   _bossFallback() {
     this._bossUrl = null;
     if (!this.enabled || !this.musicOn) return;
     this._mTargetVol = Math.min(1, this._mVol * 1.3);
-    if (this._mStarted) {
-      if (this._mActive && this._mActive.paused) { const p = this._mActive.play(); if (p && p.catch) p.catch(() => {}); }
-      if (this._mActive) this._mActive.volume = this._mTargetVol;
-    } else { this.startMusic(); }
+    if (this._mStarted && this._mActive && this._mActive.paused) { const p = this._mActive.play(); if (p && p.catch) p.catch(() => {}); }
   },
   bossMusicEnd() {
     if (!this._bossMode) return;
     this._bossMode = false;
-    if (this._mBoss) { try { this._mBoss.pause(); this._mBoss.currentTime = 0; } catch (e) {} }
+    if (this._mA) this._mA.loop = false;
+    if (this._mB) this._mB.loop = false;
+    if (this._mBoss) { try { this._mBoss.pause(); } catch (e) {} }
     if (!this.enabled || !this.musicOn) { this._bossUrl = null; return; }
     this._mTargetVol = this._mVol;
     if (this._bossUrl) {
@@ -5184,7 +5172,7 @@ const UI = {
       'pdLvl', 'pdLvlVal', 'pdLvlUp', 'pdLvlDown',
       'acctChip', 'acctAv', 'acctNm', 'dailyBanner', 'btnDiscord', 'btnSettings', 'btnChangelog', 'btnGithub',
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
-      'changelogBody', 'changelogBack', 'btnHelp', 'helpBack',
+      'changelogBody', 'changelogBack', 'btnHelp', 'helpBack', 'screen-help',
       'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
