@@ -1,1 +1,3 @@
+fixs et ameliorations du jeu
+ajout de la base de donée/connection via discord
 
