@@ -1469,17 +1469,22 @@ const Audio = {
       return;
     }
     this._bossUrl = url;
+    // Couper l'ambiance : les deux éléments + tout fondu en cours.
     if (this._mFade) { clearInterval(this._mFade); this._mFade = null; }
     if (this._mA) { try { this._mA.pause(); } catch (e) {} }
     if (this._mB) { try { this._mB.pause(); } catch (e) {} }
-    try {
-      if (this._mBoss.src !== url) this._mBoss.src = url;
-      this._mBoss.currentTime = 0;
-      this._mBoss.loop = true;
-      this._mBoss.volume = this._mVol;
-      const pr = this._mBoss.play();
-      if (pr && pr.catch) pr.catch(() => this._bossFallback());
-    } catch (e) { this._bossFallback(); }
+    // Lancer le thème du boss sur l'élément dédié, sans forcer currentTime sur une src non chargée.
+    const b = this._mBoss;
+    b.loop = true;
+    b.volume = this._mVol;
+    if (b.src !== url) { b.src = url; }
+    else { try { b.currentTime = 0; } catch (e) {} }
+    const tryPlay = () => { const pr = b.play(); if (pr && pr.catch) pr.catch(() => {}); };
+    tryPlay();
+    if (b.readyState < 2) {
+      const onReady = () => { b.removeEventListener('canplay', onReady); if (this._bossMode && this._bossUrl === url && b.paused) tryPlay(); };
+      b.addEventListener('canplay', onReady);
+    }
     if (this.onTrack) this.onTrack('BOSS');
   },
   _bossFallback() {
@@ -2399,6 +2404,20 @@ class Enemy {
         this._scytheShot = 0;
         for (let k = -1; k <= 1; k++) G.spawnEnemyProjectile(this.x, this.y, baseAng + k * 0.2, 300, this.dmg * 0.6, COLORS.emberHi);
         Audio.shootBig();
+      }
+    } else if (this.pattern === 'cyclone') {
+      const s = this.speed * slowMul * 0.75;
+      this.x += Math.cos(baseAng) * s * dt; this.y += Math.sin(baseAng) * s * dt;
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 0.08;
+        this._cycA = (this._cycA || 0) + 0.34 * (0.9 + (rage - 1));
+        const arms = 3;
+        for (let k = 0; k < arms; k++) {
+          const base = (k / arms) * TAU;
+          G.spawnEnemyProjectile(this.x, this.y, this._cycA + base, 200, this.dmg * 0.42, this.color);
+          G.spawnEnemyProjectile(this.x, this.y, -this._cycA + base, 200, this.dmg * 0.42, COLORS.emberHi);
+        }
       }
     }
     this.angle = baseAng;
@@ -3699,6 +3718,8 @@ function enemyWeights(t) {
   if (t > 100) w.push({ key: 'goliath', weight: 0.55 + t / 175 });
   if (t > 75) w.push({ key: 'hornet', weight: 0.8 + t / 140 });
   if (t > 130) w.push({ key: 'colossus', weight: 0.4 + t / 210 });
+  if (t > 66) w.push({ key: 'marauder', weight: 0.85 + t / 135 });
+  if (t > 110) w.push({ key: 'revenant', weight: 0.55 + t / 165 });
   return w;
 }
 
@@ -5849,6 +5870,9 @@ ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 42, dmg: 16, radius: 15, 
 ENEMIES.boss_scythe = { name: 'FAUCHEUR', hp: 56, speed: 42, dmg: 16, radius: 15, xp: 55, shape: 'star', color: COLORS.danger, pattern: 'scythe', bossHpMult: 46, bossScale: 2.85 };
 ENEMIES.colossus = { name: 'Colosse', hp: 160, speed: 28, dmg: 24, radius: 32, xp: 9, shape: 'square', color: '#4a505a' };
 ENEMIES.hornet = { name: 'Frelon', hp: 16, speed: 104, dmg: 9, radius: 10, xp: 3, shape: 'tri', color: '#d0a85a', shoot: true, shootCd: 2.2, projSpeed: 240 };
+ENEMIES.revenant = { name: 'Revenant', hp: 72, speed: 58, dmg: 16, radius: 16, xp: 5, shape: 'penta', color: '#7a5a8a' };
+ENEMIES.marauder = { name: 'Maraudeur', hp: 22, speed: 92, dmg: 9, radius: 11, xp: 3, shape: 'tri', color: '#c97a4d', shoot: true, shootCd: 2.0, projSpeed: 250 };
+ENEMIES.boss_cyclone = { name: 'TEMPÊTE', hp: 54, speed: 40, dmg: 16, radius: 15, xp: 55, shape: 'octa', color: COLORS.frost, pattern: 'cyclone', bossHpMult: 46, bossScale: 2.8 };
 
 CHARACTERS.nyx = {
   key: 'nyx', name: 'NYX', color: '#b07fd0', icon: '☾',
@@ -5921,7 +5945,7 @@ WEAPON_INFO.hail = { pattern: 'strike', range: 'Zone', effect: 'Frappes explosiv
 WEAPONS.repeater = {
   name: 'Mitrailleuse', icon: '✣', color: COLORS.ember, tag: 'Flux soutenu',
   desc: 'Un flux de balles rapides à très haute cadence.',
-  maxLevel: 8, unlock: { gold: 1000 },
+  maxLevel: 8, evolveInto: 'fusillade', evolveReq: 'rapid', unlock: { gold: 1000 },
   levels: [
     { dmg: 5,  count: 1, cd: 0.16, speed: 720, pierce: 1, life: 0.8 },
     { dmg: 6,  count: 1, cd: 0.15, speed: 730, pierce: 1, life: 0.8 },
@@ -5950,7 +5974,7 @@ WEAPON_INFO.repeater = { pattern: 'spread', range: 'Longue', effect: 'Cadence ex
 WEAPONS.flamer = {
   name: 'Lance-Flammes', icon: '❋', color: COLORS.ember, tag: 'Cône incendiaire',
   desc: 'Projette un cône de flammes courtes qui embrasent les ennemis.',
-  maxLevel: 8, unlock: { gold: 1200 },
+  maxLevel: 8, evolveInto: 'pyroclasme', evolveReq: 'duration', unlock: { gold: 1200 },
   levels: [
     { dmg: 4,  count: 4, cd: 0.50, speed: 360, pierce: 2, life: 0.34, burn: 6,  spread: 0.50 },
     { dmg: 5,  count: 4, cd: 0.48, speed: 365, pierce: 2, life: 0.35, burn: 7,  spread: 0.50 },
@@ -5979,7 +6003,7 @@ WEAPON_INFO.flamer = { pattern: 'spread', range: 'Courte', effect: 'Brûlure en 
 WEAPONS.wardisc = {
   name: 'Disque de Guerre', icon: '◉', color: COLORS.steel, tag: 'Disque dévastateur',
   desc: 'De lourds disques tranchants qui transpercent tout en tournoyant.',
-  maxLevel: 8, unlock: { gold: 1300 },
+  maxLevel: 8, evolveInto: 'eviscerateur', evolveReq: 'power', unlock: { gold: 1300 },
   levels: [
     { dmg: 18, count: 1, cd: 0.80, speed: 380, pierce: 5,  life: 1.4 },
     { dmg: 22, count: 1, cd: 0.76, speed: 390, pierce: 6,  life: 1.4 },
@@ -6008,7 +6032,7 @@ WEAPON_INFO.wardisc = { pattern: 'spread', range: 'Moyenne', effect: 'Perforatio
 WEAPONS.plasma = {
   name: 'Canon Plasma', icon: '❂', color: COLORS.frost, tag: 'Orbe explosif',
   desc: 'Une lourde sphère de plasma qui explose à l’impact.',
-  maxLevel: 8, unlock: { gold: 1400 },
+  maxLevel: 8, evolveInto: 'supernova', evolveReq: 'area', unlock: { gold: 1400 },
   levels: [
     { dmg: 22, count: 1, cd: 0.95, speed: 360, pierce: 1, life: 1.3,  blast: 60 },
     { dmg: 27, count: 1, cd: 0.92, speed: 365, pierce: 1, life: 1.3,  blast: 64 },
@@ -6037,7 +6061,7 @@ WEAPON_INFO.plasma = { pattern: 'spread', range: 'Moyenne', effect: 'Explosion �
 WEAPONS.ballista = {
   name: 'Arbalète Lourde', icon: '↣', color: COLORS.gold, tag: 'Trait perforant',
   desc: 'Un trait surpuissant qui empale tout sur sa trajectoire.',
-  maxLevel: 8, unlock: { gold: 1500 },
+  maxLevel: 8, evolveInto: 'transperceur', evolveReq: 'precision', unlock: { gold: 1500 },
   levels: [
     { dmg: 30,  count: 1, cd: 0.85, speed: 1000, pierce: 8,  life: 0.70 },
     { dmg: 37,  count: 1, cd: 0.82, speed: 1020, pierce: 9,  life: 0.70 },
@@ -6066,7 +6090,7 @@ WEAPON_INFO.ballista = { pattern: 'rail', range: 'Très longue', effect: 'Empale
 WEAPONS.bolt = {
   name: 'Foudre', icon: '↯', color: COLORS.frost, tag: 'Orage en chaîne',
   desc: 'Des éclairs frappent et rebondissent entre les ennemis en les ralentissant.',
-  maxLevel: 8, unlock: { gold: 1300 },
+  maxLevel: 8, evolveInto: 'orage', evolveReq: 'velocity', unlock: { gold: 1300 },
   levels: [
     { dmg: 12, jumps: 3, cd: 0.90, range: 210 },
     { dmg: 15, jumps: 3, cd: 0.85, range: 220 },
@@ -6086,9 +6110,109 @@ WEAPONS.bolt = {
   },
 };
 WEAPON_INFO.bolt = { pattern: 'arc', range: 'Moyenne', effect: 'Chaîne + ralenti', how: 'Frappe l’ennemi le plus proche puis ricoche en chaîne sur plusieurs cibles autour, en les ralentissant. Le nombre de rebonds, la portée et les dégâts montent avec les niveaux.' };
+
+/* --- Évolutions ultimes des armes récentes --- */
+EVOLUTIONS.fusillade = {
+  name: 'Fusillade', icon: '✣', color: COLORS.emberHi, isEvo: true, from: 'repeater',
+  tag: 'ULTIME · Déluge de plomb', desc: 'Deux flux de balles à cadence dévastatrice qui transpercent.',
+  levels: [{ dmg: 16, count: 3, cd: 0.07, speed: 900, pierce: 4, life: 1.0 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (Math.random() - 0.5) * 0.12 + (count > 1 ? (i / (count - 1) - 0.5) * 0.08 : 0);
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 4, size: 5,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.emberHi, kind: 'bullet', isCrit: c, knock: 50 });
+    }
+  },
+};
+EVOLUTIONS.pyroclasme = {
+  name: 'Pyroclasme', icon: '❋', color: '#ff7a2d', isEvo: true, from: 'flamer',
+  tag: 'ULTIME · Tempête de feu', desc: 'Un large embrasement qui carbonise tout devant vous.',
+  levels: [{ dmg: 20, count: 12, cd: 0.34, speed: 430, pierce: 6, life: 0.5, burn: 34, spread: 0.95 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount * 2;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * lv.spread + (Math.random() - 0.5) * 0.12;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul * rand(0.85, 1.05),
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 7, size: 8,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: '#ff8a3d', kind: 'bullet', isCrit: c, knock: 30, burnOnHit: lv.burn * p.stats.damageMul });
+    }
+  },
+};
+EVOLUTIONS.eviscerateur = {
+  name: 'Éviscérateur', icon: '◉', color: COLORS.frost, isEvo: true, from: 'wardisc',
+  tag: 'ULTIME · Broyeur', desc: 'D’immenses disques qui fauchent des hordes entières.',
+  levels: [{ dmg: 90, count: 3, cd: 0.5, speed: 470, pierce: 20, life: 2.0 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.4;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 17, size: 18,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.frost, kind: 'blade', isCrit: c, spin: 26, knock: 220 });
+    }
+  },
+};
+EVOLUTIONS.supernova = {
+  name: 'Supernova', icon: '❂', color: '#9fd4e3', isEvo: true, from: 'plasma',
+  tag: 'ULTIME · Cataclysme', desc: 'Des sphères qui déclenchent d’énormes explosions.',
+  levels: [{ dmg: 120, count: 2, cd: 0.62, speed: 420, pierce: 3, life: 1.6, blast: 150 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.2;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 12, size: 13,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: '#9fd4e3', kind: 'bullet', isCrit: c, knock: 150, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+EVOLUTIONS.transperceur = {
+  name: 'Transperceur', icon: '↣', color: COLORS.goldHi, isEvo: true, from: 'ballista',
+  tag: 'ULTIME · Lance de siège', desc: 'Trois trains de traits qui embrochent toute la ligne.',
+  levels: [{ dmg: 140, count: 3, cd: 0.5, speed: 1250, pierce: 30, life: 0.9 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount;
+    Audio.shootBig();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.14;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 7, size: 8,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.goldHi, kind: 'rail', isCrit: c, knock: 240 });
+    }
+  },
+};
+EVOLUTIONS.orage = {
+  name: 'Orage Divin', icon: '↯', color: COLORS.frost, isEvo: true, from: 'bolt',
+  tag: 'ULTIME · Colère du ciel', desc: 'Des éclairs titanesques foudroient toute la horde.',
+  levels: [{ dmg: 70, jumps: 16, cd: 0.5, range: 440 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const c = p.rollCrit();
+    g.chainLightning(p.x, p.y, lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1),
+      lv.jumps + p.stats.amount, lv.range * p.stats.areaMul, COLORS.frost, c, 0.6);
+    Audio.shoot();
+  },
+};
 BOSS_CYCLE.push('boss_siege');
 BOSS_CYCLE.push('boss_pulsar');
 BOSS_CYCLE.push('boss_scythe');
+BOSS_CYCLE.push('boss_cyclone');
 
 /* ===========================================================================
  * 16b. CAPACITÉS ACTIVES (équipables, déclenchées par la touche de capacité)
