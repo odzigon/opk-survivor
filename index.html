@@ -4,11 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0b" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors *; img-src 'self' data: https://files.catbox.moe https://cdn.discordapp.com; media-src 'self' https://files.catbox.moe; font-src https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://pvezzyvbmmxjyqtvuqna.supabase.co wss://pvezzyvbmmxjyqtvuqna.supabase.co https://raw.githubusercontent.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <title>NEXIUM // SURVIVANT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 :root{
   --bg:#0a0a0b; --bg-2:#0e0e11; --panel:#15151a; --panel-2:#1c1c22; --panel-3:#24242c;
@@ -711,6 +713,64 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
   .sp{min-width:0;flex:1 1 40%;padding:9px 12px;}
   .menu-mast .subtitle{margin-top:12px;}
 }
+/* =====================================================================
+ * ACCUEIL — finition esthétique (cosmétique, sans changement de structure)
+ * ===================================================================== */
+#screen-start{box-shadow:inset 0 0 170px 36px rgba(0,0,0,.45);}
+#screen-start::before{
+  background:
+    radial-gradient(72% 52% at 50% -8%, rgba(255,82,48,.15), transparent 70%),
+    radial-gradient(46% 40% at 90% 102%, rgba(127,166,201,.06), transparent 80%),
+    linear-gradient(rgba(236,231,223,.016) 1px, transparent 1px) 0 0/100% 42px,
+    linear-gradient(90deg, rgba(236,231,223,.016) 1px, transparent 1px) 0 0/42px 100%;
+  -webkit-mask:linear-gradient(180deg,#000 0%,#000 26%,transparent 74%);
+  mask:linear-gradient(180deg,#000 0%,#000 26%,transparent 74%);}
+#screen-start .hero-logo{filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));}
+#screen-start .subtitle{color:var(--bone-dim);}
+
+/* records : une seule barre nette avec séparateurs fins */
+#screen-start .best-line{gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));box-shadow:0 10px 30px -16px rgba(0,0,0,.6);}
+#screen-start .best-line .sp{border:0;border-radius:0;background:transparent;border-left:1px solid var(--line);min-width:98px;box-shadow:none;}
+#screen-start .best-line .sp:first-child{border-left:0;}
+#screen-start .best-line .sp-gold{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 13%,transparent),transparent);}
+#screen-start .best-line .sp-gold .sp-v{color:var(--gold);}
+
+/* cartes d'opérateur : glyphe plus présent, sélection plus nette */
+#screen-start .char-card{background:linear-gradient(180deg,var(--panel-2),var(--panel));}
+#screen-start .char-card .char-glyph{
+  background:linear-gradient(155deg,color-mix(in srgb,var(--accent) 24%,var(--panel-2)),var(--panel-2));
+  border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);box-shadow:0 0 26px -8px var(--accent);}
+#screen-start .char-card.selected{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 11%,var(--panel-2)),var(--panel));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 42%,transparent),0 20px 46px -18px rgba(0,0,0,.7);}
+#screen-start .char-card .char-perks li{color:var(--bone-dim);padding-left:16px;}
+#screen-start .char-card .char-perks li::before{content:'';position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent);}
+
+/* panneau de déploiement + emplacements */
+#screen-start .menu-side{background:linear-gradient(180deg,var(--panel-2),rgba(11,11,14,.92));box-shadow:0 22px 56px -26px rgba(0,0,0,.75);}
+#screen-start .menu-side .load-slot{background:linear-gradient(180deg,var(--panel-2),var(--panel));border-radius:13px;overflow:hidden;}
+
+/* pied : utilitaires plus discrets */
+#screen-start .menu-extra .mx-btn{background:transparent;border-color:var(--line);color:var(--muted);border-radius:10px;}
+#screen-start .menu-extra .mx-btn:hover{background:var(--panel);color:var(--bone);border-color:var(--line-2);}
+#screen-start #btnDiscord:hover{border-color:color-mix(in srgb,#5865F2 55%,transparent);}
+#screen-start .legend .leg{opacity:.85;}
+
+@media (max-width:560px){
+  #screen-start .best-line{border:0;background:transparent;box-shadow:none;gap:8px;flex-wrap:wrap;}
+  #screen-start .best-line .sp{border:1px solid var(--line);border-radius:11px;background:var(--panel);flex:1 1 40%;}
+  #screen-start .best-line .sp:first-child{border:1px solid var(--line);}
+}
+.pd-stats .pd-stat .v .mx{font-family:var(--f-mono);font-size:9.5px;color:var(--muted);font-weight:400;letter-spacing:.04em;}
+.pd-lvl{display:flex;align-items:center;gap:10px;margin-top:12px;padding:7px 10px;border:1px solid var(--line);border-radius:11px;background:var(--panel);}
+.pd-lvl .pl-info{flex:1;display:flex;flex-direction:column;gap:1px;text-align:center;}
+.pd-lvl .pl-k{font-family:var(--f-mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+.pd-lvl .pl-v{font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--bone);letter-spacing:.04em;}
+.pd-lvl .pl-btn{width:34px;height:34px;flex:none;border:1px solid var(--line-2);border-radius:9px;background:var(--panel-2);color:var(--accent);
+  font-family:var(--f-display);font-size:20px;line-height:1;cursor:pointer;transition:background .12s,border-color .12s,transform .1s;-webkit-tap-highlight-color:transparent;}
+.pd-lvl .pl-btn:hover{background:var(--panel-3);border-color:color-mix(in srgb,var(--accent) 55%,transparent);}
+.pd-lvl .pl-btn:active{transform:scale(.92);}
 </style>
 </head>
 <body data-state="menu">
@@ -805,6 +865,7 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
       <div class="menu-extra">
         <button class="mx-btn" id="btnDiscord" type="button"><span class="mx-ic">⬢</span> Connexion Discord</button>
         <button class="mx-btn" id="btnSettings" type="button"><span class="mx-ic">⚙</span> Réglages</button>
+        <button class="mx-btn" id="btnHelp" type="button"><span class="mx-ic">?</span> Aide</button>
         <button class="mx-btn" id="btnChangelog" type="button"><span class="mx-ic">≡</span> Journal</button>
         <button class="mx-btn" id="btnGithub" type="button"><span class="mx-ic">↗</span> GitHub</button>
       </div>
@@ -847,6 +908,11 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
         <div class="pd-head"><span class="pd-icon" id="pdIcon">◆</span><div class="pd-id"><div class="pd-name" id="pdName">—</div><div class="pd-tag" id="pdTag">—</div></div></div>
         <p class="pd-desc" id="pdDesc"></p>
         <div class="pd-how" id="pdHow"></div>
+        <div class="pd-lvl" id="pdLvl">
+          <button class="pl-btn" id="pdLvlDown" type="button" aria-label="Niveau précédent">−</button>
+          <div class="pl-info"><span class="pl-k">Aperçu au niveau</span><span class="pl-v" id="pdLvlVal">1 / 8</span></div>
+          <button class="pl-btn" id="pdLvlUp" type="button" aria-label="Niveau suivant">+</button>
+        </div>
         <div class="pd-stats" id="pdStats"></div>
         <div class="pd-evo" id="pdEvo"></div>
         <button class="btn pd-act" id="pdAct">Équiper</button>
@@ -880,7 +946,39 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
     <div class="eyebrow">JOURNAL DES VERSIONS</div>
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Changelog</h1>
     <div class="cl-body" id="changelogBody"><div class="cl-load">Chargement…</div></div>
-    <div class="btn-row"><a class="btn btn-ghost" id="clGithub" href="https://github.com/odzigon/opk-survivor" target="_blank" rel="noopener">Voir sur GitHub</a><button class="btn btn-ghost" id="changelogBack">Retour</button></div>
+    <div class="btn-row"><a class="btn btn-ghost" id="clGithub" href="https://github.com/odzigon/opk-survivor" target="_blank" rel="noopener noreferrer">Voir sur GitHub</a><button class="btn btn-ghost" id="changelogBack">Retour</button></div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN : AIDE ============ -->
+<div class="screen" id="screen-help">
+  <div class="screen-inner cl-inner">
+    <div class="eyebrow">PROTOCOLE DE SURVIE</div>
+    <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Comment jouer</h1>
+    <div class="cl-body">
+      <div class="cl-ver">But du jeu</div>
+      <div class="cl-p">Survivez le plus longtemps possible face à des vagues d'ennemis sans fin. Votre arme tire toute seule : votre rôle est de vous déplacer, esquiver, choisir les bonnes améliorations et terrasser les boss. Plus vous tenez, plus la menace s'intensifie — visez le meilleur score.</div>
+      <div class="cl-ver">Déplacements & combat</div>
+      <div class="cl-li"><b>Déplacement</b> — WASD, ZQSD ou flèches. Sur mobile, touchez l'écran pour faire apparaître un joystick.</div>
+      <div class="cl-li"><b>Tir</b> — automatique, vers l'ennemi le plus proche. Concentrez-vous sur le placement.</div>
+      <div class="cl-li"><b>Capacité</b> — Espace ou Maj (bouton dédié sur mobile). Gardez-la pour les moments critiques.</div>
+      <div class="cl-li"><b>Pause</b> — Échap ou P.</div>
+      <div class="cl-ver">Monter en puissance</div>
+      <div class="cl-p">Les ennemis tués lâchent des gemmes d'expérience. En montant de niveau, vous choisissez une amélioration : nouvelle arme, montée de niveau d'une arme, ou passif. Une arme au niveau maximum, associée au bon passif, peut <b>évoluer</b> en version ultime, bien plus puissante.</div>
+      <div class="cl-ver">Or & boutique</div>
+      <div class="cl-p">L'or gagné en partie est conservé entre les sessions. Dépensez-le dans la <b>Boutique</b> pour des bonus permanents (PV, dégâts, vitesse…) et pour <b>débloquer</b> de nouveaux opérateurs, armes et capacités. Connectez-vous avec Discord pour sauvegarder votre progression dans le cloud.</div>
+      <div class="cl-ver">Opérateurs & personnalisation</div>
+      <div class="cl-p">Chaque opérateur a un style propre (équilibré, tank, assassin, vampire…) et une capacité active. Avant de lancer une partie, choisissez votre opérateur, votre arme de départ et votre capacité dans le menu. La fiche de chaque arme propose un aperçu en direct à n'importe quel niveau.</div>
+      <div class="cl-ver">Ennemis & boss</div>
+      <div class="cl-p">Le bestiaire est varié : fonceurs, cracheurs à distance, kamikazes explosifs, soigneurs, bastions blindés, diviseurs, spectres qui se téléportent, tisseurs qui orbitent… Des <b>boss</b> surgissent régulièrement avec des attaques dangereuses (charges, salves circulaires, invocations, ondes de choc). Esquivez leurs projectiles et concentrez le feu.</div>
+      <div class="cl-ver">Conseils</div>
+      <div class="cl-li">Restez toujours en mouvement : un ennemi immobile vous touche, pas l'inverse.</div>
+      <div class="cl-li">Spécialisez-vous : montez une arme jusqu'à son évolution plutôt que d'en éparpiller plusieurs.</div>
+      <div class="cl-li">Le Magnétisme (boutique) facilite énormément la récupération des gemmes.</div>
+      <div class="cl-li">Gardez votre capacité pour vous dégager quand vous êtes encerclé.</div>
+      <div class="cl-li">Les boss laissent des coffres et des ramassages : récupérez-les après la victoire.</div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" id="helpBack">Retour</button></div>
   </div>
 </div>
 
@@ -1989,6 +2087,44 @@ class Enemy {
         }
         return;
       }
+      // --- spectre : se rapproche par téléportations ---
+      if (this.def.blink) {
+        const ang = angleTo(this.x, this.y, p.x, p.y) + Math.sin(this.wobble) * 0.3;
+        const s = this.speed * slowMul * 0.5;
+        this.x += Math.cos(ang) * s * dt; this.y += Math.sin(ang) * s * dt; this.angle = ang;
+        this.shootTimer -= dt;
+        if (this.shootTimer <= 0) {
+          this.shootTimer = this.def.blinkCd || 2.4;
+          const d = dist(this.x, this.y, p.x, p.y);
+          if (d > 110) {
+            G.rings.push({ x: this.x, y: this.y, from: this.radius + 6, to: 0, life: 0.3, max: 0.3, color: this.color });
+            const jump = Math.min(d - 70, this.def.blinkDist || 210);
+            this.x += Math.cos(ang) * jump; this.y += Math.sin(ang) * jump;
+            G.rings.push({ x: this.x, y: this.y, from: 0, to: this.radius + 10, life: 0.3, max: 0.3, color: this.color });
+            for (let i = 0; i < 6; i++) { const a = rand(0, TAU); G.particle({ x: this.x, y: this.y, vx: Math.cos(a) * 90, vy: Math.sin(a) * 90, life: 0.32, max: 0.32, size: rand(2, 3.5), color: this.color, drag: 0.85, glow: true }); }
+            Audio.tone(520, 0.07, 'triangle', 0.04, 0.002, 900);
+          }
+        }
+        return;
+      }
+      // --- tisseur : tourne autour du joueur en tirant ---
+      if (this.def.orbiter) {
+        if (this.orbitDir === undefined) this.orbitDir = chance(0.5) ? 1 : -1;
+        const toP = angleTo(this.x, this.y, p.x, p.y);
+        const d = dist(this.x, this.y, p.x, p.y);
+        const desired = this.def.orbitR || 210;
+        const tang = toP + HALF_PI * this.orbitDir;
+        const s = this.speed * slowMul;
+        const radial = clamp((d - desired) / 60, -1, 1);
+        const vx = Math.cos(toP) * radial * s * 1.1 + Math.cos(tang) * s;
+        const vy = Math.sin(toP) * radial * s * 1.1 + Math.sin(tang) * s;
+        this.x += vx * dt; this.y += vy * dt; this.angle = Math.atan2(vy, vx);
+        if (this.def.shoot) {
+          this.shootTimer -= dt;
+          if (this.shootTimer <= 0) { this.shootTimer = this.def.shootCd || 2.8; if (d < 660) { G.spawnEnemyProjectile(this.x, this.y, toP, this.def.projSpeed || 210, this.dmg * 0.7, this.color); Audio.shoot(); } }
+        }
+        return;
+      }
       // poursuite directe avec un léger flottement
       const ang = angleTo(this.x, this.y, p.x, p.y) + Math.sin(this.wobble) * 0.12;
       const s = this.speed * slowMul;
@@ -2093,6 +2229,22 @@ class Enemy {
         Audio.shootBig(); Camera.shake(4, 0.18);
         if (this._siegeN % 3 === 0) {
           for (let i = 0; i < 4; i++) { const a = rand(0, TAU), d = rand(40, 80); G.spawnEnemy('mite', this.x + Math.cos(a) * d, this.y + Math.sin(a) * d, {}); }
+        }
+      }
+    } else if (this.pattern === 'pulsar') {
+      const s = this.speed * slowMul * 0.78;
+      this.x += Math.cos(baseAng) * s * dt; this.y += Math.sin(baseAng) * s * dt;
+      this.shootTimer -= dt;
+      if (this.shootTimer <= 0) {
+        this.shootTimer = 1.5;
+        this._pulseN = (this._pulseN || 0) + 1;
+        const n = 14, off = (this._pulseN % 2) * (Math.PI / n);
+        for (let i = 0; i < n; i++) { const a = off + (i / n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 210, this.dmg * 0.55, this.color); }
+        Audio.shootBig(); Camera.shake(4, 0.18);
+        if (this._pulseN % 3 === 0) {
+          G.rings.push({ x: this.x, y: this.y, from: 0, to: 155, life: 0.4, max: 0.4, color: this.color });
+          if (dist2(this.x, this.y, p.x, p.y) <= 155 * 155) p.takeDamage(this.dmg * 0.9);
+          Audio.explosion();
         }
       }
     }
@@ -3227,21 +3379,21 @@ const CHARACTERS = {
     role: 'Assassin', blurb: 'Critiques dévastateurs au prix d’une santé fragile.',
     perks: ['+15% crit', '+0.6× dégâts crit', '+10% vitesse', '-15% PV max'],
     apply: (s) => { s.critChance += 0.15; s.critMult += 0.6; s.speedMul += 0.10; s.hpMul -= 0.15; },
-    locked: true, unlock: { gold: 600 },
+    locked: true, unlock: { gold: 1800 },
   },
   atlas: {
     key: 'atlas', name: 'ATLAS', color: '#7fa6c9', icon: '◧',
     role: 'Titan', blurb: 'Forteresse ambulante : lent, mais quasiment increvable.',
     perks: ['+60% PV max', '+4 armure', '+20% zone', '-15% vitesse'],
     apply: (s) => { s.hpMul += 0.60; s.armor += 4; s.areaMul += 0.20; s.speedMul -= 0.15; },
-    locked: true, unlock: { bosses: 6 },
+    locked: true, unlock: { bosses: 14 },
   },
   rift: {
     key: 'rift', name: 'RIFT', color: COLORS.frost, icon: '❖',
     role: 'Arcaniste', blurb: 'Maître des projectiles et des zones d’effet.',
     perks: ['+1 projectile', '+20% zone', '+15% durée', '+10% recharge'],
     apply: (s) => { s.amount += 1; s.areaMul += 0.20; s.durationMul += 0.15; s.cooldownMul *= 0.90; },
-    locked: true, unlock: { kills: 4000 },
+    locked: true, unlock: { kills: 18000 },
   },
 };
 
@@ -3265,16 +3417,16 @@ const Meta = {
   life: { kills: 0, bosses: 0, games: 0 },
 
   shop: [
-    { key: 'mhp',  name: 'Endurance',     icon: '❤', desc: '+15 PV max par rang', max: 8, baseCost: 40, costMul: 1.45, apply: (s, r) => { s.hpAdd += r * 15; } },
-    { key: 'dmg',  name: 'Surcharge',     icon: '✦', desc: '+5% dégâts par rang', max: 8, baseCost: 60, costMul: 1.5,  apply: (s, r) => { s.damageMul += r * 0.05; } },
-    { key: 'spd',  name: 'Propulsion',    icon: '➤', desc: '+3% vitesse par rang', max: 6, baseCost: 50, costMul: 1.5,  apply: (s, r) => { s.speedMul += r * 0.03; } },
-    { key: 'arm',  name: 'Plaques',       icon: '◧', desc: '+1 armure par rang', max: 6, baseCost: 55, costMul: 1.55, apply: (s, r) => { s.armor += r * 1; } },
-    { key: 'mag',  name: 'Magnétisme',    icon: '⦿', desc: '+15 rayon par rang', max: 6, baseCost: 40, costMul: 1.4,  apply: (s, r) => { s.pickupAdd += r * 15; } },
-    { key: 'crit', name: 'Visée',         icon: '✜', desc: '+3% crit par rang', max: 5, baseCost: 70, costMul: 1.6,  apply: (s, r) => { s.critChance += r * 0.03; } },
-    { key: 'grl',  name: 'Cupidité',      icon: '◇', desc: '+8% or par rang', max: 5, baseCost: 80, costMul: 1.6,  apply: (s, r) => { s.goldMul += r * 0.08; } },
-    { key: 'xpl',  name: 'Apprentissage', icon: '◈', desc: '+6% XP par rang', max: 5, baseCost: 80, costMul: 1.6,  apply: (s, r) => { s.xpMul += r * 0.06; } },
-    { key: 'rer',  name: 'Relances',      icon: '↻', desc: '+1 relance par partie', max: 5, baseCost: 110, costMul: 1.7, apply: () => {} },
-    { key: 'rev',  name: 'Résurrection',  icon: '✛', desc: 'Revient une fois à 50% PV', max: 1, baseCost: 300, costMul: 2, apply: () => {} },
+    { key: 'mhp',  name: 'Endurance',     icon: '❤', desc: '+15 PV max par rang', max: 10, baseCost: 90, costMul: 1.5, apply: (s, r) => { s.hpAdd += r * 15; } },
+    { key: 'dmg',  name: 'Surcharge',     icon: '✦', desc: '+5% dégâts par rang', max: 10, baseCost: 130, costMul: 1.55,  apply: (s, r) => { s.damageMul += r * 0.05; } },
+    { key: 'spd',  name: 'Propulsion',    icon: '➤', desc: '+3% vitesse par rang', max: 8, baseCost: 110, costMul: 1.55,  apply: (s, r) => { s.speedMul += r * 0.03; } },
+    { key: 'arm',  name: 'Plaques',       icon: '◧', desc: '+1 armure par rang', max: 8, baseCost: 120, costMul: 1.6, apply: (s, r) => { s.armor += r * 1; } },
+    { key: 'mag',  name: 'Magnétisme',    icon: '⦿', desc: '+15 rayon par rang', max: 8, baseCost: 90, costMul: 1.45,  apply: (s, r) => { s.pickupAdd += r * 15; } },
+    { key: 'crit', name: 'Visée',         icon: '✜', desc: '+3% crit par rang', max: 6, baseCost: 150, costMul: 1.6,  apply: (s, r) => { s.critChance += r * 0.03; } },
+    { key: 'grl',  name: 'Cupidité',      icon: '◇', desc: '+8% or par rang', max: 6, baseCost: 160, costMul: 1.6,  apply: (s, r) => { s.goldMul += r * 0.08; } },
+    { key: 'xpl',  name: 'Apprentissage', icon: '◈', desc: '+6% XP par rang', max: 6, baseCost: 160, costMul: 1.6,  apply: (s, r) => { s.xpMul += r * 0.06; } },
+    { key: 'rer',  name: 'Relances',      icon: '↻', desc: '+1 relance par partie', max: 5, baseCost: 260, costMul: 1.7, apply: () => {} },
+    { key: 'rev',  name: 'Résurrection',  icon: '✛', desc: 'Revient une fois à 50% PV', max: 1, baseCost: 800, costMul: 2, apply: () => {} },
   ],
 
   itemByKey(k) { return this.shop.find((x) => x.key === k); },
@@ -3330,7 +3482,7 @@ const Meta = {
   isWeaponUnlocked(k) { return !!this.unlocked.weapons[k]; },
   unlockState(kind, key, def) {
     if (this.isUnlocked(kind, key)) return { unlocked: true };
-    const u = (def && def.unlock) || { gold: 500 };
+    const u = (def && def.unlock) || { gold: 1500 };
     if (u.gold != null) return { unlocked: false, type: 'gold', cost: u.gold, canDo: this.gold >= u.gold, label: u.gold + ' or' };
     if (u.kills != null) return { unlocked: false, type: 'kills', need: u.kills, have: this.life.kills, canDo: this.life.kills >= u.kills, label: formatNum(u.kills) + ' victimes (' + formatNum(this.life.kills) + ')' };
     if (u.bosses != null) return { unlocked: false, type: 'bosses', need: u.bosses, have: this.life.bosses, canDo: this.life.bosses >= u.bosses, label: u.bosses + ' boss vaincus (' + this.life.bosses + ')' };
@@ -3388,6 +3540,10 @@ function enemyWeights(t) {
   if (t > 95) w.push({ key: 'turret', weight: 0.7 + t / 150 });
   if (t > 105) w.push({ key: 'splitter', weight: 1 + t / 125 });
   if (t > 120) w.push({ key: 'healer', weight: 0.6 + t / 200 });
+  if (t > 70) w.push({ key: 'weaver', weight: 0.8 + t / 145 });
+  if (t > 92) w.push({ key: 'wraith', weight: 0.7 + t / 155 });
+  if (t > 58) w.push({ key: 'vrille', weight: 0.9 + t / 130 });
+  if (t > 100) w.push({ key: 'goliath', weight: 0.55 + t / 175 });
   return w;
 }
 
@@ -3763,7 +3919,7 @@ Game.prototype.onEnemyKilled = function (e) {
   }
   Audio.enemyDie();
   this.spawnGem(e.x, e.y, e.xpValue);
-  this.addGold(Math.round((e.isBoss ? 70 : e.isElite ? 8 : 1) * this.player.stats.goldMul));
+  const __g = e.isBoss ? 45 : e.isElite ? 5 : (chance(0.35) ? 1 : 0); if (__g > 0) this.addGold(Math.round(__g * this.player.stats.goldMul));
   if (this.player.stats.lifesteal > 0 && chance(this.player.stats.lifesteal)) {
     this.player.heal(Math.max(1, Math.round(this.player.maxHp * 0.02)));
   }
@@ -3805,8 +3961,8 @@ Game.prototype.collectPickup = function (p) {
   if (p.type === 'heal') { px.heal(Math.round(px.maxHp * 0.25)); Audio.itemPick(); }
   else if (p.type === 'magnet') { for (let i = 0; i < this.gems.length; i++) this.gems[i].forced = true; Audio.itemPick(); this.floater(px.x, px.y - 30, 'AIMANT', COLORS.steel, 16); }
   else if (p.type === 'bomb') { this.bombScreen(); }
-  else if (p.type === 'gold') { const a = p.amount || 5; this.addGold(a); this.floater(p.x, p.y - 10, '+' + a + ' or', COLORS.gold, 15); Audio.buy(); }
-  else if (p.type === 'chest') { this.addGold(15); this.openUpgradeScreen(true); Audio.chest(); }
+  else if (p.type === 'gold') { const a = p.amount || 3; this.addGold(a); this.floater(p.x, p.y - 10, '+' + a + ' or', COLORS.gold, 15); Audio.buy(); }
+  else if (p.type === 'chest') { this.addGold(10); this.openUpgradeScreen(true); Audio.chest(); }
   else if (p.type === 'freeze') { this.freezeScreen(); }
   else if (p.type === 'xp') { const a = p.amount || 60; px.addXp(a); this.floater(p.x, p.y - 12, '+' + a + ' XP', COLORS.gold, 16, true); Audio.itemPick(); }
 };
@@ -3960,7 +4116,7 @@ Game.prototype.applyChoice = function (choice) {
     UI.flash();
   }
   else if (choice.type === 'heal') { p.heal(Math.round(p.maxHp * 0.4)); Audio.itemPick(); }
-  else if (choice.type === 'gold') { this.addGold(25); Audio.buy(); }
+  else if (choice.type === 'gold') { this.addGold(12); Audio.buy(); }
   this.resolveUpgrade();
 };
 Game.prototype.resolveUpgrade = function () {
@@ -3988,7 +4144,7 @@ Game.prototype.banish = function (choice) {
   Audio.uiBack();
 };
 Game.prototype.skipUpgrade = function () {
-  this.addGold(10);
+  this.addGold(5);
   Audio.uiBack();
   this.resolveUpgrade();
 };
@@ -4290,13 +4446,17 @@ Meta.daily = { last: 0, streak: 0 };
 Meta.toJSON = function () { return { v: 1, gold: this.gold, ranks: this.ranks, best: this.best, unlocked: this.unlocked, loadout: this.loadout, life: this.life, daily: this.daily }; };
 Meta.applyJSON = function (o) {
   if (!o || typeof o !== 'object') return;
-  if (typeof o.gold === 'number') this.gold = Math.max(this.gold || 0, o.gold);
-  if (o.ranks) for (const k in o.ranks) this.ranks[k] = Math.max(this.ranks[k] || 0, o.ranks[k] | 0);
-  if (o.best) { const b = o.best; this.best.score = Math.max(this.best.score, b.score || 0); this.best.time = Math.max(this.best.time, b.time || 0); this.best.level = Math.max(this.best.level, b.level || 0); this.best.kills = Math.max(this.best.kills, b.kills || 0); }
-  if (o.unlocked) for (const cat of ['chars', 'weapons', 'abilities']) { if (o.unlocked[cat]) for (const k in o.unlocked[cat]) if (o.unlocked[cat][k]) this.unlocked[cat][k] = 1; }
-  if (o.life) { this.life.kills = Math.max(this.life.kills, o.life.kills || 0); this.life.bosses = Math.max(this.life.bosses, o.life.bosses || 0); this.life.games = Math.max(this.life.games, o.life.games || 0); }
-  if (o.loadout) { const L = o.loadout; if (L.char && this.unlocked.chars[L.char]) this.loadout.char = L.char; if (L.weapon && this.unlocked.weapons[L.weapon]) this.loadout.weapon = L.weapon; if (L.ability && this.unlocked.abilities[L.ability]) this.loadout.ability = L.ability; }
-  if (o.daily && (o.daily.last || 0) >= (this.daily.last || 0)) { this.daily.last = o.daily.last || 0; this.daily.streak = o.daily.streak || 0; }
+  const num = (v, max) => { v = +v; return (isFinite(v) && v > 0) ? Math.min(v, max) : 0; };
+  if (o.gold != null) this.gold = Math.min(Math.max(this.gold || 0, num(o.gold, 1e9)), 1e9);
+  if (o.ranks && typeof o.ranks === 'object') for (const k in o.ranks) { const it = this.itemByKey(k); if (!it) continue; this.ranks[k] = Math.min(Math.max(this.ranks[k] || 0, num(o.ranks[k], it.max)), it.max); }
+  if (o.best && typeof o.best === 'object') { const b = o.best; this.best.score = Math.max(this.best.score, num(b.score, 1e12)); this.best.time = Math.max(this.best.time, num(b.time, 1e6)); this.best.level = Math.max(this.best.level, num(b.level, 9999)); this.best.kills = Math.max(this.best.kills, num(b.kills, 1e8)); }
+  if (o.unlocked && typeof o.unlocked === 'object') {
+    const valid = { chars: CHARACTERS, weapons: WEAPONS, abilities: ABILITIES };
+    for (const cat in valid) { const src = o.unlocked[cat]; if (!src || typeof src !== 'object') continue; for (const k in src) if (src[k] && valid[cat][k]) this.unlocked[cat][k] = 1; }
+  }
+  if (o.life && typeof o.life === 'object') { this.life.kills = Math.max(this.life.kills, num(o.life.kills, 1e9)); this.life.bosses = Math.max(this.life.bosses, num(o.life.bosses, 1e7)); this.life.games = Math.max(this.life.games, num(o.life.games, 1e7)); }
+  if (o.loadout && typeof o.loadout === 'object') { const L = o.loadout; if (typeof L.char === 'string' && CHARACTERS[L.char] && this.unlocked.chars[L.char]) this.loadout.char = L.char; if (typeof L.weapon === 'string' && WEAPONS[L.weapon] && this.unlocked.weapons[L.weapon]) this.loadout.weapon = L.weapon; if (typeof L.ability === 'string' && ABILITIES[L.ability] && this.unlocked.abilities[L.ability]) this.loadout.ability = L.ability; }
+  if (o.daily && typeof o.daily === 'object') { const last = num(o.daily.last, Daily.dayIndex() + 1), streak = num(o.daily.streak, 99999); if (last >= (this.daily.last || 0)) { this.daily.last = last; this.daily.streak = streak; } }
 };
 Meta.save = function () { try { Store.set('nexium_save', JSON.stringify(this.toJSON())); } catch (e) {} if (typeof Cloud !== 'undefined') Cloud.push(); };
 Meta.load = function () { try { const o = JSON.parse(Store.get('nexium_save') || 'null'); if (o) this.applyJSON(o); } catch (e) {} };
@@ -4309,6 +4469,11 @@ Meta.reset = function () {
 
 const CHANGELOG_URL = 'https://raw.githubusercontent.com/odzigon/opk-survivor/refs/heads/main/changelog.txt';
 const GITHUB_URL = 'https://github.com/odzigon/opk-survivor';
+
+/* Anti-XSS : échappe tout contenu dynamique inséré dans le DOM (pseudo Discord, journal…). */
+function escapeHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+/* N'accepte qu'une URL https sans caractères dangereux (évite l'injection dans url("…") ou un attribut). */
+function safeHttpUrl(u) { return (typeof u === 'string' && /^https:\/\/[^\s"')(<>\\]+$/.test(u)) ? u : ''; }
 
 Game.prototype.weaponDef = function (key) { return WEAPONS[key] || EVOLUTIONS[key]; };
 
@@ -4429,6 +4594,8 @@ const WPreview = {
   _dmgArea(x, y, r, dmg) { const d = this.dummies; for (let i = 0; i < d.length; i++) { const e = d[i]; if (!e.dead && dist2(x, y, e.x, e.y) <= (r + e.radius) * (r + e.radius)) e.hit(dmg); } },
   _spark(x, y, color, n) { for (let i = 0; i < n; i++) { const a = rand(0, TAU), s = rand(60, 200); this.particle({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.3, max: 0.3, size: rand(2, 4), color, drag: 0.86 }); } },
 
+  setLevel(n) { if (this.weapon) { const max = (this.weapon.levels || []).length || 1; this.winst.level = clamp((n | 0) || 1, 1, max); } },
+
   play(mode, key) {
     this.mode = mode; this.key = key;
     this.proj.length = 0; this.slashes.length = 0; this.rings.length = 0; this.parts.length = 0; this.bolts.length = 0; this.dummies.length = 0;
@@ -4520,6 +4687,7 @@ const WPreview = {
     else if (k === 'overdrive') { P.overT = 1.6; this.rings.push({ x: P.x, y: P.y, from: 0, to: 110, life: 0.5, max: 0.5, color: COLORS.ember }); this._spark(P.x, P.y, COLORS.ember, 14); }
     else if (k === 'warp') { for (const e of this.dummies) { if (e._svx == null) { e._svx = e.vx; e._svy = e.vy; } e.slowT = 1.6; e.vx = 0; e.vy = 0; } this.rings.push({ x: P.x, y: P.y, from: 0, to: this.w, life: 0.6, max: 0.6, color: COLORS.frost }); }
     else if (k === 'leech') { this.rings.push({ x: P.x, y: P.y, from: 150, to: 0, life: 0.4, max: 0.4, color: COLORS.danger }); for (const e of this.dummies) { const a = angleTo(e.x, e.y, P.x, P.y); this.particle({ x: e.x, y: e.y, vx: Math.cos(a) * 240, vy: Math.sin(a) * 240, life: 0.4, max: 0.4, size: 3, color: COLORS.danger, drag: 0.92 }); e.hit(9); } }
+    else if (k === 'pulse') { this.rings.push({ x: P.x, y: P.y, from: 0, to: 180, life: 0.5, max: 0.5, color: '#b07fd0' }); for (const e of this.dummies) { const a = angleTo(P.x, P.y, e.x, e.y); e.vx += Math.cos(a) * 200; e.vy += Math.sin(a) * 200; e.slowT = 1.4; e.hit(8); } this._spark(P.x, P.y, '#b07fd0', 14); }
   },
 
   _render() {
@@ -4837,9 +5005,10 @@ const UI = {
       'slotWeapon', 'slotWeaponName', 'slotAbility', 'slotAbilityName',
       'screen-picker', 'pickerGrid', 'pickerTitle', 'pickerEyebrow', 'pickerGold', 'pickerBack',
       'pickerDetail', 'pvCanvas', 'pdIcon', 'pdName', 'pdTag', 'pdDesc', 'pdHow', 'pdStats', 'pdEvo', 'pdAct',
+      'pdLvl', 'pdLvlVal', 'pdLvlUp', 'pdLvlDown',
       'acctChip', 'acctAv', 'acctNm', 'dailyBanner', 'btnDiscord', 'btnSettings', 'btnChangelog', 'btnGithub',
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
-      'changelogBody', 'changelogBack'];
+      'changelogBody', 'changelogBack', 'btnHelp', 'helpBack'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
@@ -4851,6 +5020,8 @@ const UI = {
     if (this.el.slotWeapon) this.el.slotWeapon.addEventListener('click', () => { Audio.ui(); this.openPicker('weapon'); });
     if (this.el.slotAbility) this.el.slotAbility.addEventListener('click', () => { Audio.ui(); this.openPicker('ability'); });
     if (this.el.pickerBack) this.el.pickerBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.pdLvlUp) this.el.pdLvlUp.addEventListener('click', () => this._setWLevel((this._wLevel || 1) + 1));
+    if (this.el.pdLvlDown) this.el.pdLvlDown.addEventListener('click', () => this._setWLevel((this._wLevel || 1) - 1));
 
     // --- compte Discord / cloud ---
     const authAction = () => { Audio.ui(); if (Cloud.user) Cloud.logout(); else if (Cloud.available()) Cloud.login(); else this.openSettings(); };
@@ -4869,7 +5040,9 @@ const UI = {
     // --- réglages / journal / github ---
     if (this.el.btnSettings) this.el.btnSettings.addEventListener('click', () => { Audio.ui(); this.openSettings(); });
     if (this.el.btnChangelog) this.el.btnChangelog.addEventListener('click', () => { Audio.ui(); this.openChangelog(); });
-    if (this.el.btnGithub) this.el.btnGithub.addEventListener('click', () => { Audio.ui(); window.open(GITHUB_URL, '_blank', 'noopener'); });
+    if (this.el.btnHelp) this.el.btnHelp.addEventListener('click', () => { Audio.ui(); this.show('screen-help'); });
+    if (this.el.helpBack) this.el.helpBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.btnGithub) this.el.btnGithub.addEventListener('click', () => { Audio.ui(); window.open(GITHUB_URL, '_blank', 'noopener,noreferrer'); });
     if (this.el.settingsBack) this.el.settingsBack.addEventListener('click', () => { Audio.uiBack(); this._armReset(false); this.show('screen-start'); this._refreshBest(); });
     if (this.el.changelogBack) this.el.changelogBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
 
@@ -5028,10 +5201,23 @@ const UI = {
     if (this.el.pdTag) this.el.pdTag.textContent = info ? (kind === 'weapon' ? info.effect : (info.type + ' · ' + info.effect)) : (d.tag || '');
     if (this.el.pdDesc) this.el.pdDesc.textContent = d.desc || '';
     if (this.el.pdHow) this.el.pdHow.textContent = info ? info.how : '';
-    if (this.el.pdStats) this.el.pdStats.innerHTML = kind === 'weapon' ? this._weaponStatTiles(key, info) : this._abilityStatTiles(key, info);
-    if (this.el.pdEvo) this.el.pdEvo.textContent = kind === 'weapon' ? this._evoText(key) : '';
+    const isW = kind === 'weapon';
+    this._wKey = isW ? key : null; this._wInfo = info; this._wLevel = 1;
+    this._wMax = isW ? ((WEAPONS[key].levels || []).length || 1) : 1;
+    if (this.el.pdLvl) this.el.pdLvl.style.display = (isW && this._wMax > 1) ? 'flex' : 'none';
+    if (this.el.pdLvlVal) this.el.pdLvlVal.textContent = '1 / ' + this._wMax;
+    if (this.el.pdStats) this.el.pdStats.innerHTML = isW ? this._weaponStatTiles(key, info, 1) : this._abilityStatTiles(key, info);
+    if (this.el.pdEvo) this.el.pdEvo.textContent = isW ? this._evoText(key) : '';
     this._setPdAct(kind, key, d);
-    if (this.el.pvCanvas) { WPreview.mount(this.el.pvCanvas); WPreview.play(kind === 'weapon' ? 'weapon' : 'ability', key); }
+    if (this.el.pvCanvas) { WPreview.mount(this.el.pvCanvas); WPreview.play(isW ? 'weapon' : 'ability', key); }
+  },
+  _setWLevel(n) {
+    if (!this._wKey) return;
+    this._wLevel = clamp(n | 0, 1, this._wMax || 1);
+    if (this.el.pdLvlVal) this.el.pdLvlVal.textContent = this._wLevel + ' / ' + (this._wMax || 1);
+    if (this.el.pdStats) this.el.pdStats.innerHTML = this._weaponStatTiles(this._wKey, this._wInfo, this._wLevel);
+    if (typeof WPreview !== 'undefined') WPreview.setLevel(this._wLevel);
+    Audio.ui();
   },
   _setPdAct(kind, key, d) {
     const btn = this.el.pdAct; if (!btn) return;
@@ -5054,17 +5240,17 @@ const UI = {
       } else { Audio.uiBack(); }
     };
   },
-  _weaponStatTiles(key, info) {
-    const d = WEAPONS[key], L = d.levels || [], a = L[0] || {}, z = L[L.length - 1] || a;
+  _weaponStatTiles(key, info, level) {
+    const d = WEAPONS[key], L = d.levels || [], idx = clamp(((level || 1) | 0) - 1, 0, Math.max(0, L.length - 1)), lv = L[idx] || {}, z = L[L.length - 1] || lv;
     const tile = (k, v) => '<div class="pd-stat"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>';
-    const rng = (lo, hi) => (hi != null && hi !== lo) ? (lo + ' → ' + hi) : ('' + lo);
+    const mx = (cur, max) => (max != null && max !== cur) ? (cur + ' <span class="mx">/ ' + max + '</span>') : ('' + cur);
     let out = '';
-    if (a.dmg != null) out += tile('Dégâts', rng(a.dmg, z.dmg));
-    if (a.cd != null) out += tile('Cadence', (1 / a.cd).toFixed(1) + ' /s');
-    const c0 = a.count != null ? a.count : 1, cz = z.count != null ? z.count : c0;
-    out += tile('Projectiles', rng(c0, cz));
-    if (a.pierce != null) out += tile('Perforation', rng(a.pierce, z.pierce)); else out += tile('Portée', (info && info.range) || '—');
-    if (a.dmg != null && a.cd != null) out += tile('DPS niv.1 ≈', formatNum(Math.round(a.dmg * c0 / a.cd)));
+    if (lv.dmg != null) out += tile('Dégâts', mx(lv.dmg, z.dmg));
+    if (lv.cd != null) out += tile('Cadence', (1 / lv.cd).toFixed(1) + ' /s');
+    const c = lv.count != null ? lv.count : 1, cz = z.count != null ? z.count : c;
+    out += tile('Projectiles', mx(c, cz));
+    if (lv.pierce != null) out += tile('Perforation', mx(lv.pierce, z.pierce)); else out += tile('Portée', (info && info.range) || '—');
+    if (lv.dmg != null && lv.cd != null) out += tile('DPS ≈', formatNum(Math.round(lv.dmg * c / lv.cd)));
     out += tile('Effet', (info && info.effect) || '—');
     return out;
   },
@@ -5093,14 +5279,15 @@ const UI = {
     const av = this.el.acctAv, nm = this.el.acctNm, chip = this.el.acctChip;
     if (info) {
       if (nm) nm.textContent = info.name;
-      if (av) { av.textContent = info.avatar ? '' : (info.name[0] || '◆').toUpperCase(); av.style.backgroundImage = info.avatar ? 'url("' + info.avatar + '")' : 'none'; }
+      const avurl = safeHttpUrl(info.avatar);
+      if (av) { av.textContent = avurl ? '' : (info.name[0] || '◆').toUpperCase(); av.style.backgroundImage = avurl ? 'url("' + avurl + '")' : 'none'; }
       if (chip) chip.classList.add('online');
     } else {
       if (nm) nm.textContent = 'Invité';
       if (av) { av.textContent = '◆'; av.style.backgroundImage = 'none'; }
       if (chip) chip.classList.remove('online');
     }
-    if (this.el.btnDiscord) this.el.btnDiscord.innerHTML = '<span class="mx-ic">⬢</span> ' + (info ? info.name : (typeof Cloud !== 'undefined' && Cloud.available() ? 'Connexion Discord' : 'Discord (héberger)'));
+    if (this.el.btnDiscord) this.el.btnDiscord.innerHTML = '<span class="mx-ic">⬢</span> ' + (info ? escapeHtml(info.name) : (typeof Cloud !== 'undefined' && Cloud.available() ? 'Connexion Discord' : 'Discord (héberger)'));
     const ab = this.el.setAccBtn, dd = this.el.setAccDesc;
     if (info) { if (ab) { ab.textContent = 'Se déconnecter'; ab.classList.remove('locked'); } if (dd) dd.textContent = 'Connecté · ' + info.name; }
     else if (typeof Cloud !== 'undefined' && Cloud.available()) { if (ab) { ab.textContent = 'Connexion Discord'; ab.classList.remove('locked'); } if (dd) dd.textContent = 'Sauvegarde cloud désactivée'; }
@@ -5144,7 +5331,7 @@ const UI = {
       .catch(() => { body.innerHTML = '<div class="cl-err">Impossible de charger le journal (hors-ligne, ou fichier introuvable).<br/>Consultez-le directement sur GitHub.</div>'; });
   },
   _parseChangelog(text) {
-    const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const esc = escapeHtml;
     const lines = String(text).replace(/\r/g, '').split('\n');
     let out = '';
     for (const raw of lines) {
@@ -5181,7 +5368,7 @@ const UI = {
 
   show(screenId) {
     if (screenId !== 'screen-picker' && typeof WPreview !== 'undefined' && WPreview.running) WPreview.stop();
-    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog'];
+    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
       if (s) s.classList.toggle('visible', screens[i] === screenId);
@@ -5474,7 +5661,84 @@ ENEMIES.healer = { name: 'Séraphin',    hp: 34, speed: 60, dmg: 8,  radius: 15,
 ENEMIES.dasher = { name: 'Lacérateur',  hp: 20, speed: 62, dmg: 12, radius: 13, xp: 3, shape: 'tri',    color: '#b07fd0', dasher: true };
 ENEMIES.turret = { name: 'Tourelle',    hp: 56, speed: 24, dmg: 7,  radius: 16, xp: 4, shape: 'square', color: '#8aa0b8', shoot: true, shootCd: 1.5, projSpeed: 250 };
 ENEMIES.boss_siege = { name: 'MITOSE',  hp: 52, speed: 36, dmg: 13, radius: 15, xp: 50, shape: 'octa',  color: '#b07fd0', pattern: 'siege', bossHpMult: 32, bossScale: 2.8 };
+
+/* ===========================================================================
+ * AJOUTS DE CONTENU — opérateur, capacité, arme, ennemis
+ * ======================================================================== */
+ENEMIES.wraith = { name: 'Spectre', hp: 22, speed: 70, dmg: 11, radius: 13, xp: 3, shape: 'diamond', color: '#9b7fd0', blink: true, blinkCd: 2.4, blinkDist: 210 };
+ENEMIES.weaver = { name: 'Tisseur', hp: 24, speed: 96, dmg: 9, radius: 12, xp: 3, shape: 'penta', color: '#5fb0a0', orbiter: true, orbitR: 215, shoot: true, shootCd: 2.8, projSpeed: 210 };
+ENEMIES.goliath = { name: 'Goliath', hp: 92, speed: 34, dmg: 20, radius: 26, xp: 6, shape: 'square', color: '#5a616b', splits: 'brute', splitCount: 2 };
+ENEMIES.vrille = { name: 'Vrille', hp: 14, speed: 78, dmg: 10, radius: 11, xp: 2, shape: 'tri', color: '#d08a5a', dasher: true };
+ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 40, dmg: 13, radius: 15, xp: 50, shape: 'star', color: COLORS.gold, pattern: 'pulsar', bossHpMult: 30, bossScale: 2.7 };
+
+CHARACTERS.nyx = {
+  key: 'nyx', name: 'NYX', color: '#b07fd0', icon: '☾',
+  role: 'Vampire', blurb: 'Se nourrit du combat : chaque victime peut lui rendre des forces.',
+  perks: ['+8% vol de vie', '+10% dégâts', '-12% PV max'],
+  apply: (s) => { s.lifesteal = (s.lifesteal || 0) + 0.08; s.damageMul += 0.10; s.hpMul -= 0.12; },
+  locked: true, unlock: { kills: 12000 },
+};
+
+ABILITY_INFO.pulse = { type: 'Contrôle', effect: 'Zone · projection · ralenti', pattern: 'ab_pulse', how: 'Libère une onde de choc autour de vous : inflige des dégâts, repousse violemment et ralentit les ennemis proches. Idéal pour se dégager quand on est submergé.' };
+
+WEAPONS.kunai = {
+  name: 'Fronde', icon: '⩜', color: COLORS.frost, tag: 'Salve perçante',
+  desc: 'Une rafale de lames qui transpercent les ennemis alignés.',
+  maxLevel: 8, unlock: { gold: 900 },
+  levels: [
+    { dmg: 8,  count: 1, cd: 0.50, speed: 560, pierce: 2, life: 1.0 },
+    { dmg: 10, count: 1, cd: 0.46, speed: 580, pierce: 2, life: 1.0 },
+    { dmg: 12, count: 2, cd: 0.44, speed: 600, pierce: 3, life: 1.05 },
+    { dmg: 15, count: 2, cd: 0.42, speed: 620, pierce: 3, life: 1.10 },
+    { dmg: 18, count: 2, cd: 0.40, speed: 640, pierce: 4, life: 1.10 },
+    { dmg: 22, count: 3, cd: 0.38, speed: 660, pierce: 4, life: 1.15 },
+    { dmg: 27, count: 3, cd: 0.36, speed: 680, pierce: 5, life: 1.20 },
+    { dmg: 34, count: 3, cd: 0.34, speed: 700, pierce: 6, life: 1.25 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shoot();
+    const spread = 0.12;
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * spread;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 5, size: 6,
+        life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.frost, kind: 'blade', isCrit: c, spin: 18, knock: 80 });
+    }
+  },
+};
+WEAPON_INFO.kunai = { pattern: 'spread', range: 'Longue', effect: 'Perforation en ligne', how: 'Projette une volée de lames rapides qui traversent plusieurs ennemis sur leur trajectoire. La perforation et le nombre de lames montent avec les niveaux — redoutable contre les files d’ennemis.' };
+WEAPONS.hail = {
+  name: 'Grêle', icon: '❉', color: COLORS.steel, tag: 'Bombardement de zone',
+  desc: 'Fait pleuvoir des frappes explosives autour de vous.',
+  maxLevel: 8, unlock: { gold: 1100 },
+  levels: [
+    { dmg: 14, count: 2, cd: 1.5,  blast: 56, range: 230 },
+    { dmg: 17, count: 2, cd: 1.4,  blast: 60, range: 240 },
+    { dmg: 21, count: 3, cd: 1.35, blast: 62, range: 250 },
+    { dmg: 26, count: 3, cd: 1.3,  blast: 66, range: 260 },
+    { dmg: 31, count: 4, cd: 1.25, blast: 70, range: 270 },
+    { dmg: 38, count: 4, cd: 1.2,  blast: 74, range: 280 },
+    { dmg: 46, count: 5, cd: 1.1,  blast: 78, range: 290 },
+    { dmg: 56, count: 6, cd: 1.0,  blast: 84, range: 300 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    for (let i = 0; i < count; i++) {
+      const a = rand(0, TAU), d = rand(40, lv.range * p.stats.areaMul);
+      const tx = p.x + Math.cos(a) * d, ty = p.y + Math.sin(a) * d;
+      const c = p.rollCrit();
+      g.strikeAt(tx, ty, lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), lv.blast * Math.sqrt(p.stats.areaMul), c, COLORS.frost);
+    }
+    Audio.shootBig();
+  },
+};
+WEAPON_INFO.hail = { pattern: 'strike', range: 'Zone', effect: 'Frappes explosives', how: 'Déclenche une pluie de frappes explosives sur des positions aléatoires autour de vous. Idéal pour le contrôle de zone et les groupes ; le nombre de frappes et le rayon augmentent avec les niveaux.' };
 BOSS_CYCLE.push('boss_siege');
+BOSS_CYCLE.push('boss_pulsar');
 
 /* ===========================================================================
  * 16b. CAPACITÉS ACTIVES (équipables, déclenchées par la touche de capacité)
@@ -5495,7 +5759,7 @@ const ABILITIES = {
   blink: {
     key: 'blink', name: 'Translation', icon: '⊹', color: COLORS.steel, cooldown: 4.5,
     desc: 'Téléportation instantanée + déflagration aux deux extrémités.',
-    locked: true, unlock: { gold: 450 },
+    locked: true, unlock: { gold: 1300 },
     activate(g, p) {
       const a = p.moving ? Math.atan2(p.lastDirY, p.lastDirX) : p.aimAngle;
       const ox = p.x, oy = p.y, dmg = 30 * p.stats.damageMul;
@@ -5509,7 +5773,7 @@ const ABILITIES = {
   aegis: {
     key: 'aegis', name: 'Égide', icon: '❖', color: COLORS.gold, cooldown: 9,
     desc: 'Bouclier d’invulnérabilité (2,5 s) + onde répulsive.',
-    locked: true, unlock: { gold: 550 },
+    locked: true, unlock: { gold: 1500 },
     activate(g, p) {
       p.shieldT = 2.5;
       g.areaBurst(p.x, p.y, 175, 20 * p.stats.damageMul, { knock: 620, color: COLORS.gold, ring: true });
@@ -5519,7 +5783,7 @@ const ABILITIES = {
   overdrive: {
     key: 'overdrive', name: 'Surrégime', icon: '⚡', color: COLORS.ember, cooldown: 14,
     desc: '+60 % dégâts et cadence de tir pendant 5 s.',
-    locked: true, unlock: { kills: 2500 },
+    locked: true, unlock: { kills: 9000 },
     activate(g, p) {
       p.overdriveT = 5;
       g.rings.push({ x: p.x, y: p.y, from: 0, to: 120, life: 0.5, max: 0.5, color: COLORS.ember });
@@ -5530,7 +5794,7 @@ const ABILITIES = {
   warp: {
     key: 'warp', name: 'Distorsion', icon: '✸', color: COLORS.frost, cooldown: 12,
     desc: 'Fige tous les ennemis à l’écran (3 s).',
-    locked: true, unlock: { gold: 500 },
+    locked: true, unlock: { gold: 1400 },
     activate(g, p) {
       const r = Math.hypot(VIEW.w, VIEW.h) / 2 + 60;
       const list = g.grid.queryCircle(p.x, p.y, r, []);
@@ -5542,7 +5806,7 @@ const ABILITIES = {
   leech: {
     key: 'leech', name: 'Saignée', icon: '✚', color: COLORS.danger, cooldown: 10,
     desc: 'Déflagration qui draine la vie des ennemis proches.',
-    locked: true, unlock: { bosses: 4 },
+    locked: true, unlock: { bosses: 10 },
     activate(g, p) {
       const list = g.grid.queryCircle(p.x, p.y, 160, []);
       let hits = 0; const dmg = 38 * p.stats.damageMul;
@@ -5558,7 +5822,7 @@ const ABILITIES = {
 WEAPONS.chakram = {
   name: 'Chakram', icon: '◌', color: COLORS.steel, usesAmount: true, tag: 'Disque perforant',
   desc: 'Lance des disques tournoyants qui transpercent une longue ligne d’ennemis.',
-  maxLevel: 8, unlock: { gold: 350 },
+  maxLevel: 8, unlock: { gold: 1000 },
   levels: [
     { dmg: 16, count: 1, cd: 1.2, speed: 380, pierce: 5, life: 1.7 }, { dmg: 20, count: 1, cd: 1.15, speed: 390, pierce: 5, life: 1.7 },
     { dmg: 24, count: 2, cd: 1.1, speed: 400, pierce: 6, life: 1.8 }, { dmg: 29, count: 2, cd: 1.0, speed: 410, pierce: 7, life: 1.85 },
@@ -5577,7 +5841,7 @@ WEAPONS.chakram = {
 WEAPONS.venom = {
   name: 'Crachat Acide', icon: '☣', color: COLORS.heal, usesAmount: true, tag: 'Poison persistant',
   desc: 'Projette des glaives acides qui rongent les ennemis dans la durée.',
-  maxLevel: 8, unlock: { gold: 400 },
+  maxLevel: 8, unlock: { gold: 1200 },
   levels: [
     { dmg: 7, count: 2, cd: 0.9, spread: 0.35, speed: 400, pierce: 1, burn: 10, life: 0.9 }, { dmg: 9, count: 2, cd: 0.86, spread: 0.36, speed: 405, pierce: 1, burn: 12, life: 0.9 },
     { dmg: 11, count: 3, cd: 0.82, spread: 0.4, speed: 410, pierce: 1, burn: 15, life: 0.95 }, { dmg: 13, count: 3, cd: 0.78, spread: 0.42, speed: 415, pierce: 2, burn: 18, life: 0.95 },
@@ -5737,6 +6001,15 @@ Game.prototype._drawBackground = function (ctx) {
   g.addColorStop(0, 'rgba(0,0,0,0)');
   g.addColorStop(1, 'rgba(0,0,0,0.55)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  // liseré d'ambiance teinté (prend la couleur du boss et s'intensifie)
+  if (intensity > 0.12 || this.activeBoss) {
+    const col = this.activeBoss ? this.activeBoss.color : COLORS.ember;
+    g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.46, W / 2, H / 2, R * 0.82);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, hexA(col, 0.05 + 0.09 * (this.activeBoss ? 1 : intensity)));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
 };
 
 Game.prototype._drawBossArrow = function (ctx) {
@@ -5820,6 +6093,28 @@ function loop(ts) {
   G.render();
   requestAnimationFrame(loop);
 }
+
+ABILITIES.pulse = {
+  key: 'pulse', name: 'Impulsion', icon: '◎', color: '#b07fd0', cooldown: 8,
+  desc: 'Onde de choc : dégâts de zone, projection et ralentissement autour de vous.',
+  locked: true, unlock: { gold: 1600 },
+  activate(g, p) {
+    const r = 200, dmg = 34 * p.stats.damageMul;
+    const list = g.grid.queryCircle(p.x, p.y, r, []);
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i]; if (e.dead) continue;
+      if (dist2(e.x, e.y, p.x, p.y) <= (r + e.radius) * (r + e.radius)) {
+        const a = angleTo(p.x, p.y, e.x, e.y);
+        e.hit(dmg, Math.cos(a) * 460, Math.sin(a) * 460, false);
+        if (!e.isBoss) e.slowT = Math.max(e.slowT, 1.6);
+      }
+    }
+    g.rings.push({ x: p.x, y: p.y, from: 0, to: r, life: 0.5, max: 0.5, color: '#b07fd0' });
+    g.rings.push({ x: p.x, y: p.y, from: 0, to: r * 0.6, life: 0.35, max: 0.35, color: COLORS.frost });
+    for (let i = 0; i < 20; i++) { const a = (i / 20) * TAU; g.particle({ x: p.x, y: p.y, vx: Math.cos(a) * 220, vy: Math.sin(a) * 220, life: 0.5, max: 0.5, size: rand(2, 4), color: '#b07fd0', glow: true, drag: 0.86 }); }
+    Audio.explosion(); Camera.shake(7, 0.32);
+  },
+};
 
 function boot() {
   const canvas = document.getElementById('game');
