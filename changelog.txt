@@ -1,3 +1,28 @@
+V.2 (Alpha)
+ 
+Bugs corrigés
+
+Curseur masqué pendant le jeu (seul le réticule reste visible).
+Boomerang : il inflige désormais des dégâts au retour (il ré-attaque les ennemis sur le chemin du retour et ne « meurt » plus une fois sa perforation atteinte — il vit jusqu'à revenir vers toi).
+Bouton « Équiper » toujours coloré (il prend la couleur de l'arme, plus de bouton terne).
+Gemmes : elles foncent désormais en ligne droite vers toi (fini les orbites), et fusionnent plus tôt quand il y en a beaucoup → moins d'encombrement et de lag.
+
+Gameplay / équilibrage
+
+Boss en 1v1 (arène) : à l'arrivée d'un boss, tous les autres ennemis sont évacués, et aucune nouvelle vague / élite / boss n'apparaît tant qu'il est en vie. Duel pur.
+Boss moins fréquents mais plus durs : un boss toutes les ~2 min 50 (premier à 1 min 50), +30 % de PV en plus de l'enrage, des phases de fureur et des nouvelles attaques déjà ajoutées.
+Moins d'ennemis (plafonds et vagues réduits) et progression plus lente (courbe d'XP plus posée) pour mieux sentir la montée en puissance.
+Armes principales vs bonus : seules les armes principales (scatter, cross, arc, drone, rail, lame, faisceau, mitrailleuse, arbalète, plasma, chakram, disque) sont sélectionnables comme arme de départ. Les montées de niveau ne proposent plus que des armes bonus → tu gardes une seule arme principale à la fois (plus de Grêle imposée au départ).
+Boutique recentrée : il ne reste que Propulsion, Plaques, Relances, Résurrection. Vie, magnétisme, apprentissage, dégâts, crit et or passent en jeu (ils existent déjà comme passifs de niveau).
+
+Nerfs
+
+Dash : cooldown 2,2 s → 4,0 s (moins spammable).
+Mines : le bonus de quantité est plafonné (+2 max) → fini les nuées de mines.
+
+
+V0.1 (Alpha)
+
 Correctif du bug. L'erreur venait d'une zone morte temporelle : la capacité Impulsion s'enregistrait avant que la liste des capacités ne soit déclarée. Je l'ai déplacée après toutes les déclarations — le jeu se charge de nouveau normalement.
 Page d'aide. Nouveau bouton Aide dans le menu, qui ouvre un écran expliquant tout : le but du jeu (survivre aux vagues infinies, le tir est automatique, ton rôle est le placement et les choix), les contrôles, la montée en puissance (XP → niveaux → évolutions ultimes), l'or et la boutique, les opérateurs/personnalisation, les ennemis et boss, et une section conseils.
 Nouveau contenu.
