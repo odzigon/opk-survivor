@@ -811,6 +811,25 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
 .char-card:hover .op-action{background:color-mix(in srgb,var(--accent) 24%,transparent);}
 .op-action.eq{background:transparent;letter-spacing:.2em;border-color:color-mix(in srgb,var(--accent) 60%,transparent);color:color-mix(in srgb,var(--accent) 90%,var(--bone));}
 @media (max-width:560px){ .menu-deck{max-width:440px;padding:16px;} #screen-start .hero-logo{max-height:24vh;} }
+
+/* ---- Quêtes ---- */
+.go-quests{margin-top:10px;color:var(--heal);font-size:13px;font-weight:600;line-height:1.4;}
+.q-sub{color:var(--muted);font-size:13px;margin:6px 0 0;}
+.q-row{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2);margin-bottom:9px;}
+.q-row.done{border-color:color-mix(in srgb,var(--heal) 45%,transparent);background:color-mix(in srgb,var(--heal) 8%,var(--panel-2));}
+.q-ic{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:17px;background:var(--panel-3);border:1px solid var(--line-2);color:var(--ember);}
+.q-row.done .q-ic{color:var(--heal);border-color:color-mix(in srgb,var(--heal) 45%,transparent);}
+.q-main{flex:1;min-width:0;text-align:left;}
+.q-name{font-weight:600;color:var(--bone);font-size:14px;}
+.q-desc{color:var(--muted);font-size:12px;margin-top:1px;}
+.q-bar{height:6px;border-radius:6px;background:var(--panel-3);overflow:hidden;margin-top:7px;}
+.q-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--ember),var(--ember-hi));}
+.q-row.done .q-fill{background:var(--heal);}
+.q-side{flex:none;text-align:right;min-width:92px;}
+.q-reward{font-size:12px;color:var(--gold);font-weight:600;line-height:1.2;}
+.q-prog{font-size:11px;color:var(--muted);margin-top:3px;}
+.q-status{font-size:11px;font-weight:700;color:var(--heal);letter-spacing:.04em;}
+@media (max-width:560px){ .q-side{min-width:78px;} .q-reward{font-size:11px;} }
 </style>
 </head>
 <body data-state="menu">
@@ -909,6 +928,7 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
         <button class="mx-btn" id="btnDiscord" type="button"><span class="mx-ic">⬢</span> Connexion Discord</button>
         <button class="mx-btn" id="btnSettings" type="button"><span class="mx-ic">⚙</span> Réglages</button>
         <button class="mx-btn" id="btnHelp" type="button"><span class="mx-ic">?</span> Aide</button>
+        <button class="mx-btn" id="btnQuests" type="button"><span class="mx-ic">✦</span> Quêtes</button>
         <button class="mx-btn" id="btnChangelog" type="button"><span class="mx-ic">≡</span> Journal</button>
         <button class="mx-btn" id="btnGithub" type="button"><span class="mx-ic">↗</span> GitHub</button>
       </div>
@@ -976,6 +996,7 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
       <div class="set-row"><div class="set-l"><div class="set-k">Secousse écran</div><div class="set-d">Intensité des impacts</div></div><input class="range" id="setShake" type="range" min="0" max="100" value="100" /></div>
       <div class="set-row"><div class="set-l"><div class="set-k">Effets visuels</div><div class="set-d">Densité des particules</div></div><input class="range" id="setFx" type="range" min="0" max="100" value="100" /></div>
       <div class="set-row"><div class="set-l"><div class="set-k">Dégâts affichés</div><div class="set-d">Nombres flottants à l'impact</div></div><button class="switch" id="setDmg" type="button" role="switch" aria-checked="true"></button></div>
+      <div class="set-row"><div class="set-l"><div class="set-k">Visée manuelle</div><div class="set-d">Viser au curseur / joystick droit — sinon visée automatique</div></div><button class="switch" id="setAim" type="button" role="switch" aria-checked="false"></button></div>
       <div class="set-row set-acc"><div class="set-l"><div class="set-k">Compte</div><div class="set-d" id="setAccDesc">Non connecté</div></div><button class="btn pd-act" id="setAccBtn" type="button">Connexion Discord</button></div>
     </div>
     <div class="set-danger"><button class="btn set-reset" id="setReset" type="button">Réinitialiser la progression</button></div>
@@ -990,6 +1011,17 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Changelog</h1>
     <div class="cl-body" id="changelogBody"><div class="cl-load">Chargement…</div></div>
     <div class="btn-row"><a class="btn btn-ghost" id="clGithub" href="https://github.com/odzigon/opk-survivor" target="_blank" rel="noopener noreferrer">Voir sur GitHub</a><button class="btn btn-ghost" id="changelogBack">Retour</button></div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN : QUÊTES ============ -->
+<div class="screen" id="screen-quests">
+  <div class="screen-inner cl-inner">
+    <div class="eyebrow">PROGRESSION</div>
+    <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Quêtes</h1>
+    <div class="q-sub" id="questsSummary"></div>
+    <div class="cl-body" id="questsBody"></div>
+    <div class="btn-row"><button class="btn btn-ghost" id="questsBack">Retour</button></div>
   </div>
 </div>
 
@@ -1625,9 +1657,9 @@ const Input = {
     return out;
   },
   // Direction de visée manuelle (souris au PC, joystick droit au mobile) ou null.
-  aimAngleFor(p) {
+  aimAngleFor(p, force) {
     if (this.aimActive && (this.aimX || this.aimY)) return Math.atan2(this.aimY, this.aimX);
-    if (this.mouseAim && !this.touch) {
+    if ((force || this.mouseAim) && !this.touch) {
       const dx = this.mouse.x - Camera.sx(p.x), dy = this.mouse.y - Camera.sy(p.y);
       if (dx || dy) return Math.atan2(dy, dx);
     }
@@ -1646,7 +1678,7 @@ const Input = {
 /* Référence globale vers l'instance de jeu (renseignée à la création). */
 let G = null;
 /* Réglages appliqués dans les chemins critiques (mis à jour par Settings.apply) */
-let G_QUALITY = 1;   // 0..1 densité des particules
+let G_QUALITY = 1; let DRAW_LITE = false;   // 0..1 densité des particules
 let SHOW_DMG = true; // affichage des dégâts flottants
 let SHAKE_SCALE = 1; // 0..1 intensité de la secousse caméra
 
@@ -1801,6 +1833,16 @@ class Player {
       magnetMul: 1,
       lifesteal: 0,
       luck: 0,
+      pierceBonus: 0,
+      dodge: 0,
+      thornsDmg: 0,
+      igniteDps: 0,
+      slowOnHitG: 0,
+      abilityCdMul: 1,
+      projSizeMul: 1,
+      knockMul: 1,
+      healOnKill: 0,
+      contactDps: 0,
     };
 
     // 1) méta-progression
@@ -1850,8 +1892,14 @@ class Player {
 
   takeDamage(dmg) {
     if (this.iTimer > 0 || !this.alive || this.shieldT > 0) return;
+    if (this.stats.dodge > 0 && chance(this.stats.dodge)) { this.iTimer = BASE.iFrames * 0.5; G.floater(this.x, this.y - 24, 'esquive', COLORS.frost, 13); Audio.uiBack(); return; }
     let d = Math.max(1, dmg - this.stats.armor);
     this.hp -= d;
+    if (this.stats.thornsDmg > 0) {
+      const tr = 130 * this.stats.areaMul;
+      G.areaBurst(this.x, this.y, tr, this.stats.thornsDmg * this.stats.damageMul, { knock: 220, color: COLORS.danger });
+      G.rings.push({ x: this.x, y: this.y, from: 0, to: tr, life: 0.3, max: 0.3, color: COLORS.danger });
+    }
     this.iTimer = BASE.iFrames;
     this.flash = 0.18;
     Camera.shake(7, 0.22);
@@ -1890,7 +1938,7 @@ class Player {
     const dp = Input.dashPressed();
     if (dp && !G._dashPrev && this.abilityCd <= 0 && this.ability && this.alive) {
       this.ability.activate(G, this);
-      this.abilityCd = this.ability.cooldown;
+      this.abilityCd = this.ability.cooldown * (this.stats.abilityCdMul || 1);
     }
     G._dashPrev = dp;
     Input.dashWanted = false;
@@ -1921,7 +1969,7 @@ class Player {
     }
 
     // Visée : manuelle (souris / joystick droit) en priorité, sinon ennemi le plus proche, sinon direction.
-    const manualAim = Input.aimAngleFor(this);
+    const manualAim = ((typeof Settings !== 'undefined' && Settings.data.aim === 'manual') ? Input.aimAngleFor(this, true) : null);
     if (manualAim !== null) {
       this.aimAngle = manualAim;
     } else if (G.nearestEnemy) {
@@ -1930,6 +1978,10 @@ class Player {
       this.aimAngle = Math.atan2(this.lastDirY, this.lastDirX);
     }
     this.faceAngle = rotToward(this.faceAngle, this.aimAngle, dt * 14);
+    if (this.stats.contactDps > 0 && G) {
+      const cr = this.radius + 36, cd = this.stats.contactDps * dt, list = G.queryEnemies(this.x, this.y, cr);
+      for (let i = 0; i < list.length; i++) { const e = list[i]; if (!e.dead && dist2(e.x, e.y, this.x, this.y) < (cr + e.radius) * (cr + e.radius)) e.dot(cd); }
+    }
 
     if (this.iTimer > 0) this.iTimer -= dt;
     if (this.flash > 0) this.flash -= dt;
@@ -2292,15 +2344,58 @@ class Enemy {
     const baseAng = angleTo(this.x, this.y, p.x, p.y);
     const __hpr = clamp(this.hp / (this.maxHp || 1), 0, 1);
     const rage = 1 + (1 - __hpr) * 0.95;
+    const tier = this.bossTier || 0;
     if (this._phaseStage === undefined) this._phaseStage = 0;
     const __stage = __hpr <= 0.3 ? 2 : (__hpr <= 0.6 ? 1 : 0);
     if (__stage > this._phaseStage) {
       this._phaseStage = __stage;
-      const __n = 24, __o = rand(0, TAU);
+      const __n = 24 + tier * 4, __o = rand(0, TAU);
       for (let i = 0; i < __n; i++) { const a = __o + (i / __n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 230, this.dmg * 0.55, COLORS.danger); }
       G.rings.push({ x: this.x, y: this.y, from: 0, to: 200, life: 0.5, max: 0.5, color: COLORS.danger });
       Audio.explosion(); Camera.shake(8, 0.4);
       if (__stage === 2 && UI && UI.announce) UI.announce('⚠ ' + (this.bossName || 'BOSS') + ' — FUREUR');
+    }
+
+    // === ATTAQUES SPÉCIALES (télégraphiées, montent en puissance avec le palier du boss) ===
+    if (this._novaT > 0) {
+      this._novaT -= dt;
+      if (this._novaT <= 0) {
+        const nr = this._novaR || 220;
+        G.rings.push({ x: this.x, y: this.y, from: nr * 0.3, to: nr, life: 0.4, max: 0.4, color: COLORS.danger });
+        if (dist2(this.x, this.y, p.x, p.y) <= nr * nr) p.takeDamage(this.dmg * 1.1);
+        const m = 20 + tier * 4, o = rand(0, TAU);
+        for (let i = 0; i < m; i++) G.spawnEnemyProjectile(this.x, this.y, o + (i / m) * TAU, 245, this.dmg * 0.5, COLORS.danger);
+        Audio.explosion(); Camera.shake(9, 0.4);
+      }
+    }
+    this._specialT = (this._specialT === undefined ? rand(4, 6) : this._specialT) - dt;
+    if (this._specialT <= 0) {
+      this._specialT = Math.max(3.2, 7.5 - tier * 0.6) / (rage > 1.3 ? 1.25 : 1);
+      this._specialN = (this._specialN || 0) + 1;
+      const k = this._specialN % 4;
+      if (k === 0) {
+        // Mur tournant à brèche : un anneau dense avec une ouverture pour s'échapper
+        const n = 30 + tier * 6, gap = 3, start = rand(0, TAU);
+        for (let i = 0; i < n; i++) { if (i < gap) continue; const a = start + (i / n) * TAU; G.spawnEnemyProjectile(this.x, this.y, a, 165 + tier * 12, this.dmg * 0.5, COLORS.emberHi); }
+        Audio.shootBig(); Camera.shake(4, 0.2);
+      } else if (k === 1) {
+        // Orbes traqueuses : projectiles qui pourchassent le joueur
+        const n = 3 + Math.min(4, tier);
+        for (let i = 0; i < n; i++) { const a = baseAng + (i - (n - 1) / 2) * 0.42; G.spawnEnemyProjectile(this.x, this.y, a, 150 + tier * 8, this.dmg * 0.7, '#b07fd0', 2.2 + tier * 0.2); }
+        if (UI && UI.announce) UI.announce('⚠ ' + (this.bossName || 'BOSS') + ' — ORBES');
+        Audio.warn();
+      } else if (k === 2) {
+        // Barrage convergent : des tirs foncent vers le joueur depuis tout autour
+        const n = 14 + tier * 3, R = 380;
+        for (let i = 0; i < n; i++) { const a = (i / n) * TAU, ox = p.x + Math.cos(a) * R, oy = p.y + Math.sin(a) * R; G.spawnEnemyProjectile(ox, oy, angleTo(ox, oy, p.x, p.y), 230 + tier * 14, this.dmg * 0.45, COLORS.frost); }
+        Audio.shootBig();
+      } else {
+        // Déflagration télégraphiée : anneau d'alerte puis énorme onde de choc
+        this._novaR = 210 + tier * 30; this._novaT = 1.1;
+        G.rings.push({ x: this.x, y: this.y, from: 0, to: this._novaR, life: 1.1, max: 1.1, color: hexA(COLORS.danger, 0.6) });
+        if (UI && UI.announce) UI.announce('⚠ ' + (this.bossName || 'BOSS') + ' — DÉFLAGRATION');
+        Audio.warn();
+      }
     }
 
     if (this.pattern === 'charge') {
@@ -2581,9 +2676,11 @@ function drawShape(ctx, shape, r, fill, boss) {
   ctx.fillStyle = bodyGrad(ctx, fill, r);
   ctx.fill();
   ctx.strokeStyle = edge; ctx.stroke();
-  // reflet supérieur
-  ctx.strokeStyle = hexA('#ffffff', 0.14); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(0, 0, r * 0.82, -2.4, -0.7); ctx.stroke();
+  if (!DRAW_LITE || boss) {
+    // reflet supérieur
+    ctx.strokeStyle = hexA('#ffffff', 0.14); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(0, 0, r * 0.82, -2.4, -0.7); ctx.stroke();
+  }
   // œil / noyau orienté vers l'avant
   const ey = -r * 0.12;
   ctx.fillStyle = hexA('#000000', 0.5);
@@ -2599,6 +2696,12 @@ function EnemyProjectile() {
 }
 EnemyProjectile.prototype.update = function (dt, p) {
   this.life -= dt;
+  if (this.homing > 0) {
+    const a = angleTo(this.x, this.y, p.x, p.y), ca = Math.atan2(this.vy, this.vx);
+    const na = ca + clamp(angDiff(a, ca), -this.homing * dt, this.homing * dt);
+    const sp = Math.hypot(this.vx, this.vy) || 1;
+    this.vx = Math.cos(na) * sp; this.vy = Math.sin(na) * sp;
+  }
   this.x += this.vx * dt;
   this.y += this.vy * dt;
   if (this.life <= 0) { this.dead = true; return; }
@@ -2620,6 +2723,8 @@ EnemyProjectile.prototype.draw = function (ctx) {
   ctx.beginPath(); ctx.arc(-s * 0.22, -s * 0.22, s * 0.38, 0, TAU); ctx.fill();
   ctx.strokeStyle = hexA(this.color, 0.9); ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.arc(0, 0, s, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = hexA(COLORS.danger, 0.55); ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(0, 0, s + 3, 0, TAU); ctx.stroke();
   ctx.restore();
 };
 
@@ -2787,7 +2892,7 @@ function Gem() {
   this.value = 1; this.tier = 0; this.bob = 0; this.forced = false; this.dead = false; this.radius = 6;
 }
 Gem.tierColor = function (t) {
-  return t >= 3 ? COLORS.emberHi : t >= 2 ? COLORS.gold : t >= 1 ? COLORS.frost : COLORS.xp;
+  return t >= 3 ? '#c98ae8' : t >= 2 ? '#ffcf5a' : t >= 1 ? '#46e0c4' : '#8ef0a8';
 };
 Gem.prototype.update = function (dt, p) {
   this.bob += dt * 4;
@@ -2820,12 +2925,14 @@ Gem.prototype.draw = function (ctx) {
   const r = this.radius + (this.tier >= 2 ? 2 : 0);
   ctx.save();
   ctx.translate(sx, sy);
-  ctx.shadowColor = c; ctx.shadowBlur = 10;
+  ctx.shadowColor = c; ctx.shadowBlur = 6;
   ctx.fillStyle = c;
   ctx.beginPath();
   ctx.moveTo(0, -r); ctx.lineTo(r * 0.8, 0); ctx.lineTo(0, r); ctx.lineTo(-r * 0.8, 0);
   ctx.closePath(); ctx.fill();
-  ctx.fillStyle = hexA('#ffffff', 0.6);
+  ctx.shadowBlur = 0;
+  ctx.strokeStyle = hexA('#ffffff', 0.85); ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.fillStyle = hexA('#ffffff', 0.55);
   ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * 0.4, -r * 0.2); ctx.lineTo(0, 0); ctx.lineTo(-r * 0.4, -r * 0.2);
   ctx.closePath(); ctx.fill();
   ctx.restore();
@@ -2986,8 +3093,8 @@ WEAPONS.cross = {
 /* --- Bobine d'Arc : foudre qui rebondit entre les ennemis --- */
 WEAPONS.arc = {
   name: "Bobine d'Arc", icon: 'ϟ', color: COLORS.frost,
-  tag: 'Chaîne électrique',
-  desc: 'Déclenche un éclair qui rebondit d’ennemi en ennemi.',
+  tag: 'Décharge de zone',
+  desc: 'Libère une décharge électrique qui foudroie et ralentit tous les ennemis autour de vous.',
   maxLevel: 8, evolveInto: 'ion', evolveReq: 'power',
   levels: [
     { dmg: 14, jumps: 3, cd: 1.3, range: 240 },
@@ -3002,8 +3109,20 @@ WEAPONS.arc = {
   fire(g, w) {
     const p = g.player, lv = this.levels[w.level - 1];
     const c = p.rollCrit();
-    g.chainLightning(p.x, p.y, lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1),
-      lv.jumps + (p.stats.amount > 0 ? 1 : 0), lv.range * p.stats.areaMul, COLORS.frost, c);
+    const r = lv.range * 0.6 * p.stats.areaMul;
+    const dmg = lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1);
+    const list = g.queryEnemies(p.x, p.y, r);
+    let n = 0;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (e.dead || dist2(e.x, e.y, p.x, p.y) > (r + e.radius) * (r + e.radius)) continue;
+      const a = angleTo(p.x, p.y, e.x, e.y);
+      e.hit(dmg, Math.cos(a) * 130, Math.sin(a) * 130, c);
+      e.slow(0.6);
+      if (n < 6) { g.bolts.push({ points: [{ x: p.x, y: p.y }, { x: e.x, y: e.y }], life: 0.16, max: 0.16, color: COLORS.frost }); n++; }
+    }
+    g.rings.push({ x: p.x, y: p.y, from: r * 0.25, to: r, life: 0.3, max: 0.3, color: COLORS.frost });
+    Audio.tone(170, 0.08, 'sawtooth', 0.05, 0.002, 90);
   },
 };
 
@@ -3327,13 +3446,26 @@ EVOLUTIONS.storm = {
 
 EVOLUTIONS.ion = {
   name: 'Tempête Ionique', icon: 'Ϟ', color: COLORS.frost, isEvo: true, from: 'arc',
-  tag: 'ULTIME · Foudre en chaîne', desc: 'Des éclairs massifs ralentissent et déchaînent toute la horde.',
-  levels: [{ dmg: 60, jumps: 14, cd: 0.55, range: 420 }],
+  tag: 'ULTIME · Décharge dévastatrice', desc: 'Des décharges massives foudroient et paralysent toute la horde autour de vous.',
+  levels: [{ dmg: 60, cd: 0.55, range: 360 }],
   fire(g, w) {
     const p = g.player, lv = this.levels[0];
     const c = p.rollCrit();
-    g.chainLightning(p.x, p.y, lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1),
-      lv.jumps + p.stats.amount, lv.range * p.stats.areaMul, COLORS.frost, c, 0.7);
+    const r = lv.range * p.stats.areaMul;
+    const dmg = lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1);
+    const list = g.queryEnemies(p.x, p.y, r);
+    let n = 0;
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (e.dead || dist2(e.x, e.y, p.x, p.y) > (r + e.radius) * (r + e.radius)) continue;
+      const a = angleTo(p.x, p.y, e.x, e.y);
+      e.hit(dmg, Math.cos(a) * 200, Math.sin(a) * 200, c);
+      e.slow(1.0);
+      if (n < 12) { g.bolts.push({ points: [{ x: p.x, y: p.y }, { x: e.x, y: e.y }], life: 0.18, max: 0.18, color: COLORS.frost }); n++; }
+    }
+    g.rings.push({ x: p.x, y: p.y, from: r * 0.2, to: r, life: 0.36, max: 0.36, color: COLORS.frost });
+    g.rings.push({ x: p.x, y: p.y, from: r * 0.5, to: r * 1.12, life: 0.44, max: 0.44, color: COLORS.frost });
+    Audio.tone(150, 0.12, 'sawtooth', 0.06, 0.002, 80); Camera.shake(4, 0.2);
   },
 };
 
@@ -3475,6 +3607,66 @@ const PASSIVES = {
     desc: 'Augmente tous les dégâts infligés.',
     detail: (lv) => '+' + (lv * 10) + '% dégâts',
     apply: (s, lv) => { s.damageMul += 0.10 * lv; },
+  },
+  pierceup: {
+    name: 'Perforation', icon: '⇉', color: COLORS.steel, maxLevel: 3,
+    desc: 'Vos projectiles transpercent davantage d’ennemis.',
+    detail: (lv) => '+' + lv + ' perforation',
+    apply: (s, lv) => { s.pierceBonus += lv; },
+  },
+  dodge: {
+    name: 'Esquive Fantôme', icon: '⊘', color: COLORS.frost, maxLevel: 5,
+    desc: 'Chance d’ignorer totalement une attaque subie.',
+    detail: (lv) => '+' + (lv * 6) + '% esquive',
+    apply: (s, lv) => { s.dodge += 0.06 * lv; },
+  },
+  thorns: {
+    name: 'Représailles', icon: '✸', color: COLORS.danger, maxLevel: 5,
+    desc: 'Émet une onde de choc quand vous êtes touché.',
+    detail: (lv) => Math.round(lv * 14) + ' dégâts de riposte',
+    apply: (s, lv) => { s.thornsDmg += 14 * lv; },
+  },
+  ignite: {
+    name: 'Combustion', icon: '♨', color: COLORS.emberHi, maxLevel: 5,
+    desc: 'Vos tirs enflamment les ennemis (dégâts dans le temps).',
+    detail: (lv) => Math.round(lv * 6) + ' dégâts/s de brûlure',
+    apply: (s, lv) => { s.igniteDps += 6 * lv; },
+  },
+  chill: {
+    name: 'Engelure', icon: '❄', color: COLORS.frost, maxLevel: 4,
+    desc: 'Vos tirs ralentissent les ennemis touchés.',
+    detail: (lv) => 'ralenti ' + (0.3 + lv * 0.1).toFixed(1) + ' s',
+    apply: (s, lv) => { s.slowOnHitG = Math.max(s.slowOnHitG, 0.3 + lv * 0.1); },
+  },
+  reflex: {
+    name: 'Réflexes', icon: '⟳', color: COLORS.bone, maxLevel: 5,
+    desc: 'Réduit le temps de recharge de votre capacité.',
+    detail: (lv) => '-' + Math.round((1 - Math.max(0.45, 1 - 0.11 * lv)) * 100) + '% recharge capacité',
+    apply: (s, lv) => { s.abilityCdMul *= Math.max(0.45, 1 - 0.11 * lv); },
+  },
+  caliber: {
+    name: 'Calibre', icon: '◉', color: COLORS.gold, maxLevel: 4,
+    desc: 'Agrandit vos projectiles (zone de contact accrue).',
+    detail: (lv) => '+' + (lv * 12) + '% taille de projectile',
+    apply: (s, lv) => { s.projSizeMul += 0.12 * lv; },
+  },
+  impact: {
+    name: 'Impact', icon: '➶', color: COLORS.steel, maxLevel: 4,
+    desc: 'Augmente la projection (recul) infligée aux ennemis.',
+    detail: (lv) => '+' + (lv * 25) + '% recul',
+    apply: (s, lv) => { s.knockMul += 0.25 * lv; },
+  },
+  feast: {
+    name: 'Festin', icon: '✛', color: COLORS.heal, maxLevel: 5,
+    desc: 'Récupère des PV à chaque ennemi éliminé.',
+    detail: (lv) => '+' + (lv * 0.5).toFixed(1) + ' PV par victime',
+    apply: (s, lv) => { s.healOnKill += 0.5 * lv; },
+  },
+  lava: {
+    name: 'Cœur de Lave', icon: '✹', color: COLORS.emberHi, maxLevel: 5,
+    desc: 'Brûle en continu les ennemis qui s’approchent de vous.',
+    detail: (lv) => Math.round(lv * 9) + ' dégâts/s de proximité',
+    apply: (s, lv) => { s.contactDps += 9 * lv; },
   },
   rapid: {
     name: 'Module Rapide', icon: '⏣', color: COLORS.frost, maxLevel: 5,
@@ -3671,10 +3863,23 @@ const Meta = {
   },
 
   _bag(kind) { return kind === 'char' ? this.unlocked.chars : kind === 'weapon' ? this.unlocked.weapons : this.unlocked.abilities; },
-  isUnlocked(kind, key) { return !!this._bag(kind)[key]; },
-  isWeaponUnlocked(k) { return !!this.unlocked.weapons[k]; },
+  _questGate(kind, key) {
+    if (!Meta._qg) {
+      Meta._qg = {};
+      if (typeof QUESTS !== 'undefined') for (let i = 0; i < QUESTS.length; i++) { const q = QUESTS[i]; if (q.reward && q.reward.key) Meta._qg[q.reward.kind + ':' + q.reward.key] = q; }
+    }
+    return Meta._qg[kind + ':' + key] || null;
+  },
+  isUnlocked(kind, key) {
+    const q = this._questGate(kind, key);
+    if (q) return !!(this.questsDone && this.questsDone.indexOf(q.id) >= 0);
+    return !!this._bag(kind)[key];
+  },
+  isWeaponUnlocked(k) { return this.isUnlocked('weapon', k); },
   unlockState(kind, key, def) {
     if (this.isUnlocked(kind, key)) return { unlocked: true };
+    const q = this._questGate(kind, key);
+    if (q) return { unlocked: false, type: 'quest', canDo: false, label: 'Quête : ' + q.name };
     const u = (def && def.unlock) || { gold: 1500 };
     if (u.gold != null) return { unlocked: false, type: 'gold', cost: u.gold, canDo: this.gold >= u.gold, label: u.gold + ' or' };
     if (u.kills != null) return { unlocked: false, type: 'kills', need: u.kills, have: this.life.kills, canDo: this.life.kills >= u.kills, label: formatNum(u.kills) + ' victimes (' + formatNum(this.life.kills) + ')' };
@@ -3909,6 +4114,14 @@ class Game {
     p.color = o.color || COLORS.bone; p.kind = o.kind || 'bullet';
     p.homing = o.homing || 0; p.isCrit = !!o.isCrit; p.knock = o.knock === undefined ? 100 : o.knock;
     p.spin = o.spin || 0; p.blast = o.blast || 0; p.slowOnHit = o.slowOnHit || 0; p.burnOnHit = o.burnOnHit || 0;
+    const ps = this.player && this.player.stats;
+    if (ps && o.kind !== 'mine') {
+      if (ps.pierceBonus) p.pierce += ps.pierceBonus;
+      if (ps.projSizeMul && ps.projSizeMul !== 1) { p.radius *= ps.projSizeMul; p.size *= ps.projSizeMul; }
+      if (ps.knockMul && ps.knockMul !== 1 && p.knock) p.knock *= ps.knockMul;
+      if (ps.igniteDps && !p.burnOnHit) p.burnOnHit = ps.igniteDps;
+      if (ps.slowOnHitG && !p.slowOnHit) p.slowOnHit = ps.slowOnHitG;
+    }
     this.projectiles.push(p);
     return p;
   }
@@ -3918,11 +4131,12 @@ class Game {
       life, pierce: 0, color, kind: 'mine', knock: 0 });
     if (p) p.blast = blast;
   }
-  spawnEnemyProjectile(x, y, angle, speed, dmg, color) {
+  spawnEnemyProjectile(x, y, angle, speed, dmg, color, homing) {
     if (this.enemyProjectiles.length >= 260) return;
     const p = this.eprojPool.get();
     p.x = x; p.y = y; p.vx = Math.cos(angle) * speed; p.vy = Math.sin(angle) * speed;
-    p.dmg = dmg; p.radius = 7; p.life = 3.2; p.color = color || COLORS.steel; p.dead = false;
+    p.dmg = dmg; p.radius = homing ? 9 : 7; p.life = homing ? 4.5 : 3.2; p.color = color || COLORS.steel; p.dead = false;
+    p.homing = homing || 0;
     this.enemyProjectiles.push(p);
   }
   spawnGem(x, y, value) {
@@ -4097,7 +4311,12 @@ Game.prototype.spawnBoss = function () {
   }
   const pos = this.spawnPos();
   const e = this.spawnEnemy(key, pos.x, pos.y, { boss: true });
-  e.hp *= 1.3; e.maxHp *= 1.3;   // boss plus coriaces
+  const tier = this.bossIndex - 1;            // 0 = 1er boss, augmente ensuite
+  e.bossTier = tier;
+  const hpBoost = 1.3 * (1 + tier * 0.16);
+  e.hp *= hpBoost; e.maxHp *= hpBoost;        // boss bien plus coriaces, et croissants
+  e.dmg *= (1 + tier * 0.10);
+  e.speed *= (1 + tier * 0.04);
   this.activeBoss = e;
   this.rings.push({ x: pos.x, y: pos.y, from: 0, to: e.radius + 70, life: 0.9, max: 0.9, color: e.color });
   this.stats.bosses++;
@@ -4128,6 +4347,10 @@ Game.prototype.onEnemyKilled = function (e) {
   const __g = e.isBoss ? 45 : e.isElite ? 5 : (chance(0.35) ? 1 : 0); if (__g > 0) this.addGold(Math.round(__g * this.player.stats.goldMul));
   if (this.player.stats.lifesteal > 0 && chance(this.player.stats.lifesteal)) {
     this.player.heal(Math.max(1, Math.round(this.player.maxHp * 0.02)));
+  }
+  if (this.player.stats.healOnKill > 0) {
+    this._healAcc = (this._healAcc || 0) + this.player.stats.healOnKill;
+    if (this._healAcc >= 1) { const h = Math.floor(this._healAcc); this._healAcc -= h; this.player.heal(h); }
   }
 
   if (e.isBoss) {
@@ -4342,11 +4565,26 @@ Game.prototype.reroll = function () {
 };
 Game.prototype.banish = function (choice) {
   if (this.banishes <= 0) return;
+  const cur = (this._choices || []).slice();
+  const idx = cur.findIndex((c) => c.id === choice.id);
+  if (idx < 0) return;
   this.banishes--;
   this.banished.push(choice.id);
-  const choices = this.getChoices();
-  this._choices = choices;
-  UI.showLevelUp(choices, this._chestMode, this.rerolls, this.banishes, this.player.level);
+  let replacement = null;
+  for (let tries = 0; tries < 12 && !replacement; tries++) {
+    const fresh = this.getChoices();
+    for (let i = 0; i < fresh.length; i++) {
+      const c = fresh[i];
+      if (c.id === choice.id) continue;
+      let dup = false;
+      for (let j = 0; j < cur.length; j++) { if (j !== idx && cur[j].id === c.id) { dup = true; break; } }
+      if (!dup) { replacement = c; break; }
+    }
+  }
+  if (!replacement) replacement = (idx % 2 === 0) ? this.makeHealChoice() : this.makeGoldChoice();
+  cur[idx] = replacement;
+  this._choices = cur;
+  UI.showLevelUp(cur, this._chestMode, this.rerolls, this.banishes, this.player.level);
   Audio.uiBack();
 };
 Game.prototype.skipUpgrade = function () {
@@ -4366,6 +4604,11 @@ Game.prototype.onPlayerDeath = function () {
   Meta.life.kills += this.stats.kills;
   Meta.life.bosses += this.stats.bosses;
   Meta.life.games += 1;
+  Meta.life.gold = (Meta.life.gold || 0) + this.stats.goldEarned;
+  const qs = Meta.qstat || (Meta.qstat = { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 });
+  qs.kills += this.stats.kills; qs.bosses += this.stats.bosses; qs.games += 1; qs.gold += this.stats.goldEarned;
+  qs.time = Math.max(qs.time, this.run.time); qs.level = Math.max(qs.level, this.run.level); qs.score = Math.max(qs.score, this.run.score);
+  Meta._questPops = (Meta._questPops || []).concat(Meta.checkQuests());
   Meta.save();
   Camera.shake(14, 0.6);
   for (let i = 0; i < 30; i++) {
@@ -4574,7 +4817,7 @@ const Store = {
 
 /* Réglages (locaux à l'appareil). */
 const Settings = {
-  data: { music: 0.7, sfx: 0.9, shake: 1, fx: 1, dmgnum: 1 },
+  data: { music: 0.7, sfx: 0.9, shake: 1, fx: 1, dmgnum: 1, aim: 'auto' },
   load() { try { const s = JSON.parse(Store.get('nexium_settings') || 'null'); if (s) Object.assign(this.data, s); } catch (e) {} this.apply(); },
   save() { try { Store.set('nexium_settings', JSON.stringify(this.data)); } catch (e) {} },
   set(k, v) { this.data[k] = v; this.apply(); this.save(); },
@@ -4651,7 +4894,7 @@ const Cloud = {
 
 /* --- Sérialisation / fusion de la progression (fusion par max/union : aucune perte) --- */
 Meta.daily = { last: 0, streak: 0 };
-Meta.toJSON = function () { return { v: 1, gold: this.gold, ranks: this.ranks, best: this.best, unlocked: this.unlocked, loadout: this.loadout, life: this.life, daily: this.daily }; };
+Meta.toJSON = function () { return { v: 1, gold: this.gold, ranks: this.ranks, best: this.best, unlocked: this.unlocked, loadout: this.loadout, life: this.life, daily: this.daily, questsDone: this.questsDone, qstat: this.qstat }; };
 Meta.applyJSON = function (o) {
   if (!o || typeof o !== 'object') return;
   const num = (v, max) => { v = +v; return (isFinite(v) && v > 0) ? Math.min(v, max) : 0; };
@@ -4662,16 +4905,59 @@ Meta.applyJSON = function (o) {
     const valid = { chars: CHARACTERS, weapons: WEAPONS, abilities: ABILITIES };
     for (const cat in valid) { const src = o.unlocked[cat]; if (!src || typeof src !== 'object') continue; for (const k in src) if (src[k] && valid[cat][k]) this.unlocked[cat][k] = 1; }
   }
-  if (o.life && typeof o.life === 'object') { this.life.kills = Math.max(this.life.kills, num(o.life.kills, 1e9)); this.life.bosses = Math.max(this.life.bosses, num(o.life.bosses, 1e7)); this.life.games = Math.max(this.life.games, num(o.life.games, 1e7)); }
-  if (o.loadout && typeof o.loadout === 'object') { const L = o.loadout; if (typeof L.char === 'string' && CHARACTERS[L.char] && this.unlocked.chars[L.char]) this.loadout.char = L.char; if (typeof L.weapon === 'string' && WEAPONS[L.weapon] && this.unlocked.weapons[L.weapon]) this.loadout.weapon = L.weapon; if (typeof L.ability === 'string' && ABILITIES[L.ability] && this.unlocked.abilities[L.ability]) this.loadout.ability = L.ability; }
+  if (o.life && typeof o.life === 'object') { this.life.kills = Math.max(this.life.kills, num(o.life.kills, 1e9)); this.life.bosses = Math.max(this.life.bosses, num(o.life.bosses, 1e7)); this.life.games = Math.max(this.life.games, num(o.life.games, 1e7)); this.life.gold = Math.max(this.life.gold || 0, num(o.life.gold, 1e12)); }
+  if (o.qstat && typeof o.qstat === 'object') { this.qstat = this.qstat || { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 }; const QK = ['kills', 'bosses', 'games', 'gold', 'time', 'level', 'score']; for (let i = 0; i < QK.length; i++) { const k = QK[i]; this.qstat[k] = Math.max(this.qstat[k] || 0, num(o.qstat[k], 1e12)); } }
+  if (Array.isArray(o.questsDone)) { this.questsDone = this.questsDone || []; const ids = {}; for (let i = 0; i < QUESTS.length; i++) ids[QUESTS[i].id] = 1; for (let i = 0; i < o.questsDone.length; i++) { const q = o.questsDone[i]; if (ids[q] && this.questsDone.indexOf(q) < 0) this.questsDone.push(q); } }
+  if (o.loadout && typeof o.loadout === 'object') { const L = o.loadout; if (typeof L.char === 'string' && CHARACTERS[L.char] && this.isUnlocked('char', L.char)) this.loadout.char = L.char; if (typeof L.weapon === 'string' && WEAPONS[L.weapon] && this.isUnlocked('weapon', L.weapon)) this.loadout.weapon = L.weapon; if (typeof L.ability === 'string' && ABILITIES[L.ability] && this.isUnlocked('ability', L.ability)) this.loadout.ability = L.ability; }
   if (o.daily && typeof o.daily === 'object') { const last = num(o.daily.last, Daily.dayIndex() + 1), streak = num(o.daily.streak, 99999); if (last >= (this.daily.last || 0)) { this.daily.last = last; this.daily.streak = streak; } }
 };
+Meta.unlock = function (kind, key) {
+  const bag = this._bag(kind); if (!bag) return false;
+  const valid = kind === 'char' ? CHARACTERS : kind === 'ability' ? ABILITIES : WEAPONS;
+  if (!valid[key] || bag[key]) return false;
+  bag[key] = 1; return true;
+};
+const QUESTS = [
+  { id: 'q_surv1',  name: 'Premiers pas',   desc: 'Survivre 60 secondes',                 type: 'time',   goal: 60,   reward: { kind: 'weapon', key: 'drone' } },
+  { id: 'q_kill1',  name: 'Chasseur',       desc: 'Éliminer 400 ennemis (cumulé)',        type: 'kills',  goal: 400,  reward: { kind: 'weapon', key: 'nova' } },
+  { id: 'q_lvl1',   name: 'Tacticien',      desc: 'Atteindre le niveau 8',                type: 'level',  goal: 8,    reward: { kind: 'weapon', key: 'rail' } },
+  { id: 'q_boss1',  name: 'Briseur',        desc: 'Vaincre 1 boss',                       type: 'bosses', goal: 1,    reward: { kind: 'char',   key: 'kikou' } },
+  { id: 'q_surv2',  name: 'Survivant',      desc: 'Survivre 3 minutes',                   type: 'time',   goal: 180,  reward: { kind: 'weapon', key: 'blade' } },
+  { id: 'q_gold1',  name: 'Cupide',         desc: 'Amasser 2 500 or (cumulé)',            type: 'gold',   goal: 2500, reward: { kind: 'weapon', key: 'orbit' } },
+  { id: 'q_kill2',  name: 'Pyromane',       desc: 'Éliminer 1 500 ennemis (cumulé)',      type: 'kills',  goal: 1500, reward: { kind: 'weapon', key: 'flame' } },
+  { id: 'q_games1', name: 'Habitué',        desc: 'Jouer 8 parties',                      type: 'games',  goal: 8,    reward: { kind: 'ability', key: 'blink' } },
+  { id: 'q_boss2',  name: 'Tueur de boss',  desc: 'Vaincre 4 boss (cumulé)',              type: 'bosses', goal: 4,    reward: { kind: 'char',   key: 'texas' } },
+  { id: 'q_score1', name: 'Performeur',     desc: 'Atteindre un score de 4 000',          type: 'score',  goal: 4000, reward: { kind: 'weapon', key: 'mine' } },
+  { id: 'q_surv3',  name: 'Endurance',      desc: 'Survivre 6 minutes',                   type: 'time',   goal: 360,  reward: { kind: 'weapon', key: 'boomerang' } },
+  { id: 'q_lvl2',   name: 'Maître',         desc: 'Atteindre le niveau 16',               type: 'level',  goal: 16,   reward: { kind: 'ability', key: 'aegis' } },
+  { id: 'q_kill3',  name: 'Carnage',        desc: 'Éliminer 5 000 ennemis (cumulé)',      type: 'kills',  goal: 5000, reward: { kind: 'weapon', key: 'blackhole' } },
+  { id: 'q_gold2',  name: 'Magnat',         desc: 'Amasser 8 000 or (cumulé)',            type: 'gold',   goal: 8000, reward: { gold: 600 } },
+];
+Meta.questValue = function (type) {
+  const q = this.qstat || {};
+  return q[type] || 0;
+};
+Meta.checkQuests = function () {
+  this.questsDone = this.questsDone || [];
+  const done = [];
+  for (let i = 0; i < QUESTS.length; i++) {
+    const q = QUESTS[i];
+    if (this.questsDone.indexOf(q.id) >= 0) continue;
+    if (this.questValue(q.type) >= q.goal) {
+      this.questsDone.push(q.id);
+      if (q.reward.gold) this.gold = Math.min(1e9, this.gold + q.reward.gold);
+      else this.unlock(q.reward.kind, q.reward.key);
+      done.push(q);
+    }
+  }
+  return done;
+};
 Meta.save = function () { try { Store.set('nexium_save', JSON.stringify(this.toJSON())); } catch (e) {} if (typeof Cloud !== 'undefined') Cloud.push(); };
-Meta.load = function () { try { const o = JSON.parse(Store.get('nexium_save') || 'null'); if (o) this.applyJSON(o); } catch (e) {} };
+Meta.load = function () { try { const o = JSON.parse(Store.get('nexium_save') || 'null'); if (o) this.applyJSON(o); } catch (e) {} this.checkQuests(); };
 Meta.reset = function () {
   this.gold = 0; this.ranks = {}; this.best = { score: 0, time: 0, level: 0, kills: 0 };
-  this.unlocked = { chars: { odzigon: 1, kikou: 1, texas: 1 }, weapons: { scatter: 1, cross: 1, arc: 1, drone: 1, nova: 1, rail: 1, mine: 1, flame: 1, orbit: 1, boomerang: 1, blade: 1, blackhole: 1 }, abilities: { dash: 1 } };
-  this.loadout = { char: 'odzigon', weapon: 'scatter', ability: 'dash' }; this.life = { kills: 0, bosses: 0, games: 0 }; this.daily = { last: 0, streak: 0 };
+  this.unlocked = { chars: { odzigon: 1 }, weapons: { scatter: 1, cross: 1, arc: 1 }, abilities: { dash: 1 } };
+  this.loadout = { char: 'odzigon', weapon: 'scatter', ability: 'dash' }; this.life = { kills: 0, bosses: 0, games: 0, gold: 0 }; this.daily = { last: 0, streak: 0 }; this.questsDone = []; this.qstat = { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 };
   this.save();
 };
 
@@ -4689,7 +4975,7 @@ Game.prototype.weaponDef = function (key) { return WEAPONS[key] || EVOLUTIONS[ke
 const WEAPON_INFO = {
   scatter:   { pattern: 'spread',    range: 'Moyenne',         effect: 'Repousse légère',          how: 'Vise automatiquement l’ennemi le plus proche et lâche un éventail de balles. Les niveaux élargissent la gerbe et ajoutent de la perforation.' },
   cross:     { pattern: 'cross',     range: 'Moyenne',         effect: 'Perforation',              how: 'Projette des lames simultanément dans plusieurs directions autour de vous — votre meilleur recours quand vous êtes encerclé.' },
-  arc:       { pattern: 'chain',     range: 'Moyenne',         effect: 'Chaîne électrique',        how: 'Un éclair frappe une cible puis rebondit vers les ennemis voisins. Monter le niveau ajoute des rebonds et des dégâts.' },
+  arc:       { pattern: 'nova',      range: 'Autour de vous',  effect: 'Décharge + ralenti',       how: 'Émet une décharge électrique centrée sur vous qui touche et ralentit TOUS les ennemis à portée — idéale quand on est encerclé. Le rayon et les dégâts montent avec les niveaux.' },
   drone:     { pattern: 'drone',     range: 'Longue',          effect: 'Autoguidage',              how: 'Largue des drones qui infléchissent leur trajectoire pour traquer les ennemis jusqu’à l’impact.' },
   nova:      { pattern: 'nova',      range: 'Corps-à-corps',   effect: 'Repousse',                 how: 'Émet une onde de choc circulaire centrée sur vous qui frappe et projette tout ce qui est proche.' },
   rail:      { pattern: 'rail',      range: 'Longue',          effect: 'Transperce la ligne',      how: 'Décharge un trait à très haute vitesse qui traverse toute une file d’ennemis alignés.' },
@@ -4705,7 +4991,7 @@ const WEAPON_INFO = {
   venom:     { pattern: 'spread',    range: 'Moyenne',         effect: 'Poison (dégâts dans le temps)', how: 'Crache des glaives acides qui empoisonnent : les ennemis continuent de subir des dégâts après l’impact.' },
   beam:      { pattern: 'beam',      range: 'Longue',          effect: 'Faisceau continu',         how: 'Émet un rayon permanent dans la direction visée qui ronge en continu tout ce qu’il traverse.' },
   strike:    { pattern: 'strike',    range: 'Toute la zone',   effect: 'Frappes explosives',       how: 'Marque des ennemis et fait s’abattre des frappes orbitales explosives sur leur position.' },
-  whip:      { pattern: 'slash',     range: 'Corps-à-corps',   effect: 'Fauche avant + arrière',   how: 'Cingle deux arcs tranchants simultanés, devant ET derrière vous — parfait contre les prises en tenaille.', dual: true },
+  whip:      { pattern: 'slash',     range: 'Corps-à-corps',   effect: 'Fauche · ralenti · soin',  how: 'Cingle deux arcs simultanés devant ET derrière vous : forte projection, ralentit les touchés, et vous rend des PV à chaque ennemi fauché — l’arme de survie au corps-à-corps.', dual: true },
 };
 const ABILITY_INFO = {
   dash:      { type: 'Mobilité', effect: 'Invincibilité brève',  pattern: 'ab_dash',      how: 'Une ruée instantanée dans votre direction qui vous rend invulnérable le temps de traverser un danger.' },
@@ -4728,6 +5014,7 @@ const WPreview = {
     x: 0, y: 0, radius: 13, aimAngle: 0, lastDirX: 1, lastDirY: 0, moving: false, shieldT: 0, overT: 0, dashT: 0,
     stats: { damageMul: 1, critChance: 0.14, critMult: 2, amount: 0, projSpeedMul: 1, durationMul: 1, areaMul: 1, cooldownMul: 1, pickupAdd: 0, armor: 0 },
     rollCrit() { return Math.random() < this.stats.critChance; },
+    heal() {},
   },
 
   mount(canvas) {
@@ -4751,6 +5038,9 @@ const WPreview = {
       radius: rand(11, 15), maxHp: 70, hp: 70, dead: false, flash: 0, slowT: 0, _svx: null, _svy: null,
       shape: ['hex', 'penta', 'tri', 'diamond'][(Math.random() * 4) | 0], color: '#8b919c',
       hit(d) { this.hp -= d; this.flash = 0.12; if (this.hp <= 0) this.dead = true; },
+      dot(d) { this.hp -= d; this.flash = 0.08; if (this.hp <= 0) this.dead = true; },
+      applyKnockback(kx, ky) { this.x += kx * 0.03; this.y += ky * 0.03; },
+      slow(d) { this.slowT = Math.max(this.slowT || 0, d); },
     });
   },
 
@@ -4809,7 +5099,7 @@ const WPreview = {
     this.proj.length = 0; this.slashes.length = 0; this.rings.length = 0; this.parts.length = 0; this.bolts.length = 0; this.dummies.length = 0;
     this.pull = null; this.fireT = 0.2; this.spawnT = 0; this.time = 0; this.abilT = 0.6;
     this.player.shieldT = 0; this.player.overT = 0; this.player.dashT = 0;
-    if (mode === 'weapon') { this.weapon = WEAPONS[key]; this.winst.level = 1; } else { this.ability = ABILITIES[key]; }
+    if (mode === 'weapon') { this.weapon = WEAPONS[key]; this.winst.level = 1; this.winst.t = 0; } else { this.ability = ABILITIES[key]; }
     this._resize();
     for (let i = 0; i < 4; i++) { this._spawnDummy(); this.dummies[i].x = rand(this.w * 0.52, this.w - 28); }
     Audio._silent = true;
@@ -4852,9 +5142,13 @@ const WPreview = {
     if (tgt) { const want = angleTo(P.x, P.y, tgt.x, tgt.y); P.aimAngle = want; P.lastDirX = Math.cos(want); P.lastDirY = Math.sin(want); }
 
     if (this.mode === 'weapon' && this.weapon) {
-      this.fireT -= dt;
-      const lv = this.weapon.levels[0], cd = (lv && lv.cd ? lv.cd : 0.6);
-      if (this.fireT <= 0 && tgt) { try { this.weapon.fire(this, this.winst); } catch (err) { } this.fireT = cd; }
+      if (this.weapon.continuous) {
+        if (this.weapon.tick) { try { this.weapon.tick(this, this.winst, dt); } catch (err) { } }
+      } else {
+        this.fireT -= dt;
+        const lv = this.weapon.levels[this.winst.level - 1] || this.weapon.levels[0], cd = (lv && lv.cd ? lv.cd : 0.6);
+        if (this.fireT <= 0 && tgt) { try { this.weapon.fire(this, this.winst); } catch (err) { } this.fireT = cd; }
+      }
     } else if (this.mode === 'ability') { this._abilityDemo(dt, tgt); }
 
     for (let i = this.proj.length - 1; i >= 0; i--) {
@@ -4914,12 +5208,47 @@ const WPreview = {
       if (e.hp < e.maxHp) { ctx.strokeStyle = hexA(COLORS.danger, 0.7); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(e.x, e.y, e.radius + 4, -HALF_PI, -HALF_PI + TAU * clamp(e.hp / e.maxHp, 0, 1)); ctx.stroke(); }
     }
     for (const s of this.slashes) { const a = clamp(s.life / s.max, 0, 1), r = s.r * (0.8 + 0.2 * (1 - a)); ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.ang); ctx.beginPath(); ctx.arc(0, 0, r, -s.arc / 2, s.arc / 2); ctx.arc(0, 0, r * 0.62, s.arc / 2, -s.arc / 2, true); ctx.closePath(); ctx.fillStyle = hexA(s.color, a * 0.3); ctx.fill(); ctx.strokeStyle = hexA('#fff', a * 0.8); ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(0, 0, r, -s.arc / 2, s.arc / 2); ctx.stroke(); ctx.restore(); }
-    for (const b of this.bolts) { const a = clamp(b.life / b.max, 0, 1); ctx.strokeStyle = hexA(b.color, a); ctx.lineWidth = b.beam ? 4 : 2.4; ctx.beginPath(); for (let i = 0; i < b.pts.length; i++) { const p = b.pts[i]; i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); } ctx.stroke(); ctx.strokeStyle = hexA('#fff', a * 0.7); ctx.lineWidth = 1.2; ctx.stroke(); }
+    for (const b of this.bolts) { const a = clamp(b.life / b.max, 0, 1); const pts = b.pts || b.points || []; ctx.strokeStyle = hexA(b.color, a); ctx.lineWidth = b.beam ? 4 : 2.4; ctx.beginPath(); for (let i = 0; i < pts.length; i++) { const p = pts[i]; const X = p[0] !== undefined ? p[0] : p.x, Y = p[1] !== undefined ? p[1] : p.y; i === 0 ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y); } ctx.stroke(); ctx.strokeStyle = hexA('#fff', a * 0.7); ctx.lineWidth = 1.2; ctx.stroke(); }
     for (const r of this.rings) { const t = 1 - r.life / r.max, rad = Math.max(0, lerp(r.from, r.to, t)), a = clamp(r.life / r.max, 0, 1); ctx.strokeStyle = hexA(r.color, a * 0.85); ctx.lineWidth = 2 + 2 * a; ctx.beginPath(); ctx.arc(r.x, r.y, rad, 0, TAU); ctx.stroke(); }
+    this._drawAura(ctx);
     for (const pr of this.proj) this._drawProj(ctx, pr);
     for (const p of this.parts) { const a = clamp(p.life / p.max, 0, 1); ctx.globalAlpha = a; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, TAU); ctx.fill(); }
     ctx.globalAlpha = 1;
     this._drawPlayer(ctx);
+  },
+
+  _drawAura(ctx) {
+    if (this.mode !== 'weapon' || !this.weapon || !this.weapon.continuous) return;
+    const def = this.weapon, w = this.winst, P = this.player, key = this.key;
+    const lv = def.levels[w.level - 1] || def.levels[0]; if (!lv) return;
+    const sx = P.x, sy = P.y;
+    if (key === 'beam' || key === 'disintegrator') {
+      const range = lv.range, width = lv.width, aim = P.aimAngle, pulse = 0.8 + 0.2 * Math.sin(this.time * 30);
+      ctx.save(); ctx.translate(sx, sy); ctx.rotate(aim);
+      const g = ctx.createLinearGradient(0, -width, 0, width);
+      g.addColorStop(0, hexA(def.color, 0)); g.addColorStop(0.5, hexA(def.color, 0.28 * pulse)); g.addColorStop(1, hexA(def.color, 0));
+      ctx.fillStyle = g; ctx.fillRect(0, -width, range, width * 2);
+      ctx.shadowColor = def.color; ctx.shadowBlur = 16;
+      ctx.fillStyle = hexA(COLORS.bone, 0.9 * pulse); ctx.fillRect(0, -width * 0.16, range, width * 0.32);
+      ctx.fillStyle = hexA(def.color, 0.9); ctx.fillRect(0, -width * 0.4, range, width * 0.4);
+      ctx.shadowBlur = 0; ctx.restore();
+    } else if (key === 'flame' || key === 'inferno') {
+      const radius = lv.radius, pulse = 0.85 + 0.15 * Math.sin(this.time * 8);
+      const g = ctx.createRadialGradient(sx, sy, radius * 0.2, sx, sy, radius * pulse);
+      g.addColorStop(0, hexA(COLORS.ember, 0.05)); g.addColorStop(0.7, hexA(COLORS.ember, 0.16)); g.addColorStop(1, hexA(COLORS.emberHi, 0));
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, radius * pulse, 0, TAU); ctx.fill();
+      ctx.strokeStyle = hexA(COLORS.ember, 0.3); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(sx, sy, radius, 0, TAU); ctx.stroke();
+    } else if (key === 'orbit' || key === 'saturn') {
+      const count = lv.count, radius = lv.radius, size = lv.size, ang = w.t || 0;
+      ctx.strokeStyle = hexA(def.color, 0.14); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(sx, sy, radius, 0, TAU); ctx.stroke();
+      for (let k = 0; k < count; k++) {
+        const a = ang + (k / count) * TAU, ox = sx + Math.cos(a) * radius, oy = sy + Math.sin(a) * radius;
+        ctx.save(); ctx.translate(ox, oy); ctx.rotate(a * 2);
+        ctx.shadowColor = def.color; ctx.shadowBlur = 14; ctx.fillStyle = def.color;
+        ctx.beginPath(); ctx.moveTo(0, -size); ctx.lineTo(size, 0); ctx.lineTo(0, size); ctx.lineTo(-size, 0); ctx.closePath(); ctx.fill();
+        ctx.shadowBlur = 0; ctx.restore();
+      }
+    }
   },
 
   _poly(ctx, shape, r, fill) {
@@ -5171,14 +5500,18 @@ Game.prototype.render = function () {
   this._drawGrid(ctx);
   if (!this.player) return;
 
-  for (let i = 0; i < this.gems.length; i++) this.gems[i].draw(ctx);
-  for (let i = 0; i < this.pickups.length; i++) this.pickups[i].draw(ctx);
+  const _cx = Camera.x + Camera.ox, _cy = Camera.y + Camera.oy;
+  const _hw = VIEW.w / 2 + 64, _hh = VIEW.h / 2 + 64;
+  const _onS = (x, y) => x > _cx - _hw && x < _cx + _hw && y > _cy - _hh && y < _cy + _hh;
+  DRAW_LITE = this.enemies.length > 90 || G_QUALITY < 0.6;
+  for (let i = 0; i < this.gems.length; i++) { const o = this.gems[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
+  for (let i = 0; i < this.pickups.length; i++) { const o = this.pickups[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
   this._drawRings(ctx);
-  for (let i = 0; i < this.enemies.length; i++) { const e = this.enemies[i]; if (!e.dead) e.draw(ctx); }
-  for (let i = 0; i < this.enemyProjectiles.length; i++) this.enemyProjectiles[i].draw(ctx);
+  for (let i = 0; i < this.enemies.length; i++) { const e = this.enemies[i]; if (!e.dead && (e.isBoss || _onS(e.x, e.y))) e.draw(ctx); }
+  for (let i = 0; i < this.enemyProjectiles.length; i++) { const o = this.enemyProjectiles[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
   this._drawBolts(ctx);
   this._drawWeaponAuras(ctx);
-  for (let i = 0; i < this.projectiles.length; i++) this.projectiles[i].draw(ctx);
+  for (let i = 0; i < this.projectiles.length; i++) { const o = this.projectiles[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
   this._drawSlashes(ctx);
   this.player.draw(ctx);
   this._drawReticle(ctx);
@@ -5189,7 +5522,7 @@ Game.prototype.render = function () {
 };
 
 Game.prototype._drawReticle = function (ctx) {
-  if (!Input.aimManual || !Input.aimManual()) return;
+  if (typeof Settings === 'undefined' || Settings.data.aim !== 'manual') return;
   const p = this.player; if (!p) return;
   const dist = 64;
   const psx = Camera.sx(p.x), psy = Camera.sy(p.y);
@@ -5247,14 +5580,15 @@ const UI = {
       'pickerDetail', 'pvCanvas', 'pdIcon', 'pdName', 'pdTag', 'pdDesc', 'pdHow', 'pdStats', 'pdEvo', 'pdAct',
       'pdLvl', 'pdLvlVal', 'pdLvlUp', 'pdLvlDown',
       'acctChip', 'acctAv', 'acctNm', 'dailyBanner', 'btnDiscord', 'btnSettings', 'btnChangelog', 'btnGithub',
-      'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
+      'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAim', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
       'changelogBody', 'changelogBack', 'btnHelp', 'helpBack', 'screen-help',
-      'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack'];
+      'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack',
+      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
     // sélection courante + cartes d'opérateurs + arsenal
-    this.selectedChar = Meta.loadout.char || 'odzigon';
+    this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon';
     this._buildChars();
     this._refreshCurrentOp();
     this._refreshLoadout();
@@ -5283,21 +5617,24 @@ const UI = {
     if (this.el.btnSettings) this.el.btnSettings.addEventListener('click', () => { Audio.ui(); this.openSettings(); });
     if (this.el.btnChangelog) this.el.btnChangelog.addEventListener('click', () => { Audio.ui(); this.openChangelog(); });
     if (this.el.btnHelp) this.el.btnHelp.addEventListener('click', () => { Audio.ui(); this.show('screen-help'); });
+    if (this.el.btnQuests) this.el.btnQuests.addEventListener('click', () => { Audio.ui(); this.openQuests(); });
     if (this.el.helpBack) this.el.helpBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
     if (this.el.currentOp) this.el.currentOp.addEventListener('click', () => { Audio.ui(); this._buildChars(); this._refreshRosterGold(); this.show('screen-roster'); });
     if (this.el.rosterBack) this.el.rosterBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshCurrentOp(); this._refreshBest(); });
     if (this.el.btnGithub) this.el.btnGithub.addEventListener('click', () => { Audio.ui(); window.open(GITHUB_URL, '_blank', 'noopener,noreferrer'); });
     if (this.el.settingsBack) this.el.settingsBack.addEventListener('click', () => { Audio.uiBack(); this._armReset(false); this.show('screen-start'); this._refreshBest(); });
     if (this.el.changelogBack) this.el.changelogBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.questsBack) this.el.questsBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
 
     // --- contrôles de réglages ---
     const slide = (el, key) => { if (!el) return; el.addEventListener('input', () => { Audio.ensure(); Settings.set(key, el.value / 100); }); };
     slide(this.el.setMusic, 'music'); slide(this.el.setSfx, 'sfx'); slide(this.el.setShake, 'shake'); slide(this.el.setFx, 'fx');
     if (this.el.setDmg) this.el.setDmg.addEventListener('click', () => { const on = !this.el.setDmg.classList.contains('on'); this.el.setDmg.classList.toggle('on', on); this.el.setDmg.setAttribute('aria-checked', on ? 'true' : 'false'); Settings.set('dmgnum', on ? 1 : 0); Audio.ui(); });
+    if (this.el.setAim) this.el.setAim.addEventListener('click', () => { const on = !this.el.setAim.classList.contains('on'); this.el.setAim.classList.toggle('on', on); this.el.setAim.setAttribute('aria-checked', on ? 'true' : 'false'); Settings.set('aim', on ? 'manual' : 'auto'); Audio.ui(); });
     if (this.el.setReset) this.el.setReset.addEventListener('click', () => {
       if (!this._resetArm) { this._armReset(true); return; }
       this._armReset(false); Meta.reset(); Settings.save(); Audio.uiBack();
-      this.selectedChar = Meta.loadout.char || 'odzigon'; this._refreshAll();
+      this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon'; this._refreshAll();
     });
 
     this.el.btnPlay.addEventListener('click', () => { Audio.ensure(); Audio.resume(); G.start(this.selectedChar); this._enterPlay(); });
@@ -5574,13 +5911,41 @@ const UI = {
     if (this.el.setShake) this.el.setShake.value = Math.round(d.shake * 100);
     if (this.el.setFx) this.el.setFx.value = Math.round(d.fx * 100);
     if (this.el.setDmg) { const on = !!+d.dmgnum; this.el.setDmg.classList.toggle('on', on); this.el.setDmg.setAttribute('aria-checked', on ? 'true' : 'false'); }
+    if (this.el.setAim) { const on = d.aim === 'manual'; this.el.setAim.classList.toggle('on', on); this.el.setAim.setAttribute('aria-checked', on ? 'true' : 'false'); }
   },
   _refreshAll() {
-    this.selectedChar = Meta.loadout.char || 'odzigon';
+    this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon';
     if (this._buildChars) this._buildChars();
     if (this._refreshCurrentOp) this._refreshCurrentOp();
     if (this._refreshLoadout) this._refreshLoadout();
     this._refreshAccount(); this._refreshDaily(); this._syncSettings(); this._refreshBest();
+  },
+  openQuests() { this._buildQuests(); this.show('screen-quests'); },
+  _buildQuests() {
+    const body = this.el.questsBody; if (!body) return;
+    const done = Meta.questsDone || [];
+    const nDone = QUESTS.reduce((a, q) => a + (done.indexOf(q.id) >= 0 ? 1 : 0), 0);
+    if (this.el.questsSummary) this.el.questsSummary.textContent = nDone + ' / ' + QUESTS.length + ' accomplies — termine-les pour débloquer armes, opérateurs et capacités.';
+    const rewardLabel = (q) => {
+      if (q.reward.gold) return '+' + q.reward.gold + ' or';
+      const map = q.reward.kind === 'char' ? CHARACTERS : q.reward.kind === 'ability' ? ABILITIES : WEAPONS;
+      const d = map[q.reward.key]; return d ? d.name : q.reward.key;
+    };
+    const prog = (q, v) => q.type === 'time' ? (formatTime(Math.min(v, q.goal)) + ' / ' + formatTime(q.goal)) : (formatNum(Math.min(v, q.goal)) + ' / ' + formatNum(q.goal));
+    let html = '';
+    for (let i = 0; i < QUESTS.length; i++) {
+      const q = QUESTS[i], isDone = done.indexOf(q.id) >= 0;
+      const v = Meta.questValue(q.type), pct = (clamp(v / q.goal, 0, 1) * 100).toFixed(0);
+      html += '<div class="q-row' + (isDone ? ' done' : '') + '">'
+        + '<div class="q-ic">' + (isDone ? '\u2713' : '\u2726') + '</div>'
+        + '<div class="q-main"><div class="q-name">' + q.name + '</div>'
+        + '<div class="q-desc">' + q.desc + '</div>'
+        + '<div class="q-bar"><div class="q-fill" style="width:' + pct + '%"></div></div></div>'
+        + '<div class="q-side"><div class="q-reward">' + rewardLabel(q) + '</div>'
+        + (isDone ? '<div class="q-status">DÉBLOQUÉ</div>' : '<div class="q-prog">' + prog(q, v) + '</div>')
+        + '</div></div>';
+    }
+    body.innerHTML = html;
   },
   openSettings() { this._syncSettings(); this._refreshAccount(); this._armReset(false); this.show('screen-settings'); },
   openChangelog() {
@@ -5631,7 +5996,7 @@ const UI = {
 
   show(screenId) {
     if (screenId !== 'screen-picker' && typeof WPreview !== 'undefined' && WPreview.running) WPreview.stop();
-    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster'];
+    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
       if (s) s.classList.toggle('visible', screens[i] === screenId);
@@ -5829,6 +6194,12 @@ UI.gameOver = function (game) {
     '</div>';
   e.goBest.innerHTML = 'Réserve d’or : <span class="gold">' + formatNum(Meta.gold) +
     '</span> — dépensez-la dans la boutique pour devenir plus fort.';
+  const _pops = Meta._questPops || [];
+  if (_pops.length) {
+    const names = _pops.map((q) => { const r = q.reward.gold ? ('+' + q.reward.gold + ' or') : (((q.reward.kind === 'char' ? CHARACTERS : q.reward.kind === 'ability' ? ABILITIES : WEAPONS)[q.reward.key] || {}).name || q.reward.key); return q.name + ' \u2192 ' + r; });
+    e.goBest.innerHTML += '<div class="go-quests">\u2726 Qu\u00eate' + (_pops.length > 1 ? 's' : '') + ' accomplie' + (_pops.length > 1 ? 's' : '') + ' : ' + names.join(' \u00b7 ') + '</div>';
+    Meta._questPops = [];
+  }
   this.show('screen-gameover');
   document.body.dataset.state = 'gameover';
 };
@@ -6165,7 +6536,7 @@ WEAPON_INFO.ballista = { pattern: 'rail', range: 'Très longue', effect: 'Empale
 
 WEAPONS.bolt = {
   name: 'Foudre', icon: '↯', color: COLORS.frost, tag: 'Orage en chaîne',
-  desc: 'Des éclairs frappent et rebondissent entre les ennemis en les ralentissant.',
+  desc: 'Un éclair frappe la cible la plus proche puis ricoche en chaîne sur de nombreux ennemis à distance, en les ralentissant.',
   maxLevel: 8, evolveInto: 'orage', evolveReq: 'velocity', unlock: { gold: 1300 },
   levels: [
     { dmg: 12, jumps: 3, cd: 0.90, range: 210 },
@@ -6490,7 +6861,7 @@ Game.prototype.strikeAt = function (x, y, dmg, blast, crit, color) {
 /* Fouet Spectral : double fauchage devant et derrière */
 WEAPONS.whip = {
   name: 'Fouet Spectral', icon: '∿', color: COLORS.emberHi,
-  tag: 'Fauchage double', desc: 'Cingle d’un arc tranchant devant ET derrière vous.',
+  tag: 'Fauchage · vol de vie', desc: 'Cingle deux arcs devant ET derrière, ralentit, repousse et vous soigne à chaque ennemi touché.',
   maxLevel: 8,
   levels: [
     { dmg: 18, cd: 0.95, radius: 110, arc: 1.2, knock: 260 }, { dmg: 22, cd: 0.9, radius: 118, arc: 1.25, knock: 280 },
@@ -6502,6 +6873,7 @@ WEAPONS.whip = {
     const p = g.player, lv = this.levels[w.level - 1];
     const r = lv.radius * p.stats.areaMul;
     const dirs = [p.aimAngle, p.aimAngle + Math.PI];
+    let healed = 0;
     for (let k = 0; k < dirs.length; k++) {
       const aim = dirs[k], c = p.rollCrit();
       const dmg = lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1);
@@ -6510,7 +6882,11 @@ WEAPONS.whip = {
         const e = list[i];
         if (e.dead || dist2(e.x, e.y, p.x, p.y) > (r + e.radius) * (r + e.radius)) continue;
         const ea = angleTo(p.x, p.y, e.x, e.y);
-        if (Math.abs(angDiff(aim, ea)) <= lv.arc / 2) e.hit(dmg, Math.cos(ea) * lv.knock, Math.sin(ea) * lv.knock, c);
+        if (Math.abs(angDiff(aim, ea)) <= lv.arc / 2) {
+          e.hit(dmg, Math.cos(ea) * lv.knock, Math.sin(ea) * lv.knock, c);
+          e.slow(0.45);
+          if (healed < 2) { p.heal(1); healed++; }
+        }
       }
       g.slashes.push({ x: p.x, y: p.y, ang: aim, arc: lv.arc, r, life: 0.2, max: 0.2, color: COLORS.emberHi });
     }
@@ -6666,7 +7042,94 @@ ABILITIES.pulse = {
   },
 };
 
-['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
+
+/* === Nouvelles armes === */
+WEAPONS.needler = {
+  name: 'Dard Traqueur', icon: '\u219f', color: COLORS.frost, usesAmount: true,
+  tag: 'Dards traqueurs', desc: 'Crache une volée de dards autoguidés qui saignent les ennemis (dégâts dans le temps).',
+  maxLevel: 8, unlock: { gold: 1400 },
+  levels: [
+    { dmg: 6, count: 3, cd: 0.50, speed: 360, bleed: 4, life: 1.4 },
+    { dmg: 7, count: 4, cd: 0.48, speed: 370, bleed: 5, life: 1.4 },
+    { dmg: 8, count: 4, cd: 0.46, speed: 380, bleed: 6, life: 1.5 },
+    { dmg: 10, count: 5, cd: 0.44, speed: 390, bleed: 7, life: 1.5 },
+    { dmg: 12, count: 5, cd: 0.42, speed: 400, bleed: 9, life: 1.6 },
+    { dmg: 14, count: 6, cd: 0.40, speed: 410, bleed: 11, life: 1.6 },
+    { dmg: 17, count: 7, cd: 0.37, speed: 420, bleed: 13, life: 1.7 },
+    { dmg: 21, count: 8, cd: 0.34, speed: 440, bleed: 16, life: 1.8 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (Math.random() - 0.5) * 0.5;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 3, size: 4, pierce: 0,
+        color: COLORS.frost, kind: 'bullet', isCrit: c, knock: 30, homing: 5,
+        burnOnHit: lv.bleed * p.stats.damageMul, life: lv.life * p.stats.durationMul });
+    }
+  },
+};
+WEAPON_INFO.needler = { pattern: 'spread', range: 'Moyenne', effect: 'Autoguidage + saignement', how: 'Tire une volée de petits dards qui pourchassent les ennemis et leur infligent des dégâts dans le temps. Le nombre de dards et le saignement montent avec les niveaux.' };
+
+WEAPONS.frostcone = {
+  name: 'Cône de Givre', icon: '\u22bf', color: COLORS.frost,
+  tag: 'Cône glaçant', desc: 'Projette un cône de givre qui blesse et gèle (fort ralenti) les ennemis devant vous.',
+  maxLevel: 8, unlock: { gold: 1500 },
+  levels: [
+    { dmg: 16, cd: 0.80, radius: 150, arc: 0.90, slow: 1.0 },
+    { dmg: 20, cd: 0.76, radius: 160, arc: 0.95, slow: 1.1 },
+    { dmg: 24, cd: 0.72, radius: 170, arc: 1.00, slow: 1.2 },
+    { dmg: 29, cd: 0.68, radius: 182, arc: 1.06, slow: 1.3 },
+    { dmg: 35, cd: 0.64, radius: 194, arc: 1.12, slow: 1.4 },
+    { dmg: 42, cd: 0.60, radius: 208, arc: 1.18, slow: 1.6 },
+    { dmg: 50, cd: 0.55, radius: 222, arc: 1.25, slow: 1.8 },
+    { dmg: 62, cd: 0.50, radius: 240, arc: 1.34, slow: 2.1 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const r = lv.radius * p.stats.areaMul, aim = p.aimAngle, c = p.rollCrit();
+    const dmg = lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1);
+    const list = g.queryEnemies(p.x, p.y, r);
+    for (let i = 0; i < list.length; i++) {
+      const e = list[i];
+      if (e.dead || dist2(e.x, e.y, p.x, p.y) > (r + e.radius) * (r + e.radius)) continue;
+      const ea = angleTo(p.x, p.y, e.x, e.y);
+      if (Math.abs(angDiff(aim, ea)) <= lv.arc / 2) { e.hit(dmg, Math.cos(ea) * 70, Math.sin(ea) * 70, c); e.slow(lv.slow); }
+    }
+    g.slashes.push({ x: p.x, y: p.y, ang: aim, arc: lv.arc, r, life: 0.22, max: 0.22, color: COLORS.frost });
+    Audio.tone(520, 0.10, 'sine', 0.05, 0.002, 360);
+  },
+};
+WEAPON_INFO.frostcone = { pattern: 'cone', range: 'Cône avant', effect: 'Dégâts + gel', how: 'Souffle un cône de givre dans la direction visée : inflige des dégâts et ralentit fortement tous les ennemis pris dedans. Idéal pour figer un groupe.' };
+
+WEAPONS.driller = {
+  name: 'Foreuse', icon: '\u2699', color: COLORS.gold,
+  tag: 'Foreuse perforante', desc: 'Lance une foreuse lente et massive qui plonge à travers les rangs ennemis en les transperçant tous.',
+  maxLevel: 8, unlock: { gold: 1600 },
+  levels: [
+    { dmg: 24, cd: 1.50, speed: 150, pierce: 99, life: 2.4, size: 13 },
+    { dmg: 29, cd: 1.45, speed: 155, pierce: 99, life: 2.5, size: 14 },
+    { dmg: 35, cd: 1.40, speed: 160, pierce: 99, life: 2.6, size: 15 },
+    { dmg: 42, cd: 1.32, speed: 165, pierce: 99, life: 2.7, size: 16 },
+    { dmg: 50, cd: 1.24, speed: 170, pierce: 99, life: 2.8, size: 17 },
+    { dmg: 60, cd: 1.16, speed: 175, pierce: 99, life: 2.9, size: 18 },
+    { dmg: 72, cd: 1.06, speed: 180, pierce: 99, life: 3.0, size: 20 },
+    { dmg: 90, cd: 0.95, speed: 190, pierce: 99, life: 3.2, size: 22 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1], c = p.rollCrit();
+    g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle, speed: lv.speed * p.stats.projSpeedMul,
+      dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: lv.size, size: lv.size, pierce: lv.pierce,
+      color: COLORS.gold, kind: 'blade', isCrit: c, knock: 150, spin: 16, life: lv.life * p.stats.durationMul });
+    Audio.shootBig(); Camera.shake(2, 0.1);
+  },
+};
+WEAPON_INFO.driller = { pattern: 'pierce', range: 'Ligne droite', effect: 'Perforation totale', how: 'Projette une foreuse lente mais énorme qui traverse et broie tous les ennemis sur sa trajectoire. Forte projection. Dégâts et taille croissants.' };
+
+['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc','needler','frostcone','driller'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
   const canvas = document.getElementById('game');
