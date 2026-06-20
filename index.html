@@ -27,6 +27,7 @@
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--bone);font-family:var(--f-ui);}
 body{position:fixed;inset:0;user-select:none;-webkit-user-select:none;touch-action:none;overscroll-behavior:none;}
 #game{position:absolute;inset:0;display:block;width:100%;height:100%;background:var(--bg);touch-action:none;z-index:0;}
+body[data-state="playing"] #game{cursor:none;}
 
 /* ============ couches ============ */
 #hud{position:absolute;inset:0;z-index:10;pointer-events:none;font-family:var(--f-ui);
@@ -108,6 +109,13 @@ body[data-state="playing"] #hud, body[data-state="gameover"] #hud{opacity:1;}
 #joyKnob{position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%, var(--bone), var(--bone-dim));
   transform:translate(-50%,-50%);box-shadow:0 4px 18px rgba(0,0,0,.5);}
+#joystickR{position:absolute;width:128px;height:128px;margin:-64px 0 0 -64px;border-radius:50%;
+  border:1.5px solid color-mix(in srgb, var(--bone) 45%, var(--line-2));background:rgba(28,28,32,.32);z-index:9;pointer-events:none;
+  opacity:0;transition:opacity .12s;backdrop-filter:blur(2px);}
+#joystickR.active{opacity:1;}
+#joyKnobR{position:absolute;left:50%;top:50%;width:54px;height:54px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffffff, #c9c9cf);
+  transform:translate(-50%,-50%);box-shadow:0 4px 18px rgba(0,0,0,.5),0 0 14px rgba(255,255,255,.25);}
 
 /* ---- annonces / toasts ---- */
 .announce{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%) scale(.9);
@@ -848,6 +856,7 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
   <div id="nowPlaying"></div>
 </div>
 <div id="joystick"><div id="joyKnob"></div></div>
+<div id="joystickR"><div id="joyKnobR"></div></div>
 <div class="announce" id="announce"></div>
 <div id="flash"></div>
 
@@ -993,8 +1002,8 @@ body.booted #screen-start .menu-footer{animation:fadeDown .6s ease .56s backward
       <div class="cl-ver">But du jeu</div>
       <div class="cl-p">Survivez le plus longtemps possible face à des vagues d'ennemis sans fin. Votre arme tire toute seule : votre rôle est de vous déplacer, esquiver, choisir les bonnes améliorations et terrasser les boss. Plus vous tenez, plus la menace s'intensifie — visez le meilleur score.</div>
       <div class="cl-ver">Déplacements & combat</div>
-      <div class="cl-li"><b>Déplacement</b> — WASD, ZQSD ou flèches. Sur mobile, touchez l'écran pour faire apparaître un joystick.</div>
-      <div class="cl-li"><b>Tir</b> — automatique, vers l'ennemi le plus proche. Concentrez-vous sur le placement.</div>
+      <div class="cl-li"><b>Déplacement</b> — WASD, ZQSD ou flèches. Sur mobile, joystick gauche (apparaît au toucher sur la moitié gauche de l'écran).</div>
+      <div class="cl-li"><b>Visée & tir</b> — sur PC, visez à la souris ; sur mobile, joystick droit de visée (type Brawl Stars). Le tir est automatique dans la direction visée — un réticule blanc indique où vous tirez. Sans visée manuelle, l'ennemi le plus proche est ciblé automatiquement.</div>
       <div class="cl-li"><b>Capacité</b> — Espace ou Maj (bouton dédié sur mobile). Gardez-la pour les moments critiques.</div>
       <div class="cl-li"><b>Pause</b> — Échap ou P.</div>
       <div class="cl-ver">Monter en puissance</div>
@@ -1144,14 +1153,14 @@ const BAL = {
   dmgScale: (t) => 1 + t / 140 + Math.pow(t / 125, 1.18) * 0.22,
   spdScale: (t) => 1 + Math.min(t / 380, 0.42),
   // Cadence d'apparition : intervalle entre deux salves (secondes).
-  spawnInterval: (t) => Math.max(0.3, 1.5 - t * 0.0105),
-  spawnBatch:   (t) => 2 + Math.floor(t / 30),
-  maxEnemies:   (t) => Math.min(420, 60 + Math.floor(t * 1.2)),
-  eliteEvery:   28,    // un élite toutes les ~28 s
-  bossEvery:    120,   // un boss toutes les 2 min
-  firstBoss:    78,    // premier boss un peu plus tôt
-  // Courbe d'XP par niveau.
-  xpForLevel: (lvl) => Math.floor(5 + lvl * 4 + Math.pow(lvl, 1.52) * 1.1),
+  spawnInterval: (t) => Math.max(0.45, 1.7 - t * 0.009),
+  spawnBatch:   (t) => 1 + Math.floor(t / 46),
+  maxEnemies:   (t) => Math.min(230, 36 + Math.floor(t * 0.7)),
+  eliteEvery:   36,    // un élite toutes les ~36 s
+  bossEvery:    170,   // un boss toutes les ~2 min 50
+  firstBoss:    110,   // premier boss plus tard
+  // Courbe d'XP par niveau (progression plus posée).
+  xpForLevel: (lvl) => Math.floor(6 + lvl * 5 + Math.pow(lvl, 1.55) * 1.6),
 };
 
 const MAX_WEAPONS = 6;
@@ -1512,11 +1521,17 @@ const Audio = {
 const Input = {
   keys: Object.create(null),
   mouse: { x: 0, y: 0, down: false },
-  // joystick tactile
+  mouseAim: false,        // la souris a bougé -> visée manuelle (PC)
+  // joystick de déplacement (gauche)
   joyActive: false,
   joyId: null,
   joyBaseX: 0, joyBaseY: 0,
   joyX: 0, joyY: 0,     // vecteur normalisé (-1..1)
+  // joystick de visée (droite, type Brawl Stars)
+  aimActive: false,
+  aimId: null,
+  aimBaseX: 0, aimBaseY: 0,
+  aimX: 0, aimY: 0,
   touch: false,
 
   init(canvas) {
@@ -1531,22 +1546,30 @@ const Input = {
       const r = canvas.getBoundingClientRect();
       this.mouse.x = e.clientX - r.left;
       this.mouse.y = e.clientY - r.top;
+      if (!this.touch) this.mouseAim = true;
     });
     canvas.addEventListener('mousedown', () => { this.mouse.down = true; });
     window.addEventListener('mouseup', () => { this.mouse.down = false; });
 
-    // Tactile : la moitié gauche de l'écran sert de joystick virtuel.
+    // Tactile twin-stick : moitié gauche = déplacement, moitié droite = visée + tir.
+    const half = () => window.innerWidth / 2;
+    const maxR = 64;
     const onStart = (e) => {
-      this.touch = true;
+      this.touch = true; this.mouseAim = false;
       for (let i = 0; i < e.changedTouches.length; i++) {
         const t = e.changedTouches[i];
-        if (!this.joyActive) {
-          this.joyActive = true;
-          this.joyId = t.identifier;
-          this.joyBaseX = t.clientX;
-          this.joyBaseY = t.clientY;
-          this.joyX = 0; this.joyY = 0;
-          UI.showJoystick(t.clientX, t.clientY);
+        if (t.clientX < half()) {
+          if (!this.joyActive) {
+            this.joyActive = true; this.joyId = t.identifier;
+            this.joyBaseX = t.clientX; this.joyBaseY = t.clientY;
+            this.joyX = 0; this.joyY = 0;
+            UI.showJoystick(t.clientX, t.clientY);
+          }
+        } else if (!this.aimActive) {
+          this.aimActive = true; this.aimId = t.identifier;
+          this.aimBaseX = t.clientX; this.aimBaseY = t.clientY;
+          this.aimX = 0; this.aimY = 0;
+          UI.showJoystickR(t.clientX, t.clientY);
         }
       }
     };
@@ -1554,14 +1577,17 @@ const Input = {
       for (let i = 0; i < e.changedTouches.length; i++) {
         const t = e.changedTouches[i];
         if (t.identifier === this.joyId) {
-          let dx = t.clientX - this.joyBaseX;
-          let dy = t.clientY - this.joyBaseY;
-          const maxR = 64;
+          let dx = t.clientX - this.joyBaseX, dy = t.clientY - this.joyBaseY;
           const len = Math.hypot(dx, dy) || 1;
           if (len > maxR) { dx = dx / len * maxR; dy = dy / len * maxR; }
-          this.joyX = dx / maxR;
-          this.joyY = dy / maxR;
+          this.joyX = dx / maxR; this.joyY = dy / maxR;
           UI.moveJoystick(dx, dy);
+        } else if (t.identifier === this.aimId) {
+          let dx = t.clientX - this.aimBaseX, dy = t.clientY - this.aimBaseY;
+          const len = Math.hypot(dx, dy) || 1;
+          if (len > maxR) { dx = dx / len * maxR; dy = dy / len * maxR; }
+          this.aimX = dx / maxR; this.aimY = dy / maxR;
+          UI.moveJoystickR(dx, dy);
         }
       }
       e.preventDefault();
@@ -1570,10 +1596,9 @@ const Input = {
       for (let i = 0; i < e.changedTouches.length; i++) {
         const t = e.changedTouches[i];
         if (t.identifier === this.joyId) {
-          this.joyActive = false;
-          this.joyId = null;
-          this.joyX = 0; this.joyY = 0;
-          UI.hideJoystick();
+          this.joyActive = false; this.joyId = null; this.joyX = 0; this.joyY = 0; UI.hideJoystick();
+        } else if (t.identifier === this.aimId) {
+          this.aimActive = false; this.aimId = null; this.aimX = 0; this.aimY = 0; UI.hideJoystickR();
         }
       }
     };
@@ -1599,6 +1624,16 @@ const Input = {
     out.x = x; out.y = y;
     return out;
   },
+  // Direction de visée manuelle (souris au PC, joystick droit au mobile) ou null.
+  aimAngleFor(p) {
+    if (this.aimActive && (this.aimX || this.aimY)) return Math.atan2(this.aimY, this.aimX);
+    if (this.mouseAim && !this.touch) {
+      const dx = this.mouse.x - Camera.sx(p.x), dy = this.mouse.y - Camera.sy(p.y);
+      if (dx || dy) return Math.atan2(dy, dx);
+    }
+    return null;
+  },
+  aimManual() { return !!((this.aimActive && (this.aimX || this.aimY)) || (this.mouseAim && !this.touch)); },
   pausePressed() {
     return !!(this.keys['escape'] || this.keys['p']);
   },
@@ -1885,8 +1920,11 @@ class Player {
       }
     }
 
-    // viser l'ennemi le plus proche, sinon dernière direction
-    if (G.nearestEnemy) {
+    // Visée : manuelle (souris / joystick droit) en priorité, sinon ennemi le plus proche, sinon direction.
+    const manualAim = Input.aimAngleFor(this);
+    if (manualAim !== null) {
+      this.aimAngle = manualAim;
+    } else if (G.nearestEnemy) {
       this.aimAngle = angleTo(this.x, this.y, G.nearestEnemy.x, G.nearestEnemy.y);
     } else if (this.moving) {
       this.aimAngle = Math.atan2(this.lastDirY, this.lastDirX);
@@ -2605,7 +2643,7 @@ function Projectile() {
 }
 Projectile.prototype.reset = function () {
   this.dead = false; this.hitIds.length = 0; this.born = 0; this.homing = 0;
-  this.blast = 0; this.returnT = 0; this.spin = 0; this.trail = 0; this.slowOnHit = 0; this.burnOnHit = 0;
+  this.blast = 0; this.returnT = 0; this._returning = false; this.spin = 0; this.trail = 0; this.slowOnHit = 0; this.burnOnHit = 0;
 };
 Projectile.prototype.update = function (dt) {
   this.born += dt;
@@ -2634,6 +2672,7 @@ Projectile.prototype.update = function (dt) {
   if (this.kind === 'boomerang') {
     this.returnT += dt;
     if (this.returnT > this.max * 0.42) {
+      if (!this._returning) { this._returning = true; this.hitIds.length = 0; }
       const want = angleTo(this.x, this.y, G.player.x, G.player.y);
       const cur = Math.atan2(this.vy, this.vx);
       const na = rotToward(cur, want, 9 * dt);
@@ -2757,12 +2796,12 @@ Gem.prototype.update = function (dt, p) {
   if (this.forced || d2 < pr * pr) {
     const ang = angleTo(this.x, this.y, p.x, p.y);
     const d = Math.sqrt(d2) || 1;
-    const pull = this.forced ? 760 : lerp(620, 120, clamp(d / pr, 0, 1));
-    this.vx += Math.cos(ang) * pull * dt * 6;
-    this.vy += Math.sin(ang) * pull * dt * 6;
+    const spd = this.forced ? 940 : lerp(940, 300, clamp(d / pr, 0, 1));
+    this.vx = Math.cos(ang) * spd;   // vitesse dirigée -> convergence, pas d'orbite
+    this.vy = Math.sin(ang) * spd;
   } else {
-    this.vx *= Math.pow(0.9, dt * 60);
-    this.vy *= Math.pow(0.9, dt * 60);
+    this.vx *= Math.pow(0.86, dt * 60);
+    this.vy *= Math.pow(0.86, dt * 60);
   }
   this.x += this.vx * dt;
   this.y += this.vy * dt;
@@ -3076,7 +3115,7 @@ WEAPONS.mine = {
   ],
   fire(g, w) {
     const p = g.player, lv = this.levels[w.level - 1];
-    const count = lv.count + p.stats.amount;
+    const count = lv.count + Math.min(2, p.stats.amount);
     for (let i = 0; i < count; i++) {
       const a = rand(0, TAU), d = rand(20, 70);
       g.dropMine(p.x + Math.cos(a) * d, p.y + Math.sin(a) * d,
@@ -3577,15 +3616,9 @@ const Meta = {
   life: { kills: 0, bosses: 0, games: 0 },
 
   shop: [
-    { key: 'mhp',  name: 'Endurance',     icon: '❤', desc: '+15 PV max par rang', max: 10, baseCost: 90, costMul: 1.5, apply: (s, r) => { s.hpAdd += r * 15; } },
-    { key: 'dmg',  name: 'Surcharge',     icon: '✦', desc: '+5% dégâts par rang', max: 10, baseCost: 130, costMul: 1.55,  apply: (s, r) => { s.damageMul += r * 0.05; } },
     { key: 'spd',  name: 'Propulsion',    icon: '➤', desc: '+3% vitesse par rang', max: 8, baseCost: 110, costMul: 1.55,  apply: (s, r) => { s.speedMul += r * 0.03; } },
     { key: 'arm',  name: 'Plaques',       icon: '◧', desc: '+1 armure par rang', max: 8, baseCost: 120, costMul: 1.6, apply: (s, r) => { s.armor += r * 1; } },
-    { key: 'mag',  name: 'Magnétisme',    icon: '⦿', desc: '+15 rayon par rang', max: 8, baseCost: 90, costMul: 1.45,  apply: (s, r) => { s.pickupAdd += r * 15; } },
-    { key: 'crit', name: 'Visée',         icon: '✜', desc: '+3% crit par rang', max: 6, baseCost: 150, costMul: 1.6,  apply: (s, r) => { s.critChance += r * 0.03; } },
-    { key: 'grl',  name: 'Cupidité',      icon: '◇', desc: '+8% or par rang', max: 6, baseCost: 160, costMul: 1.6,  apply: (s, r) => { s.goldMul += r * 0.08; } },
-    { key: 'xpl',  name: 'Apprentissage', icon: '◈', desc: '+6% XP par rang', max: 6, baseCost: 160, costMul: 1.6,  apply: (s, r) => { s.xpMul += r * 0.06; } },
-    { key: 'rer',  name: 'Relances',      icon: '↻', desc: '+1 relance par partie', max: 5, baseCost: 260, costMul: 1.7, apply: () => {} },
+    { key: 'rer',  name: 'Relances',      icon: '↻', desc: '+1 relance par partie', max: 5, baseCost: 240, costMul: 1.7, apply: () => {} },
     { key: 'rev',  name: 'Résurrection',  icon: '✛', desc: 'Revient une fois à 50% PV', max: 1, baseCost: 800, costMul: 2, apply: () => {} },
   ],
 
@@ -3833,7 +3866,7 @@ class Game {
     this.player = new Player(charKey);
     this.player.x = 0; this.player.y = 0;
     this.player.ability = ABILITIES[Meta.loadout.ability] || ABILITIES.dash;
-    const startW = Meta.isWeaponUnlocked(Meta.loadout.weapon) ? Meta.loadout.weapon : 'scatter';
+    const startW = (Meta.isWeaponUnlocked(Meta.loadout.weapon) && WEAPONS[Meta.loadout.weapon] && WEAPONS[Meta.loadout.weapon].main) ? Meta.loadout.weapon : 'scatter';
     this.player.addWeapon(startW);
     Camera.x = 0; Camera.y = 0;
 
@@ -3894,7 +3927,7 @@ class Game {
   }
   spawnGem(x, y, value) {
     // fusion : si trop de gemmes, on cumule la valeur sur une existante proche
-    if (this.gems.length > 320) {
+    if (this.gems.length > 130) {
       const g0 = this.gems[(Math.random() * this.gems.length) | 0];
       g0.value += value;
       g0.tier = g0.value >= 25 ? 3 : g0.value >= 8 ? 2 : g0.value >= 3 ? 1 : 0;
@@ -4009,10 +4042,12 @@ Game.prototype.singularity = function (cx, cy, r, dmg, pull, crit) {
 Game.prototype.spawnDirector = function (dt) {
   this.spawnTimer -= dt;
   if (this.spawnTimer <= 0) { this.spawnTimer += BAL.spawnInterval(this.time); this.spawnBatch(); }
-  this.eliteTimer -= dt;
-  if (this.eliteTimer <= 0) { this.eliteTimer = BAL.eliteEvery; if (this.time > 20) this.spawnElite(); }
-  this.bossTimer -= dt;
-  if (this.bossTimer <= 0 && !this.activeBoss) { this.bossTimer = BAL.bossEvery; this.spawnBoss(); }
+  if (!this.activeBoss) {
+    this.eliteTimer -= dt;
+    if (this.eliteTimer <= 0) { this.eliteTimer = BAL.eliteEvery; if (this.time > 20) this.spawnElite(); }
+    this.bossTimer -= dt;
+    if (this.bossTimer <= 0) { this.bossTimer = BAL.bossEvery; this.spawnBoss(); }
+  }
 };
 Game.prototype.spawnPos = function () {
   const a = rand(0, TAU);
@@ -4025,6 +4060,7 @@ Game.prototype.spawnEnemy = function (key, x, y, opts) {
   return e;
 };
 Game.prototype.spawnBatch = function () {
+  if (this.activeBoss) return;   // arène 1v1 : aucune vague pendant un boss
   if (this.enemies.length >= BAL.maxEnemies(this.time)) return;
   const n = BAL.spawnBatch(this.time);
   const weights = enemyWeights(this.time);
@@ -4054,8 +4090,14 @@ Game.prototype.spawnElite = function () {
 Game.prototype.spawnBoss = function () {
   const key = BOSS_CYCLE[this.bossIndex % BOSS_CYCLE.length];
   this.bossIndex++;
+  // Arène 1v1 : on évacue tous les autres ennemis pour un duel.
+  for (let i = 0; i < this.enemies.length; i++) {
+    const en = this.enemies[i];
+    if (!en.isBoss) { en.dead = true; this.particle({ x: en.x, y: en.y, vx: rand(-70, 70), vy: rand(-70, 70), life: 0.3, max: 0.3, size: 3, color: hexA(en.color || COLORS.ember, 0.7), glow: true, drag: 0.9 }); }
+  }
   const pos = this.spawnPos();
   const e = this.spawnEnemy(key, pos.x, pos.y, { boss: true });
+  e.hp *= 1.3; e.maxHp *= 1.3;   // boss plus coriaces
   this.activeBoss = e;
   this.rings.push({ x: pos.x, y: pos.y, from: 0, to: e.radius + 70, life: 0.9, max: 0.9, color: e.color });
   this.stats.bosses++;
@@ -4250,7 +4292,7 @@ Game.prototype.getChoices = function () {
     if (p.passives[k] < def.maxLevel) { const c = this.makePassiveChoice(k, false); if (!banned(c.id)) cands.push({ c, weight: 5 }); }
   }
   if (p.weaponCount() < MAX_WEAPONS) {
-    for (const k in WEAPONS) { if (!p.hasWeapon(k) && Meta.isWeaponUnlocked(k)) { const c = this.makeWeaponChoice(k, true); if (!banned(c.id)) cands.push({ c, weight: 4 }); } }
+    for (const k in WEAPONS) { if (!p.hasWeapon(k) && Meta.isWeaponUnlocked(k) && !WEAPONS[k].main) { const c = this.makeWeaponChoice(k, true); if (!banned(c.id)) cands.push({ c, weight: 4 }); } }
   }
   if (p.passiveCount() < MAX_PASSIVES) {
     for (const k in PASSIVES) { if (!(k in p.passives)) { const c = this.makePassiveChoice(k, true); if (!banned(c.id)) cands.push({ c, weight: 4 }); } }
@@ -4384,10 +4426,12 @@ Game.prototype._projCollisions = function () {
         // étincelles d'impact
         this.particle({ x: pr.x, y: pr.y, vx: -nx * 60 + rand(-40, 40), vy: -ny * 60 + rand(-40, 40),
           life: 0.18, max: 0.18, size: rand(1.5, 3), color: pr.color, drag: 0.85, glow: true });
-        pr.pierce--;
-        if (pr.pierce < 0) {
-          if (pr.blast > 0 && pr.kind !== 'mine') G.areaBurst(pr.x, pr.y, pr.blast, pr.dmg, { knock: 240, color: pr.color, ring: true });
-          pr.dead = true; break;
+        if (pr.kind !== 'boomerang') {
+          pr.pierce--;
+          if (pr.pierce < 0) {
+            if (pr.blast > 0 && pr.kind !== 'mine') G.areaBurst(pr.x, pr.y, pr.blast, pr.dmg, { knock: 240, color: pr.color, ring: true });
+            pr.dead = true; break;
+          }
         }
       }
     }
@@ -4657,7 +4701,7 @@ const WEAPON_INFO = {
   blackhole: { pattern: 'blackhole', range: 'Moyenne',         effect: 'Aspiration + broyage',     how: 'Ouvre une singularité qui aspire les ennemis vers son centre et les broie sous une pression continue.' },
   rocket:    { pattern: 'rocket',    range: 'Longue',          effect: 'Autoguidage + explosion',  how: 'Tire des roquettes qui pourchassent une cible puis explosent en infligeant des dégâts de zone à l’impact.' },
   glacier:   { pattern: 'spread',    range: 'Moyenne',         effect: 'Ralentissement',           how: 'Projette une volée d’éclats glacés qui blessent et ralentissent durablement les ennemis touchés.' },
-  chakram:   { pattern: 'boomerang', range: 'Longue',          effect: 'Haute perforation',        how: 'Lance des disques tournoyants à très forte perforation qui traversent une longue ligne d’ennemis.', big: true },
+  chakram:   { pattern: 'spread',    range: 'Longue',          effect: 'Perforation en ligne',     how: 'Lance des disques tournoyants qui filent TOUT DROIT et transpercent un grand nombre d’ennemis sur leur trajectoire — contrairement au boomerang, ils ne reviennent pas.', big: true },
   venom:     { pattern: 'spread',    range: 'Moyenne',         effect: 'Poison (dégâts dans le temps)', how: 'Crache des glaives acides qui empoisonnent : les ennemis continuent de subir des dégâts après l’impact.' },
   beam:      { pattern: 'beam',      range: 'Longue',          effect: 'Faisceau continu',         how: 'Émet un rayon permanent dans la direction visée qui ronge en continu tout ce qu’il traverse.' },
   strike:    { pattern: 'strike',    range: 'Toute la zone',   effect: 'Frappes explosives',       how: 'Marque des ennemis et fait s’abattre des frappes orbitales explosives sur leur position.' },
@@ -5137,10 +5181,42 @@ Game.prototype.render = function () {
   for (let i = 0; i < this.projectiles.length; i++) this.projectiles[i].draw(ctx);
   this._drawSlashes(ctx);
   this.player.draw(ctx);
+  this._drawReticle(ctx);
   this._drawParticles(ctx);
   this._drawFloaters(ctx);
   this._drawBossArrow(ctx);
   this._drawVignette(ctx);
+};
+
+Game.prototype._drawReticle = function (ctx) {
+  if (!Input.aimManual || !Input.aimManual()) return;
+  const p = this.player; if (!p) return;
+  const dist = 64;
+  const psx = Camera.sx(p.x), psy = Camera.sy(p.y);
+  const rx = Camera.sx(p.x + Math.cos(p.aimAngle) * dist);
+  const ry = Camera.sy(p.y + Math.sin(p.aimAngle) * dist);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+  ctx.lineWidth = 1.5; ctx.setLineDash([3, 7]);
+  ctx.beginPath();
+  ctx.moveTo(psx + Math.cos(p.aimAngle) * (p.radius + 6), psy + Math.sin(p.aimAngle) * (p.radius + 6));
+  ctx.lineTo(rx, ry); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.translate(rx, ry);
+  ctx.strokeStyle = 'rgba(255,255,255,0.92)'; ctx.lineWidth = 2;
+  ctx.shadowColor = 'rgba(255,255,255,0.55)'; ctx.shadowBlur = 8;
+  ctx.beginPath(); ctx.arc(0, 0, 9, 0, TAU); ctx.stroke();
+  const tick = 5, gap = 9;
+  ctx.beginPath();
+  ctx.moveTo(gap, 0); ctx.lineTo(gap + tick, 0);
+  ctx.moveTo(-gap, 0); ctx.lineTo(-gap - tick, 0);
+  ctx.moveTo(0, gap); ctx.lineTo(0, gap + tick);
+  ctx.moveTo(0, -gap); ctx.lineTo(0, -gap - tick);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.beginPath(); ctx.arc(0, 0, 1.8, 0, TAU); ctx.fill();
+  ctx.restore();
 };
 
 /* ===========================================================================
@@ -5165,7 +5241,7 @@ const UI = {
       'btnResume', 'btnQuit', 'goStats', 'goBest', 'btnRetry', 'btnMenu',
       'hud', 'hudLevel', 'xpFill', 'hudTimer', 'hudCombo', 'hudKills', 'hudGold', 'btnPause',
       'bossBar', 'bossName', 'bossFill', 'weaponTray', 'hpFill', 'hpText', 'announce', 'flash',
-      'joystick', 'joyKnob', 'btnMusic', 'btnMusicPause', 'nowPlaying', 'btnDash', 'dashFill',
+      'joystick', 'joyKnob', 'joystickR', 'joyKnobR', 'btnMusic', 'btnMusicPause', 'nowPlaying', 'btnDash', 'dashFill',
       'slotWeapon', 'slotWeaponName', 'slotAbility', 'slotAbilityName',
       'screen-picker', 'pickerGrid', 'pickerTitle', 'pickerEyebrow', 'pickerGold', 'pickerBack',
       'pickerDetail', 'pvCanvas', 'pdIcon', 'pdName', 'pdTag', 'pdDesc', 'pdHow', 'pdStats', 'pdEvo', 'pdAct',
@@ -5360,6 +5436,7 @@ const UI = {
     const src = kind === 'weapon' ? WEAPONS : ABILITIES;
     const cur = kind === 'weapon' ? Meta.loadout.weapon : Meta.loadout.ability;
     for (const key in src) {
+      if (kind === 'weapon' && !src[key].main) continue;
       const d = src[key], st = Meta.unlockState(kind, key, d), equipped = key === cur;
       const row = document.createElement('div');
       row.className = 'pick-row' + (st.unlocked ? '' : ' locked') + (key === this._pickActive ? ' active' : '');
@@ -5405,6 +5482,7 @@ const UI = {
   },
   _setPdAct(kind, key, d) {
     const btn = this.el.pdAct; if (!btn) return;
+    btn.style.setProperty('--accent', (d && d.color) || COLORS.ember);
     const st = Meta.unlockState(kind, key, d);
     const cur = kind === 'weapon' ? Meta.loadout.weapon : Meta.loadout.ability;
     btn.className = 'btn pd-act';
@@ -5571,6 +5649,16 @@ const UI = {
     this.el.joyKnob.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
   },
   hideJoystick() { this.el.joystick.classList.remove('active'); },
+  showJoystickR(x, y) {
+    const j = this.el.joystickR; if (!j) return;
+    j.style.left = x + 'px'; j.style.top = y + 'px';
+    j.classList.add('active');
+    if (this.el.joyKnobR) this.el.joyKnobR.style.transform = 'translate(-50%, -50%)';
+  },
+  moveJoystickR(dx, dy) {
+    if (this.el.joyKnobR) this.el.joyKnobR.style.transform = 'translate(calc(-50% + ' + dx + 'px), calc(-50% + ' + dy + 'px))';
+  },
+  hideJoystickR() { if (this.el.joystickR) this.el.joystickR.classList.remove('active'); },
 
   /* --- toasts / annonces --- */
   announce(text) { this._toast(text, 'major', 1700); },
@@ -6207,7 +6295,7 @@ BOSS_CYCLE.push('boss_cyclone');
  * ======================================================================== */
 const ABILITIES = {
   dash: {
-    key: 'dash', name: 'Esquive', icon: '»', color: COLORS.frost, cooldown: 2.2,
+    key: 'dash', name: 'Esquive', icon: '»', color: COLORS.frost, cooldown: 4.0,
     desc: 'Ruée rapide avec une brève invincibilité.',
     activate(g, p) {
       let dx = p.lastDirX, dy = p.lastDirY;
@@ -6283,7 +6371,7 @@ const ABILITIES = {
 /* === armes équipables supplémentaires === */
 WEAPONS.chakram = {
   name: 'Chakram', icon: '◌', color: COLORS.steel, usesAmount: true, tag: 'Disque perforant',
-  desc: 'Lance des disques tournoyants qui transpercent une longue ligne d’ennemis.',
+  desc: 'Lance des disques tournoyants qui filent tout droit et transpercent une longue ligne d’ennemis (ne reviennent pas).',
   maxLevel: 8, unlock: { gold: 1000 },
   levels: [
     { dmg: 16, count: 1, cd: 1.2, speed: 380, pierce: 5, life: 1.7 }, { dmg: 20, count: 1, cd: 1.15, speed: 390, pierce: 5, life: 1.7 },
@@ -6296,7 +6384,7 @@ WEAPONS.chakram = {
     Audio.tone(520, 0.07, 'square', 0.04, 0.002, 720);
     for (let i = 0; i < count; i++) {
       const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.6, c = p.rollCrit();
-      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul, dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 9, size: 10, life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.steel, kind: 'boomerang', isCrit: c, knock: 90, spin: 22 });
+      g.spawnProjectile({ x: p.x, y: p.y, angle: p.aimAngle + off, speed: lv.speed * p.stats.projSpeedMul, dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 9, size: 10, life: lv.life * p.stats.durationMul, pierce: lv.pierce, color: COLORS.steel, kind: 'blade', isCrit: c, knock: 90, spin: 22 });
     }
   },
 };
@@ -6577,6 +6665,8 @@ ABILITIES.pulse = {
     Audio.explosion(); Camera.shake(7, 0.32);
   },
 };
+
+['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
   const canvas = document.getElementById('game');
