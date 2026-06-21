@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0b" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors *; img-src 'self' data: https://files.catbox.moe https://cdn.discordapp.com; media-src 'self' https://files.catbox.moe; font-src https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://pvezzyvbmmxjyqtvuqna.supabase.co wss://pvezzyvbmmxjyqtvuqna.supabase.co https://raw.githubusercontent.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors *; img-src 'self' data: https://files.catbox.moe https://cdn.discordapp.com; media-src 'self' https://files.catbox.moe; font-src https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://pvezzyvbmmxjyqtvuqna.supabase.co wss://pvezzyvbmmxjyqtvuqna.supabase.co https://raw.githubusercontent.com https://cdn.jsdelivr.net; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <title>NEXIUM // SURVIVANT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -5223,16 +5223,17 @@ const Net = {
     ch.on('presence', { event: 'sync' }, () => this._syncPresence());
     ch.on('broadcast', { event: 'm' }, (msg) => this._recv(msg && msg.payload));
     let done = false;
+    const fail = (st) => { if (done) return; done = true; this.connected = false; if (cb) cb(false, st); if (this._onChange) this._onChange(); };
+    const watchdog = setTimeout(() => { console.warn('[NEXIUM net] timeout : aucune réponse du canal Realtime en 12s'); fail('TIMED_OUT'); }, 12000);
     ch.subscribe((status, err) => {
+      console.log('[NEXIUM net] statut canal =', status, err ? ('| err: ' + (err.message || err)) : '');
       this.lastErr = err ? (err.message || ('' + err)) : (this.lastErr || '');
       if (status === 'SUBSCRIBED') {
-        this.connected = true;
+        clearTimeout(watchdog); this.connected = true;
         try { ch.track({ id: this.me.id, name: this.me.name, host: this.isHost, ready: this._ready, t: this._joinT }); } catch (e) {}
         if (!done && cb) { done = true; cb(true); }
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-        this.connected = false;
-        if (!done && cb) { done = true; cb(false, status); }
-        if (this._onChange) this._onChange();
+        clearTimeout(watchdog); fail(status);
       }
     });
   },
