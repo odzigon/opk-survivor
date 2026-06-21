@@ -906,6 +906,35 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 .diff-opt:hover{color:var(--bone);transform:translateY(-1px);border-color:var(--bone-dim);}
 .diff-opt.on{color:var(--bg);background:var(--ember);border-color:var(--ember);font-weight:700;box-shadow:0 8px 22px -10px var(--ember);}
 @media (max-width:560px){ .diff-opt{font-size:9px;padding:9px 2px;} }
+.diff-opts-3{grid-template-columns:repeat(3,1fr);}
+.mode-cap{font-family:var(--f-mono);font-size:10px;line-height:1.3;color:var(--gold);min-height:13px;}
+/* Panneau prestige (écran Palmarès) */
+.prestige-panel{width:100%;border:1px solid color-mix(in srgb,var(--gold) 30%,var(--line-2));border-radius:13px;background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 8%,var(--panel-2)),var(--panel-2));padding:15px 17px;margin:14px 0 8px;display:flex;flex-direction:column;gap:11px;}
+.pp-top{display:flex;align-items:center;gap:13px;}
+.pp-badge{flex:none;width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-size:22px;color:var(--gold);background:var(--panel-3);border:1px solid color-mix(in srgb,var(--gold) 45%,var(--line-2));box-shadow:0 0 22px -8px var(--gold);}
+.pp-info{flex:1;text-align:left;}
+.pp-k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+.pp-lvl{font-family:var(--f-display);font-size:19px;color:var(--bone);letter-spacing:.02em;}
+.pp-bonus{font-size:12px;color:var(--gold);margin-top:2px;line-height:1.35;}
+.pp-btn{pointer-events:auto;cursor:pointer;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em;padding:12px;border-radius:10px;border:1px solid color-mix(in srgb,var(--gold) 50%,var(--line-2));background:color-mix(in srgb,var(--gold) 13%,var(--panel-2));color:var(--gold);font-weight:700;transition:transform .12s,background .15s,box-shadow .15s;}
+.pp-btn:hover:not(:disabled){transform:translateY(-1px);background:color-mix(in srgb,var(--gold) 22%,var(--panel-2));box-shadow:0 10px 26px -12px var(--gold);}
+.pp-btn:disabled{opacity:.4;cursor:not-allowed;}
+.q-status.got{color:var(--gold);}
+/* Lignes de malédiction (écran Risque/Récompense) */
+.curse-row{cursor:pointer;pointer-events:auto;transition:border-color .15s,background .15s,transform .12s;}
+.curse-row:hover{transform:translateY(-1px);border-color:var(--line-2);}
+.curse-row.on{border-color:color-mix(in srgb,#ff3b30 55%,transparent);background:color-mix(in srgb,#ff3b30 9%,var(--panel-2));}
+.curse-row.on .q-ic{color:#ff5247;border-color:color-mix(in srgb,#ff3b30 50%,transparent);}
+.curse-row .q-reward{color:var(--gold);}
+/* Récapitulatif de build (écran de pause) */
+.pause-build{width:100%;max-width:560px;margin:8px auto 2px;display:flex;flex-direction:column;gap:8px;text-align:left;}
+.pb-row{display:flex;gap:8px;align-items:flex-start;}
+.pb-lbl{flex:none;width:88px;font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);padding-top:6px;}
+.pb-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.pb-chip{font-family:var(--f-mono);font-size:10.5px;padding:4px 8px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line-2);color:var(--bone-dim);}
+.pb-chip.evo{border-color:color-mix(in srgb,var(--ember) 50%,var(--line-2));color:var(--ember);}
+.pb-chip.syn{border-color:color-mix(in srgb,var(--gold) 45%,var(--line-2));color:var(--gold);}
+.pb-chip.curse{border-color:color-mix(in srgb,#ff3b30 50%,var(--line-2));color:#ff5247;}
 </style>
 </head>
 <body data-state="menu">
@@ -994,6 +1023,15 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
         <button class="load-slot" id="slotWeapon"><span class="ls-k">Arme</span><span class="ls-v" id="slotWeaponName">—</span><span class="ls-go">changer ›</span></button>
         <button class="load-slot" id="slotAbility"><span class="ls-k">Capacité</span><span class="ls-v" id="slotAbilityName">—</span><span class="ls-go">changer ›</span></button>
       </div>
+      <div class="diff-sel" id="modeSel">
+        <span class="diff-k">Mode</span>
+        <div class="diff-opts diff-opts-3">
+          <button class="diff-opt" data-m="endless" type="button">Sans fin</button>
+          <button class="diff-opt" data-m="bossrush" type="button">Boss Rush</button>
+          <button class="diff-opt" data-m="daily" type="button">Quotidien</button>
+        </div>
+        <span class="mode-cap" id="modeCap"></span>
+      </div>
       <div class="diff-sel" id="diffSel">
         <span class="diff-k">Difficulté</span>
         <div class="diff-opts">
@@ -1015,6 +1053,8 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
         <button class="mx-btn" id="btnSettings" type="button"><span class="mx-ic">⚙</span> Réglages</button>
         <button class="mx-btn" id="btnHelp" type="button"><span class="mx-ic">?</span> Aide</button>
         <button class="mx-btn" id="btnQuests" type="button"><span class="mx-ic">✦</span> Quêtes</button>
+        <button class="mx-btn" id="btnPalmares" type="button"><span class="mx-ic">★</span> Palmarès</button>
+        <button class="mx-btn" id="btnCurses" type="button"><span class="mx-ic">☠</span> Malédictions</button>
         <button class="mx-btn" id="btnChangelog" type="button"><span class="mx-ic">≡</span> Journal</button>
         <button class="mx-btn" id="btnGithub" type="button"><span class="mx-ic">↗</span> GitHub</button>
       </div>
@@ -1111,6 +1151,29 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
   </div>
 </div>
 
+<!-- ============ ÉCRAN : PALMARÈS ============ -->
+<div class="screen" id="screen-palmares">
+  <div class="screen-inner cl-inner">
+    <div class="eyebrow">MÉTA-PROGRESSION</div>
+    <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Palmarès</h1>
+    <div class="prestige-panel" id="prestigePanel"></div>
+    <div class="q-sub" id="achSummary"></div>
+    <div class="cl-body" id="achBody"></div>
+    <div class="btn-row"><button class="btn btn-ghost" id="palmaresBack">Retour</button></div>
+  </div>
+</div>
+
+<!-- ============ ÉCRAN : MALÉDICTIONS ============ -->
+<div class="screen" id="screen-curses">
+  <div class="screen-inner cl-inner">
+    <div class="eyebrow">RISQUE / RÉCOMPENSE</div>
+    <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Malédictions</h1>
+    <div class="q-sub" id="cursesSummary"></div>
+    <div class="cl-body" id="cursesBody"></div>
+    <div class="btn-row"><button class="btn btn-ghost" id="cursesBack">Retour</button></div>
+  </div>
+</div>
+
 <!-- ============ ÉCRAN : AIDE ============ -->
 <div class="screen" id="screen-help">
   <div class="screen-inner cl-inner">
@@ -1175,6 +1238,7 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
   <div class="panel-card">
     <div class="eyebrow">EN PAUSE</div>
     <h1 class="title" style="font-size:clamp(30px,7vw,48px)">Pause</h1>
+    <div class="pause-build" id="pauseBuild"></div>
     <div class="btn-row" style="justify-content:center">
       <button class="btn btn-primary" id="btnResume">Reprendre</button>
       <button class="btn btn-ghost" id="btnQuit">Abandonner</button>
@@ -1470,13 +1534,13 @@ const Audio = {
   },
 
   // --- effets ponctuels ---
-  shoot()      { this.tone(540, 0.07, 'square', 0.05, 0.002, 240); },
+  shoot()      { this.tone(540 * (0.95 + Math.random() * 0.1), 0.07, 'square', 0.05, 0.002, 240); },
   shootBig()   { this.tone(220, 0.14, 'sawtooth', 0.07, 0.003, 90); this.noise(0.08, 0.04, 2400, 'highpass'); },
   hit()        { this.noise(0.04, 0.05, 2600, 'bandpass'); },
   crit()       { this.tone(880, 0.1, 'triangle', 0.09, 0.002, 1320); this.noise(0.05, 0.05, 3200, 'highpass'); },
-  enemyDie()   { this.tone(160, 0.12, 'sawtooth', 0.05, 0.002, 60); this.noise(0.07, 0.04, 900, 'lowpass'); },
+  enemyDie()   { this.tone(160 * (0.9 + Math.random() * 0.2), 0.12, 'sawtooth', 0.05, 0.002, 60); this.noise(0.07, 0.04, 900, 'lowpass'); },
   hurt()       { this.tone(150, 0.22, 'sawtooth', 0.14, 0.002, 60); this.noise(0.18, 0.1, 500, 'lowpass'); },
-  gem()        { this.tone(720, 0.05, 'sine', 0.04, 0.001, 980); },
+  gem()        { this.tone(720 * (0.96 + Math.random() * 0.12), 0.05, 'sine', 0.04, 0.001, 980); },
   itemPick()   { this.tone(560, 0.08, 'triangle', 0.07, 0.002, 880); this.tone(840, 0.1, 'sine', 0.05, 0.01, 1180); },
   levelUp()    { [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => this.tone(f, 0.18, 'triangle', 0.08, 0.004), i * 70)); },
   evolve()     { [392, 523, 659, 784, 1047].forEach((f, i) => setTimeout(() => this.tone(f, 0.26, 'sawtooth', 0.07, 0.004), i * 80)); this.noise(0.5, 0.06, 2400, 'highpass'); },
@@ -1774,6 +1838,40 @@ const DIFFS = [
   { name: 'Vétéran',   hp: 1.35, dmg: 1.25, reward: 1.25 },
   { name: 'Cauchemar', hp: 1.80, dmg: 1.55, reward: 1.60 },
 ];
+let MODE = 'endless';
+const DAILY_MODS = [
+  { name: 'Horde',      desc: 'Deux fois plus d’ennemis',          m: (g) => { g.spawnMul = 2.0; } },
+  { name: 'Colosses',   desc: 'Ennemis rares mais très coriaces',  m: (g) => { g.spawnMul = 0.55; DIFF = { hp: DIFF.hp * 1.9, dmg: DIFF.dmg * 1.1, reward: DIFF.reward * 1.4 }; } },
+  { name: 'Frénésie',   desc: 'Ennemis rapides et nombreux',       m: (g) => { g.spawnMul = 1.6; DIFF = { hp: DIFF.hp * 0.9, dmg: DIFF.dmg * 1.2, reward: DIFF.reward * 1.25 }; } },
+  { name: 'Assaut',     desc: 'Les boss arrivent très tôt',        m: (g) => { g.bossTimer = 40; } },
+  { name: 'Pénurie',    desc: 'Ennemis fragiles, gros butin',      m: (g) => { DIFF = { hp: DIFF.hp * 0.7, dmg: DIFF.dmg * 1.3, reward: DIFF.reward * 1.7 }; } },
+  { name: 'Déluge',     desc: 'Encerclement permanent',            m: (g) => { g.spawnMul = 2.4; DIFF = { hp: DIFF.hp * 0.85, dmg: DIFF.dmg, reward: DIFF.reward * 1.3 }; } },
+  { name: 'Cataclysme', desc: 'Le grand frisson',                  m: (g) => { g.spawnMul = 1.5; DIFF = { hp: DIFF.hp * 1.4, dmg: DIFF.dmg * 1.3, reward: DIFF.reward * 1.6 }; g.bossTimer = 70; } },
+];
+function dailyIndex() { return Math.floor(Date.now() / 86400000) % DAILY_MODS.length; }
+let RUN_CURSES = {};
+const SYNERGIES = [
+  { id: 'sy_comb', name: 'Combustion',     desc: 'Brûlure + Lave', need: ['ignite', 'lava'],    apply: (s) => { s.igniteDps *= 1.5; s.damageMul += 0.10; } },
+  { id: 'sy_frost', name: 'Engelures',     desc: 'Givre + Calibre', need: ['chill', 'caliber'], apply: (s) => { s.slowOnHitG += 0.4; s.damageMul += 0.12; } },
+  { id: 'sy_thorn', name: 'Représailles',  desc: 'Épines + Esquive', need: ['thorns', 'dodge'], apply: (s) => { s.thornsDmg *= 1.6; s.dodge += 0.05; } },
+  { id: 'sy_gold', name: 'Cupidité',       desc: 'Avidité + Chance', need: ['greed', 'luck'],   apply: (s) => { s.goldMul += 0.15; s.luck += 0.12; } },
+  { id: 'sy_rate', name: 'Cadence',        desc: 'Rapidité + Vélocité', need: ['rapid', 'velocity'], apply: (s) => { s.cooldownMul *= 0.92; s.projSpeedMul += 0.15; } },
+  { id: 'sy_satu', name: 'Saturation',     desc: 'Multitude + Zone', need: ['amount', 'area'],  apply: (s) => { s.areaMul += 0.20; s.amount += 1; } },
+  { id: 'sy_vamp', name: 'Sangsue',        desc: 'Vol de vie + Festin', need: ['lifesteal', 'feast'], apply: (s) => { s.lifesteal += 0.03; s.healOnKill += 3; } },
+  { id: 'sy_tank', name: 'Forteresse',     desc: 'Blindage + Vitalité', need: ['plating', 'vitality'], apply: (s) => { s.armor += 8; s.hpMul += 0.10; } },
+  { id: 'sy_edge', name: 'Lames jumelles', desc: 'Lame + Chakram', need: ['blade', 'chakram'],  apply: (s) => { s.damageMul += 0.15; s.pierceBonus += 1; } },
+  { id: 'sy_arty', name: 'Artillerie',     desc: 'Rail + Baliste', need: ['rail', 'ballista'],  apply: (s) => { s.projSpeedMul += 0.20; s.pierceBonus += 1; } },
+];
+const CURSES = [
+  { id: 'frag', name: 'Fragilité',  desc: 'PV max réduits de 30 %',        reward: 0.20 },
+  { id: 'hemo', name: 'Hémophilie', desc: 'Aucune régénération',           reward: 0.15 },
+  { id: 'tide', name: 'Marée',      desc: '+60 % d’ennemis',               reward: 0.25 },
+  { id: 'tita', name: 'Titans',     desc: 'Ennemis +55 % PV',              reward: 0.25 },
+  { id: 'fury', name: 'Furie',      desc: 'Ennemis +30 % dégâts',          reward: 0.22 },
+  { id: 'glas', name: 'Glas',       desc: 'Les boss arrivent plus tôt',    reward: 0.20 },
+  { id: 'myop', name: 'Myopie',     desc: 'Rayon de ramassage réduit',     reward: 0.12 },
+  { id: 'fami', name: 'Disette',    desc: '−25 % d’XP gagnée',             reward: 0.18 },
+];
 
 /* ===========================================================================
  * 5a. CAMÉRA
@@ -1947,6 +2045,19 @@ class Player {
       const def = PASSIVES[key];
       if (def) def.apply(s, this.passives[key]);
     }
+
+    this._synActive = [];
+    for (let i = 0; i < SYNERGIES.length; i++) {
+      const sy = SYNERGIES[i]; let ok = true;
+      for (let j = 0; j < sy.need.length; j++) { const k = sy.need[j]; if (!(this.passives[k] > 0 || this.hasWeapon(k))) { ok = false; break; } }
+      if (ok) { sy.apply(s); this._synActive.push(sy.id); }
+    }
+    if (this._synPrev) { for (let i = 0; i < this._synActive.length; i++) { if (this._synPrev.indexOf(this._synActive[i]) < 0) { const sy = SYNERGIES.find((x) => x.id === this._synActive[i]); if (sy && typeof UI !== 'undefined' && UI.announce) UI.announce('SYNERGIE \u2014 ' + sy.name); } } }
+    this._synPrev = this._synActive.slice();
+    if (RUN_CURSES.frag) s.hpMul *= 0.7;
+    if (RUN_CURSES.hemo) s.regen = 0;
+    if (RUN_CURSES.myop) s.magnetMul *= 0.6;
+    if (RUN_CURSES.fami) s.xpMul *= 0.75;
 
     this.stats = s;
     this._dmgBase = s.damageMul;
@@ -2412,6 +2523,29 @@ class Enemy {
         }
         return;
       }
+      // --- invocateur : garde ses distances et invoque des sbires ---
+      if (this.def.summoner) {
+        const a = angleTo(this.x, this.y, p.x, p.y), d = dist(this.x, this.y, p.x, p.y);
+        const want = this.def.summonRange || 280, dir = d > want + 40 ? 1 : (d < want - 40 ? -0.7 : 0);
+        const sp = this.speed * slowMul;
+        this.x += Math.cos(a) * sp * dir * dt; this.y += Math.sin(a) * sp * dir * dt;
+        this.x += Math.cos(a + HALF_PI) * sp * 0.4 * Math.sin(this.wobble * 0.5) * dt;
+        this.y += Math.sin(a + HALF_PI) * sp * 0.4 * Math.sin(this.wobble * 0.5) * dt;
+        this.angle = a; this.shootTimer -= dt;
+        if (this.shootTimer <= 0 && G.enemies.length < 240) {
+          this.shootTimer = this.def.summonCd || 4.5;
+          const nn = this.def.summonCount || 3, key = this.def.summonKey || 'swarm';
+          for (let i = 0; i < nn; i++) { const aa = rand(0, TAU), dd = rand(24, 54); G.spawnEnemy(key, this.x + Math.cos(aa) * dd, this.y + Math.sin(aa) * dd, {}); }
+          G.rings.push({ x: this.x, y: this.y, from: 0, to: 42, life: 0.4, max: 0.4, color: this.color }); Audio.warn();
+        }
+        return;
+      }
+      // --- frénétique : approche en zigzag erratique ---
+      if (this.def.weave) {
+        const a = angleTo(this.x, this.y, p.x, p.y), wv = a + Math.sin(this.wobble * 1.6) * 0.9, sp = this.speed * slowMul;
+        this.x += Math.cos(wv) * sp * dt; this.y += Math.sin(wv) * sp * dt; this.angle = wv;
+        return;
+      }
       // poursuite directe avec un léger flottement
       const ang = angleTo(this.x, this.y, p.x, p.y) + Math.sin(this.wobble) * 0.12;
       const s = this.speed * slowMul;
@@ -2564,6 +2698,9 @@ class Enemy {
       this._beamA = (this._beamA || 0) + dt * (0.8 + (rage - 1) * 0.5);
       this._spinT = (this._spinT || 0) - dt;
       if (this._spinT <= 0) { this._spinT = 0.07; for (let k = 0; k < 4; k++) G.spawnEnemyProjectile(this.x, this.y, this._beamA + k * HALF_PI, 300, this.dmg * 0.4, COLORS.goldHi); }
+    } else if (pat === 'nemesis') {
+      this._spinT = (this._spinT || 0) - dt;
+      if (this._spinT <= 0) { this._spinT = 0.11; this._nemA = (this._nemA || 0) + 0.32 * (0.9 + (rage - 1)); const arms = 2 + (tier > 1 ? 1 : 0); for (let k = 0; k < arms; k++) { const b = (k / arms) * TAU; G.spawnEnemyProjectile(this.x, this.y, this._nemA + b, 200, this.dmg * 0.42, '#c79be0'); G.spawnEnemyProjectile(this.x, this.y, -this._nemA + b + 0.4, 200, this.dmg * 0.42, COLORS.danger); } }
     }
   }
   _bossAttack(p, baseAng, tier, rage) {
@@ -2598,6 +2735,21 @@ class Enemy {
     } else if (pat === 'cyclone') {
       if (n % 2 === 1) { for (let i = 0; i < 3; i++) this._sched(0.7 + i * 0.16, { type: 'strike', x: p.x + rand(-44, 44), y: p.y + rand(-44, 44), r: 82, n: 7, spd: 240, color: COLORS.frost }); if (UI && UI.announce) UI.announce('⚠ ' + (this.bossName || 'TEMPÊTE') + ' — FOUDRE'); this._atkT = 3.0 / rage; }
       else { this._ring(16 + tier * 2, 220, this.color, rand(0, TAU)); for (let g = 0; g < 10; g++) G.particle({ x: this.x, y: this.y, vx: rand(-140, 140), vy: rand(-140, 140), life: 0.5, max: 0.5, size: rand(2, 4), color: hexA(COLORS.frost, 0.6), drag: 0.9, glow: true }); this._atkT = 2.8 / rage; }
+    } else if (pat === 'nemesis') {
+      const k = n % 3;
+      if (k === 0) {
+        const N = 22 + tier * 3, gapStart = Math.floor(rand(0, N)), gapLen = 5, o = angleTo(this.x, this.y, p.x, p.y);
+        for (let i = 0; i < N; i++) { if (((i - gapStart + N) % N) < gapLen) continue; G.spawnEnemyProjectile(this.x, this.y, o + (i / N) * TAU, 215, this.dmg * 0.5, '#c79be0'); }
+        Audio.shootBig(); this._atkT = 2.6 / rage;
+      } else if (k === 1) {
+        for (let v = 0; v < 3; v++) this._sched(v * 0.22, { type: 'ring', n: 8, spd: 300, color: COLORS.danger });
+        this._atkT = 3.0 / rage;
+      } else {
+        const a = angleTo(this.x, this.y, p.x, p.y);
+        for (let i = -1; i <= 1; i++) this._sched(0.8, { type: 'strike', x: p.x + Math.cos(a + i * 1.0) * (i === 0 ? 0 : 145), y: p.y + Math.sin(a + i * 1.0) * (i === 0 ? 0 : 145), r: 92, n: 8, spd: 200, color: '#b07fd0' });
+        if (UI && UI.announce) UI.announce('⚠ NÉMÉSIS — FRAPPES JUMELLES');
+        this._atkT = 3.2 / rage;
+      }
     } else { this._ring(12, 200, this.color, rand(0, TAU)); this._atkT = 2.5 / rage; }
   }
 
@@ -3844,6 +3996,20 @@ const CHARACTERS = {
     locked: true, unlock: { kills: 18000 },
   },
 };
+CHARACTERS.gaia = {
+  key: 'gaia', name: 'GAÏA', color: COLORS.heal, icon: '✿',
+  role: 'Symbiote', blurb: 'Régénère sans cesse et se nourrit de ses victimes.',
+  perks: ['+30% PV max', '+1,5 régén/s', '+30 aimant', 'Soin à chaque kill', '-10% dégâts'],
+  apply: (s) => { s.hpMul += 0.30; s.regen += 1.5; s.pickupAdd += 30; s.healOnKill += 2; s.damageMul -= 0.10; },
+  locked: true, unlock: { gold: 2200 },
+};
+CHARACTERS.omega = {
+  key: 'omega', name: 'OMEGA', color: COLORS.ember, icon: '⊗',
+  role: 'Berserker', blurb: 'Puissance de feu brute, au mépris total de sa survie.',
+  perks: ['+40% dégâts', '+12% cadence', '-25% PV max', '-2 armure'],
+  apply: (s) => { s.damageMul += 0.40; s.cooldownMul *= 0.88; s.hpMul -= 0.25; s.armor -= 2; },
+  locked: true, unlock: { kills: 22000 },
+};
 
 /* ===========================================================================
  * 10d. MÉTA-PROGRESSION (boutique persistante au sein de la session)
@@ -3869,6 +4035,10 @@ const Meta = {
     { key: 'arm',  name: 'Plaques',       icon: '◧', desc: '+1 armure par rang', max: 8, baseCost: 120, costMul: 1.6, apply: (s, r) => { s.armor += r * 1; } },
     { key: 'rer',  name: 'Relances',      icon: '↻', desc: '+1 relance par partie', max: 5, baseCost: 240, costMul: 1.7, apply: () => {} },
     { key: 'rev',  name: 'Résurrection',  icon: '✛', desc: 'Revient une fois à 50% PV', max: 1, baseCost: 800, costMul: 2, apply: () => {} },
+    { key: 'pow',  name: 'Munitions',      icon: '✦', desc: '+4% dégâts par rang', max: 8, baseCost: 140, costMul: 1.6, apply: (s, r) => { s.damageMul += r * 0.04; } },
+    { key: 'vit',  name: 'Endurance',      icon: '✚', desc: '+5% PV max par rang', max: 6, baseCost: 150, costMul: 1.6, apply: (s, r) => { s.hpMul += r * 0.05; } },
+    { key: 'crt',  name: 'Précision',      icon: '✶', desc: '+2% crit par rang', max: 6, baseCost: 200, costMul: 1.65, apply: (s, r) => { s.critChance += r * 0.02; } },
+    { key: 'cdr',  name: 'Catalyseur',     icon: '↺', desc: '-4% recharge capacité/rang', max: 5, baseCost: 220, costMul: 1.7, apply: (s, r) => { s.abilityCdMul *= Math.max(0.55, 1 - 0.04 * r); } },
   ],
 
   itemByKey(k) { return this.shop.find((x) => x.key === k); },
@@ -3888,6 +4058,8 @@ const Meta = {
       const r = this.rankOf(it.key);
       if (r > 0 && it.apply) it.apply(s, r);
     }
+    const pr = this.prestige || 0;
+    if (pr) { s.damageMul += 0.04 * pr; s.goldMul += 0.05 * pr; s.hpMul += 0.02 * pr; }
   },
   startingRerolls() { return 2 + this.rankOf('rer'); },
   resetRun() { this._reviveUsed = 0; },
@@ -4003,6 +4175,9 @@ function enemyWeights(t) {
   if (t > 130) w.push({ key: 'colossus', weight: 0.4 + t / 210 });
   if (t > 66) w.push({ key: 'marauder', weight: 0.85 + t / 135 });
   if (t > 110) w.push({ key: 'revenant', weight: 0.55 + t / 165 });
+  if (t > 50) w.push({ key: 'frenzy', weight: 1.0 + t / 120 });
+  if (t > 88) w.push({ key: 'summoner', weight: 0.6 + t / 180 });
+  if (t > 118) w.push({ key: 'bulwark', weight: 0.7 + t / 150 });
   return w;
 }
 
@@ -4118,6 +4293,19 @@ class Game {
     this.combo = 0; this.comboTimer = 0; this.maxCombo = 0;
     this.stats = { kills: 0, gemsCollected: 0, goldEarned: 0, elites: 0, bosses: 0, dmgDealt: 0 };
     this.lowHpWarned = false;
+    MODE = (Meta.mode === 'bossrush' || Meta.mode === 'daily') ? Meta.mode : 'endless';
+    this.mode = MODE; this.spawnMul = 1; this._dailyMod = null;
+    if (MODE === 'bossrush') { this.bossTimer = 4; }
+    else if (MODE === 'daily') { this._dailyMod = DAILY_MODS[dailyIndex()]; this._dailyMod.m(this); }
+    RUN_CURSES = {}; this.bossEveryMul = 1;
+    { const cl = Meta.curses || []; let cw = 1;
+      for (let i = 0; i < CURSES.length; i++) { if (cl.indexOf(CURSES[i].id) >= 0) { RUN_CURSES[CURSES[i].id] = 1; cw += CURSES[i].reward; } }
+      if (cw > 1) DIFF = { hp: DIFF.hp, dmg: DIFF.dmg, reward: DIFF.reward * cw };
+      if (RUN_CURSES.tide) this.spawnMul *= 1.6;
+      if (RUN_CURSES.tita) DIFF = { hp: DIFF.hp * 1.55, dmg: DIFF.dmg, reward: DIFF.reward };
+      if (RUN_CURSES.fury) DIFF = { hp: DIFF.hp, dmg: DIFF.dmg * 1.3, reward: DIFF.reward };
+      if (RUN_CURSES.glas) { this.bossTimer = Math.min(this.bossTimer, 60); this.bossEveryMul = 0.6; }
+    }
 
     Meta.resetRun();
     this.rerolls = Meta.startingRerolls();
@@ -4312,13 +4500,17 @@ Game.prototype.singularity = function (cx, cy, r, dmg, pull, crit) {
 
 /* --- directeur de vagues --- */
 Game.prototype.spawnDirector = function (dt) {
+  if (this.mode === 'bossrush') {
+    if (!this.activeBoss) { this.bossTimer -= dt; if (this.bossTimer <= 0) { this.bossTimer = 3.0; this.spawnBoss(); } }
+    return;
+  }
   this.spawnTimer -= dt;
-  if (this.spawnTimer <= 0) { this.spawnTimer += BAL.spawnInterval(this.time); this.spawnBatch(); }
+  if (this.spawnTimer <= 0) { this.spawnTimer += BAL.spawnInterval(this.time) / (this.spawnMul || 1); this.spawnBatch(); }
   if (!this.activeBoss) {
     this.eliteTimer -= dt;
     if (this.eliteTimer <= 0) { this.eliteTimer = BAL.eliteEvery; if (this.time > 20) this.spawnElite(); }
     this.bossTimer -= dt;
-    if (this.bossTimer <= 0) { this.bossTimer = BAL.bossEvery; this.spawnBoss(); }
+    if (this.bossTimer <= 0) { this.bossTimer = BAL.bossEvery * (this.bossEveryMul || 1); this.spawnBoss(); }
   }
 };
 Game.prototype.spawnPos = function () {
@@ -4670,7 +4862,9 @@ Game.prototype.onPlayerDeath = function () {
   const qs = Meta.qstat || (Meta.qstat = { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 });
   qs.kills += this.stats.kills; qs.bosses += this.stats.bosses; qs.games += 1; qs.gold += this.stats.goldEarned;
   qs.time = Math.max(qs.time, this.run.time); qs.level = Math.max(qs.level, this.run.level); qs.score = Math.max(qs.score, this.run.score);
+  if (this.mode === 'daily') { const di = dailyIndex(); if (!Meta.dailyBest || Meta.dailyBest.day !== di) Meta.dailyBest = { day: di, score: this.run.score }; else if (this.run.score > Meta.dailyBest.score) Meta.dailyBest.score = this.run.score; }
   Meta._questPops = (Meta._questPops || []).concat(Meta.checkQuests());
+  Meta._achPops = (Meta._achPops || []).concat(Meta.checkAch());
   Meta.save();
   Camera.shake(14, 0.6);
   for (let i = 0; i < 30; i++) {
@@ -4957,7 +5151,7 @@ const Cloud = {
 
 /* --- Sérialisation / fusion de la progression (fusion par max/union : aucune perte) --- */
 Meta.daily = { last: 0, streak: 0 };
-Meta.toJSON = function () { return { v: 1, gold: this.gold, ranks: this.ranks, best: this.best, unlocked: this.unlocked, loadout: this.loadout, life: this.life, daily: this.daily, questsDone: this.questsDone, qstat: this.qstat, difficulty: this.difficulty }; };
+Meta.toJSON = function () { return { v: 1, gold: this.gold, ranks: this.ranks, best: this.best, unlocked: this.unlocked, loadout: this.loadout, life: this.life, daily: this.daily, questsDone: this.questsDone, qstat: this.qstat, difficulty: this.difficulty, mode: this.mode, dailyBest: this.dailyBest, prestige: this.prestige, achDone: this.achDone, curses: this.curses }; };
 Meta.applyJSON = function (o) {
   if (!o || typeof o !== 'object') return;
   const num = (v, max) => { v = +v; return (isFinite(v) && v > 0) ? Math.min(v, max) : 0; };
@@ -4970,6 +5164,11 @@ Meta.applyJSON = function (o) {
   }
   if (o.life && typeof o.life === 'object') { this.life.kills = Math.max(this.life.kills, num(o.life.kills, 1e9)); this.life.bosses = Math.max(this.life.bosses, num(o.life.bosses, 1e7)); this.life.games = Math.max(this.life.games, num(o.life.games, 1e7)); this.life.gold = Math.max(this.life.gold || 0, num(o.life.gold, 1e12)); }
   if (typeof o.difficulty === 'number') this.difficulty = clamp(o.difficulty | 0, 0, 3);
+  if (o.mode === 'endless' || o.mode === 'bossrush' || o.mode === 'daily') this.mode = o.mode;
+  if (typeof o.prestige === 'number') this.prestige = Math.max(this.prestige || 0, o.prestige | 0);
+  if (Array.isArray(o.curses)) { const ids = {}; for (let i = 0; i < CURSES.length; i++) ids[CURSES[i].id] = 1; this.curses = o.curses.filter((c) => ids[c]); }
+  if (Array.isArray(o.achDone)) { this.achDone = this.achDone || []; const ids = {}; for (let i = 0; i < ACHIEVEMENTS.length; i++) ids[ACHIEVEMENTS[i].id] = 1; for (let i = 0; i < o.achDone.length; i++) { const a = o.achDone[i]; if (ids[a] && this.achDone.indexOf(a) < 0) this.achDone.push(a); } }
+  if (o.dailyBest && typeof o.dailyBest === 'object') this.dailyBest = { day: num(o.dailyBest.day, 1e7) | 0, score: num(o.dailyBest.score, 1e12) | 0 };
   if (o.qstat && typeof o.qstat === 'object') { this.qstat = this.qstat || { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 }; const QK = ['kills', 'bosses', 'games', 'gold', 'time', 'level', 'score']; for (let i = 0; i < QK.length; i++) { const k = QK[i]; this.qstat[k] = Math.max(this.qstat[k] || 0, num(o.qstat[k], 1e12)); } }
   if (Array.isArray(o.questsDone)) { this.questsDone = this.questsDone || []; const ids = {}; for (let i = 0; i < QUESTS.length; i++) ids[QUESTS[i].id] = 1; for (let i = 0; i < o.questsDone.length; i++) { const q = o.questsDone[i]; if (ids[q] && this.questsDone.indexOf(q) < 0) this.questsDone.push(q); } }
   if (o.loadout && typeof o.loadout === 'object') { const L = o.loadout; if (typeof L.char === 'string' && CHARACTERS[L.char] && this.isUnlocked('char', L.char)) this.loadout.char = L.char; if (typeof L.weapon === 'string' && WEAPONS[L.weapon] && this.isUnlocked('weapon', L.weapon)) this.loadout.weapon = L.weapon; if (typeof L.ability === 'string' && ABILITIES[L.ability] && this.isUnlocked('ability', L.ability)) this.loadout.ability = L.ability; }
@@ -4996,6 +5195,10 @@ const QUESTS = [
   { id: 'q_lvl2',   name: 'Maître',         desc: 'Atteindre le niveau 16',               type: 'level',  goal: 16,   reward: { kind: 'ability', key: 'aegis' } },
   { id: 'q_kill3',  name: 'Carnage',        desc: 'Éliminer 5 000 ennemis (cumulé)',      type: 'kills',  goal: 5000, reward: { kind: 'weapon', key: 'blackhole' } },
   { id: 'q_gold2',  name: 'Magnat',         desc: 'Amasser 8 000 or (cumulé)',            type: 'gold',   goal: 8000, reward: { gold: 600 } },
+  { id: 'q_lvl3',   name: 'Cataclyste',     desc: 'Atteindre le niveau 20',               type: 'level',  goal: 20,    reward: { kind: 'ability', key: 'meteor' } },
+  { id: 'q_score2', name: 'Maestro',        desc: 'Atteindre un score de 30 000',         type: 'score',  goal: 30000, reward: { kind: 'ability', key: 'barrage' } },
+  { id: 'q_surv4',  name: 'Survivaliste',   desc: 'Survivre 10 minutes',                  type: 'time',   goal: 600,   reward: { gold: 1000 } },
+  { id: 'q_boss3',  name: 'Fléau',          desc: 'Vaincre 8 boss (cumulé)',              type: 'bosses', goal: 8,     reward: { gold: 1200 } },
 ];
 Meta.questValue = function (type) {
   const q = this.qstat || {};
@@ -5016,12 +5219,50 @@ Meta.checkQuests = function () {
   }
   return done;
 };
+Meta.prestigeCost = function () { return Math.floor(6000 * Math.pow((this.prestige || 0) + 1, 1.7)); };
+Meta.doPrestige = function () { const c = this.prestigeCost(); if (this.gold >= c) { this.gold -= c; this.prestige = (this.prestige || 0) + 1; this.save(); return true; } return false; };
+const ACHIEVEMENTS = [
+  { id: 'a_k1', name: 'Première vague',  desc: 'Éliminer 1 000 ennemis au total',   type: 'kills',  goal: 1000,  gold: 250 },
+  { id: 'a_k2', name: 'Exterminateur',   desc: 'Éliminer 10 000 ennemis au total',  type: 'kills',  goal: 10000, gold: 600 },
+  { id: 'a_k3', name: 'Légion brisée',   desc: 'Éliminer 50 000 ennemis au total',  type: 'kills',  goal: 50000, gold: 1500 },
+  { id: 'a_b1', name: 'Tombeur',         desc: 'Vaincre 10 boss au total',           type: 'bosses', goal: 10,    gold: 400 },
+  { id: 'a_b2', name: 'Bourreau',        desc: 'Vaincre 50 boss au total',           type: 'bosses', goal: 50,    gold: 1200 },
+  { id: 'a_t1', name: 'Tenace',          desc: 'Survivre 8 minutes en une partie',   type: 'time',   goal: 480,   gold: 400 },
+  { id: 'a_t2', name: 'Increvable',      desc: 'Survivre 15 minutes en une partie',  type: 'time',   goal: 900,   gold: 900 },
+  { id: 'a_l1', name: 'Ascension',       desc: 'Atteindre le niveau 25',             type: 'level',  goal: 25,    gold: 500 },
+  { id: 'a_s1', name: 'Virtuose',        desc: 'Atteindre 20 000 points',            type: 'score',  goal: 20000, gold: 600 },
+  { id: 'a_s2', name: 'Maître du score', desc: 'Atteindre 60 000 points',            type: 'score',  goal: 60000, gold: 1500 },
+  { id: 'a_g1', name: 'Fortune',         desc: 'Amasser 25 000 or au total',         type: 'gold',   goal: 25000, gold: 700 },
+  { id: 'a_ga', name: 'Aguerri',         desc: 'Jouer 25 parties',                   type: 'games',  goal: 25,    gold: 500 },
+];
+Meta.achValue = function (type) {
+  switch (type) {
+    case 'kills':  return this.life.kills;
+    case 'bosses': return this.life.bosses;
+    case 'games':  return this.life.games;
+    case 'gold':   return this.life.gold || 0;
+    case 'time':   return this.best.time;
+    case 'level':  return this.best.level;
+    case 'score':  return this.best.score;
+  }
+  return 0;
+};
+Meta.checkAch = function () {
+  this.achDone = this.achDone || [];
+  const done = [];
+  for (let i = 0; i < ACHIEVEMENTS.length; i++) {
+    const q = ACHIEVEMENTS[i];
+    if (this.achDone.indexOf(q.id) >= 0) continue;
+    if (this.achValue(q.type) >= q.goal) { this.achDone.push(q.id); this.gold = Math.min(1e9, this.gold + q.gold); done.push(q); }
+  }
+  return done;
+};
 Meta.save = function () { try { Store.set('nexium_save', JSON.stringify(this.toJSON())); } catch (e) {} if (typeof Cloud !== 'undefined') Cloud.push(); };
-Meta.load = function () { try { const o = JSON.parse(Store.get('nexium_save') || 'null'); if (o) this.applyJSON(o); } catch (e) {} this.checkQuests(); };
+Meta.load = function () { try { const o = JSON.parse(Store.get('nexium_save') || 'null'); if (o) this.applyJSON(o); } catch (e) {} this.checkQuests(); this.checkAch(); };
 Meta.reset = function () {
   this.gold = 0; this.ranks = {}; this.best = { score: 0, time: 0, level: 0, kills: 0 };
-  this.unlocked = { chars: { odzigon: 1 }, weapons: { scatter: 1, cross: 1, arc: 1 }, abilities: { dash: 1 } };
-  this.loadout = { char: 'odzigon', weapon: 'scatter', ability: 'dash' }; this.life = { kills: 0, bosses: 0, games: 0, gold: 0 }; this.daily = { last: 0, streak: 0 }; this.questsDone = []; this.qstat = { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 }; this.difficulty = 1;
+  this.unlocked = { chars: { odzigon: 1 }, weapons: { scatter: 1, cross: 1, arc: 1, hornet: 1 }, abilities: { dash: 1 } };
+  this.loadout = { char: 'odzigon', weapon: 'scatter', ability: 'dash' }; this.life = { kills: 0, bosses: 0, games: 0, gold: 0 }; this.daily = { last: 0, streak: 0 }; this.questsDone = []; this.qstat = { kills: 0, bosses: 0, games: 0, gold: 0, time: 0, level: 0, score: 0 }; this.difficulty = 1; this.mode = 'endless'; this.dailyBest = { day: 0, score: 0 }; this.prestige = 0; this.achDone = []; this.curses = [];
   this.save();
 };
 
@@ -5036,6 +5277,154 @@ function safeHttpUrl(u) { return (typeof u === 'string' && /^https:\/\/[^\s"')(<
 Game.prototype.weaponDef = function (key) { return WEAPONS[key] || EVOLUTIONS[key]; };
 
 /* Fiches détaillées : explication du tir, motif d'aperçu, portée, effet. */
+/* ============ LOT 5a — NOUVELLES ARMES + ÉVOLUTIONS ============ */
+
+/* --- Mortier : obus lobés qui explosent en zone à l'impact --- */
+WEAPONS.mortar = {
+  name: 'Mortier', icon: '✺', color: COLORS.gold, usesAmount: true,
+  tag: 'Artillerie explosive',
+  desc: 'Lobe des obus sur l’ennemi le plus proche ; ils explosent en zone à l’impact.',
+  maxLevel: 8, evolveInto: 'obusier', evolveReq: 'area', unlock: { gold: 1800 },
+  levels: [
+    { dmg: 22, count: 1, cd: 1.50, blast: 78,  speed: 360, life: 1.4 },
+    { dmg: 27, count: 1, cd: 1.45, blast: 84,  speed: 365, life: 1.4 },
+    { dmg: 33, count: 1, cd: 1.40, blast: 90,  speed: 370, life: 1.45 },
+    { dmg: 40, count: 2, cd: 1.40, blast: 96,  speed: 375, life: 1.45 },
+    { dmg: 48, count: 2, cd: 1.30, blast: 104, speed: 380, life: 1.5 },
+    { dmg: 58, count: 2, cd: 1.25, blast: 112, speed: 385, life: 1.5 },
+    { dmg: 70, count: 3, cd: 1.20, blast: 122, speed: 390, life: 1.55 },
+    { dmg: 86, count: 3, cd: 1.10, blast: 134, speed: 400, life: 1.6 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    const tgt = g.nearestEnemyTo ? g.nearestEnemyTo(p.x, p.y, 760) : null;
+    const base = tgt ? angleTo(p.x, p.y, tgt.x, tgt.y) : p.aimAngle;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.5;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: base + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 7, size: 7,
+        life: lv.life * p.stats.durationMul, pierce: 0, color: COLORS.goldHi, kind: 'bullet',
+        isCrit: c, knock: 60, spin: 6, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+EVOLUTIONS.obusier = {
+  name: 'Obusier Lourd', icon: '☄', color: COLORS.ember, isEvo: true, from: 'mortar',
+  tag: 'ULTIME · Pluie d’acier', desc: 'Une salve d’obus massifs aux explosions dévastatrices.',
+  levels: [{ dmg: 95, count: 4, cd: 0.95, blast: 150, speed: 410, life: 1.7 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount;
+    const tgt = g.nearestEnemyTo ? g.nearestEnemyTo(p.x, p.y, 820) : null;
+    const base = tgt ? angleTo(p.x, p.y, tgt.x, tgt.y) : p.aimAngle;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const off = (count > 1 ? (i / (count - 1) - 0.5) : 0) * 0.7;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: base + off, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 9, size: 9,
+        life: lv.life * p.stats.durationMul, pierce: 0, color: COLORS.emberHi, kind: 'bullet',
+        isCrit: c, knock: 80, spin: 7, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+
+/* --- Nuée de Guêpes : essaim autoguidé qui explose au contact --- */
+WEAPONS.hornet = {
+  name: 'Nuée de Guêpes', icon: '✲', color: COLORS.ember, usesAmount: true,
+  tag: 'Essaim traqueur',
+  desc: 'Lâche des guêpes autoguidées qui explosent au contact.',
+  maxLevel: 8, evolveInto: 'essaim', evolveReq: 'amount',
+  levels: [
+    { dmg: 10, count: 3, cd: 1.20, blast: 40, speed: 300, life: 2.2, homing: 4.0 },
+    { dmg: 12, count: 3, cd: 1.15, blast: 42, speed: 305, life: 2.2, homing: 4.0 },
+    { dmg: 14, count: 4, cd: 1.10, blast: 44, speed: 310, life: 2.3, homing: 4.5 },
+    { dmg: 17, count: 4, cd: 1.05, blast: 47, speed: 315, life: 2.3, homing: 4.5 },
+    { dmg: 20, count: 5, cd: 1.00, blast: 50, speed: 320, life: 2.4, homing: 5.0 },
+    { dmg: 24, count: 6, cd: 0.95, blast: 53, speed: 325, life: 2.4, homing: 5.0 },
+    { dmg: 29, count: 7, cd: 0.90, blast: 57, speed: 330, life: 2.5, homing: 5.5 },
+    { dmg: 35, count: 8, cd: 0.85, blast: 62, speed: 340, life: 2.6, homing: 6.0 },
+  ],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[w.level - 1];
+    const count = lv.count + p.stats.amount;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const a = p.aimAngle + rand(-0.9, 0.9);
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: a, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 5, size: 5,
+        life: lv.life * p.stats.durationMul, pierce: 0, color: COLORS.emberHi, kind: 'bullet',
+        homing: lv.homing, isCrit: c, knock: 40, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+EVOLUTIONS.essaim = {
+  name: 'Essaim Furieux', icon: '❋', color: COLORS.ember, isEvo: true, from: 'hornet',
+  tag: 'ULTIME · Nuée vorace', desc: 'Une nuée dense de guêpes qui traquent et pulvérisent la horde.',
+  levels: [{ dmg: 42, count: 12, cd: 0.70, blast: 78, speed: 360, life: 2.8, homing: 7.0 }],
+  fire(g, w) {
+    const p = g.player, lv = this.levels[0];
+    const count = lv.count + p.stats.amount * 2;
+    Audio.shoot();
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * TAU;
+      const c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: a, speed: lv.speed * p.stats.projSpeedMul,
+        dmg: lv.dmg * p.stats.damageMul * (c ? p.stats.critMult : 1), radius: 6, size: 6,
+        life: lv.life * p.stats.durationMul, pierce: 0, color: COLORS.gold, kind: 'bullet',
+        homing: lv.homing, isCrit: c, knock: 50, blast: lv.blast * Math.sqrt(p.stats.areaMul) });
+    }
+  },
+};
+
+/* --- Phare : faisceau rotatif qui fauche tout autour --- */
+function phareFire(g, w, lv) {
+  const p = g.player;
+  const beams = lv.beams || 1, range = lv.range * p.stats.areaMul, width = lv.width * Math.sqrt(p.stats.areaMul);
+  w.beamA = (w.beamA || 0) + lv.spin * lv.cd;
+  const dmg = lv.dps * lv.cd * p.stats.damageMul;
+  const ql = g.queryEnemies ? g.queryEnemies(p.x, p.y, range + 60) : (g.dummies || []);
+  for (let b = 0; b < beams; b++) {
+    const aim = w.beamA + (b / beams) * TAU, dx = Math.cos(aim), dy = Math.sin(aim);
+    for (let i = 0; i < ql.length; i++) {
+      const e = ql[i]; if (e.dead) continue;
+      const rx = e.x - p.x, ry = e.y - p.y, proj = rx * dx + ry * dy;
+      if (proj < 0 || proj > range) continue;
+      if (Math.abs(rx * -dy + ry * dx) < width / 2 + e.radius) e.dot(dmg);
+    }
+    g.bolts.push({ points: [{ x: p.x, y: p.y }, { x: p.x + dx * range, y: p.y + dy * range }], life: lv.cd * 1.5, max: lv.cd * 1.5, color: lv.color || COLORS.goldHi, beam: true });
+  }
+}
+WEAPONS.phare = {
+  name: 'Phare', icon: 'ϕ', color: COLORS.gold,
+  tag: 'Balayage rotatif',
+  desc: 'Un faisceau qui tournoie en continu et fauche tout autour de vous.',
+  maxLevel: 8, evolveInto: 'couronne', evolveReq: 'duration', unlock: { gold: 2400 },
+  levels: [
+    { dps: 34,  range: 230, width: 16, cd: 0.08, spin: 1.7, beams: 1, color: COLORS.gold },
+    { dps: 42,  range: 245, width: 17, cd: 0.08, spin: 1.8, beams: 1, color: COLORS.gold },
+    { dps: 52,  range: 260, width: 18, cd: 0.08, spin: 1.9, beams: 1, color: COLORS.gold },
+    { dps: 64,  range: 278, width: 19, cd: 0.08, spin: 2.0, beams: 1, color: COLORS.goldHi },
+    { dps: 78,  range: 296, width: 20, cd: 0.07, spin: 2.1, beams: 1, color: COLORS.goldHi },
+    { dps: 95,  range: 314, width: 22, cd: 0.07, spin: 2.2, beams: 1, color: COLORS.goldHi },
+    { dps: 116, range: 334, width: 23, cd: 0.07, spin: 2.3, beams: 2, color: COLORS.goldHi },
+    { dps: 142, range: 356, width: 25, cd: 0.07, spin: 2.4, beams: 2, color: COLORS.goldHi },
+  ],
+  fire(g, w) { phareFire(g, w, this.levels[w.level - 1]); },
+};
+EVOLUTIONS.couronne = {
+  name: 'Couronne Solaire', icon: '☀', color: COLORS.gold, isEvo: true, from: 'phare',
+  tag: 'ULTIME · Anneau solaire', desc: 'Trois faisceaux solaires balaient l’arène sans répit.',
+  levels: [{ dps: 175, range: 420, width: 30, cd: 0.06, spin: 2.6, beams: 3, color: COLORS.goldHi }],
+  fire(g, w) { phareFire(g, w, this.levels[0]); },
+};
+WEAPONS.mortar.main = true;
+WEAPONS.phare.main = true;
+
 const WEAPON_INFO = {
   scatter:   { pattern: 'spread',    range: 'Moyenne',         effect: 'Repousse légère',          how: 'Vise automatiquement l’ennemi le plus proche et lâche un éventail de balles. Les niveaux élargissent la gerbe et ajoutent de la perforation.' },
   cross:     { pattern: 'cross',     range: 'Moyenne',         effect: 'Perforation',              how: 'Projette des lames simultanément dans plusieurs directions autour de vous — votre meilleur recours quand vous êtes encerclé.' },
@@ -5058,6 +5447,8 @@ const WEAPON_INFO = {
   whip:      { pattern: 'slash',     range: 'Corps-à-corps',   effect: 'Fauche · ralenti · soin',  how: 'Cingle deux arcs simultanés devant ET derrière vous : forte projection, ralentit les touchés, et vous rend des PV à chaque ennemi fauché — l’arme de survie au corps-à-corps.', dual: true },
 };
 const ABILITY_INFO = {
+  meteor:    { type: 'Offense',  effect: 'Frappes explosives ciblées', pattern: 'ab_meteor',  how: 'Fait pleuvoir des météores sur les ennemis proches : chacun explose en zone. Profite de la passive Zone et du multiplicateur de dégâts.' },
+  barrage:   { type: 'Offense',  effect: 'Anneau de projectiles',      pattern: 'ab_barrage', how: 'Libère instantanément une salve circulaire de projectiles perforants pour vous dégager dans toutes les directions.' },
   dash:      { type: 'Mobilité', effect: 'Invincibilité brève',  pattern: 'ab_dash',      how: 'Une ruée instantanée dans votre direction qui vous rend invulnérable le temps de traverser un danger.' },
   blink:     { type: 'Mobilité', effect: 'Téléport + dégâts',    pattern: 'ab_blink',     how: 'Vous disparaissez pour réapparaître plus loin, en déclenchant une déflagration au départ ET à l’arrivée.' },
   aegis:     { type: 'Défense',  effect: 'Bouclier 2,5 s',       pattern: 'ab_aegis',     how: 'Lève un bouclier qui annule tous les dégâts pendant 2,5 s et repousse violemment les ennemis autour.' },
@@ -5119,6 +5510,7 @@ const WPreview = {
       homing: (o.kind === 'drone' || o.homing) ? 1 : 0, ret: false,
     });
   },
+  nearestEnemyTo(x, y, r) { let best = null, bd = (r || 9999) * (r || 9999); for (let i = 0; i < this.dummies.length; i++) { const e = this.dummies[i]; if (e.dead) continue; const dd = dist2(x, y, e.x, e.y); if (dd < bd) { bd = dd; best = e; } } return best; },
   queryEnemies(x, y, r) {
     const out = [], d = this.dummies;
     for (let i = 0; i < d.length; i++) { const e = d[i]; if (!e.dead && dist2(x, y, e.x, e.y) <= (r + e.radius) * (r + e.radius)) out.push(e); }
@@ -5253,6 +5645,8 @@ const WPreview = {
     else if (k === 'overdrive') { P.overT = 1.6; this.rings.push({ x: P.x, y: P.y, from: 0, to: 110, life: 0.5, max: 0.5, color: COLORS.ember }); this._spark(P.x, P.y, COLORS.ember, 14); }
     else if (k === 'warp') { for (const e of this.dummies) { if (e._svx == null) { e._svx = e.vx; e._svy = e.vy; } e.slowT = 1.6; e.vx = 0; e.vy = 0; } this.rings.push({ x: P.x, y: P.y, from: 0, to: this.w, life: 0.6, max: 0.6, color: COLORS.frost }); }
     else if (k === 'leech') { this.rings.push({ x: P.x, y: P.y, from: 150, to: 0, life: 0.4, max: 0.4, color: COLORS.danger }); for (const e of this.dummies) { const a = angleTo(e.x, e.y, P.x, P.y); this.particle({ x: e.x, y: e.y, vx: Math.cos(a) * 240, vy: Math.sin(a) * 240, life: 0.4, max: 0.4, size: 3, color: COLORS.danger, drag: 0.92 }); e.hit(9); } }
+    else if (k === 'meteor') { const D = this.dummies; for (let i = 0; i < 5; i++) { const e = D[i % Math.max(1, D.length)]; const x = e ? e.x : rand(this.w * 0.4, this.w - 30), y = e ? e.y : rand(30, this.h - 30); this.rings.push({ x, y, from: 0, to: 72, life: 0.4, max: 0.4, color: COLORS.ember }); this.areaBurst(x, y, 72, 26, { color: COLORS.emberHi }); this._spark(x, y, COLORS.ember, 8); } }
+    else if (k === 'barrage') { for (let i = 0; i < 26; i++) { const a = (i / 26) * TAU; this.spawnProjectile({ x: P.x, y: P.y, angle: a, speed: 340, dmg: 8, radius: 4, size: 4, life: 1.0, pierce: 1, color: COLORS.goldHi, kind: 'bullet' }); } this.rings.push({ x: P.x, y: P.y, from: 0, to: 120, life: 0.4, max: 0.4, color: COLORS.gold }); }
     else if (k === 'pulse') { this.rings.push({ x: P.x, y: P.y, from: 0, to: 180, life: 0.5, max: 0.5, color: '#b07fd0' }); for (const e of this.dummies) { const a = angleTo(P.x, P.y, e.x, e.y); e.vx += Math.cos(a) * 200; e.vy += Math.sin(a) * 200; e.slowT = 1.4; e.hit(8); } this._spark(P.x, P.y, '#b07fd0', 14); }
   },
 
@@ -5633,7 +6027,7 @@ const UI = {
   init() {
     Meta.load();
     Settings.load();
-    const ids = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-settings', 'screen-changelog',
+    const ids = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'pauseBuild', 'screen-gameover', 'screen-settings', 'screen-changelog',
       'charCards', 'btnPlay', 'btnShop', 'bestLine', 'shopList', 'shopGold', 'btnShopBack',
       'luLevel', 'cardRow', 'btnReroll', 'rerollCount', 'btnSkip', 'banishCount',
       'btnResume', 'btnQuit', 'goStats', 'goBest', 'btnRetry', 'btnMenu',
@@ -5648,13 +6042,13 @@ const UI = {
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAim', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
       'changelogBody', 'changelogBack', 'btnHelp', 'helpBack', 'screen-help',
       'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack',
-      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel'];
+      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel', 'modeSel', 'modeCap', 'screen-palmares', 'btnPalmares', 'palmaresBack', 'prestigePanel', 'achSummary', 'achBody', 'screen-curses', 'btnCurses', 'cursesBack', 'cursesBody', 'cursesSummary'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
     // sélection courante + cartes d'opérateurs + arsenal
     this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon';
-    if (this._refreshDiff) this._refreshDiff();
+    if (this._refreshDiff) this._refreshDiff(); if (this._refreshMode) this._refreshMode(); if (this._refreshCurses) this._refreshCurses();
     this._buildChars();
     this._refreshCurrentOp();
     this._refreshLoadout();
@@ -5684,6 +6078,8 @@ const UI = {
     if (this.el.btnChangelog) this.el.btnChangelog.addEventListener('click', () => { Audio.ui(); this.openChangelog(); });
     if (this.el.btnHelp) this.el.btnHelp.addEventListener('click', () => { Audio.ui(); this.show('screen-help'); });
     if (this.el.btnQuests) this.el.btnQuests.addEventListener('click', () => { Audio.ui(); this.openQuests(); });
+    if (this.el.btnPalmares) this.el.btnPalmares.addEventListener('click', () => { Audio.ui(); this.openPalmares(); });
+    if (this.el.btnCurses) this.el.btnCurses.addEventListener('click', () => { Audio.ui(); this.openCurses(); });
     if (this.el.helpBack) this.el.helpBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
     if (this.el.currentOp) this.el.currentOp.addEventListener('click', () => { Audio.ui(); this._buildChars(); this._refreshRosterGold(); this.show('screen-roster'); });
     if (this.el.rosterBack) this.el.rosterBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshCurrentOp(); this._refreshBest(); });
@@ -5691,6 +6087,8 @@ const UI = {
     if (this.el.settingsBack) this.el.settingsBack.addEventListener('click', () => { Audio.uiBack(); this._armReset(false); this.show('screen-start'); this._refreshBest(); });
     if (this.el.changelogBack) this.el.changelogBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
     if (this.el.questsBack) this.el.questsBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.palmaresBack) this.el.palmaresBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
+    if (this.el.cursesBack) this.el.cursesBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
 
     // --- contrôles de réglages ---
     const slide = (el, key) => { if (!el) return; el.addEventListener('input', () => { Audio.ensure(); Settings.set(key, el.value / 100); }); };
@@ -5701,11 +6099,12 @@ const UI = {
       if (!this._resetArm) { this._armReset(true); return; }
       this._armReset(false); Meta.reset(); Settings.save(); Audio.uiBack();
       this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon';
-    if (this._refreshDiff) this._refreshDiff(); this._refreshAll();
+    if (this._refreshDiff) this._refreshDiff(); if (this._refreshMode) this._refreshMode(); if (this._refreshCurses) this._refreshCurses(); this._refreshAll();
     });
 
     this.el.btnPlay.addEventListener('click', () => { Audio.ensure(); Audio.resume(); G.start(this.selectedChar); this._enterPlay(); });
     if (this.el.diffSel) this.el.diffSel.addEventListener('click', (ev) => { const b = ev.target.closest && ev.target.closest('.diff-opt'); if (!b) return; Meta.difficulty = clamp(parseInt(b.dataset.d, 10) || 0, 0, 3); Meta.save(); this._refreshDiff(); Audio.ui(); });
+    if (this.el.modeSel) this.el.modeSel.addEventListener('click', (ev) => { const b = ev.target.closest && ev.target.closest('.diff-opt'); if (!b) return; Meta.mode = b.dataset.m || 'endless'; Meta.save(); this._refreshMode(); Audio.ui(); });
     this.el.btnShop.addEventListener('click', () => { Audio.ui(); this.openShop(); });
     this.el.btnShopBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
 
@@ -5983,13 +6382,66 @@ const UI = {
   },
   _refreshAll() {
     this.selectedChar = (Meta.loadout.char && Meta.isUnlocked('char', Meta.loadout.char)) ? Meta.loadout.char : 'odzigon';
-    if (this._refreshDiff) this._refreshDiff();
+    if (this._refreshDiff) this._refreshDiff(); if (this._refreshMode) this._refreshMode(); if (this._refreshCurses) this._refreshCurses();
     if (this._buildChars) this._buildChars();
     if (this._refreshCurrentOp) this._refreshCurrentOp();
     if (this._refreshLoadout) this._refreshLoadout();
     this._refreshAccount(); this._refreshDaily(); this._syncSettings(); this._refreshBest();
   },
   _refreshDiff() { if (!this.el.diffSel) return; const opts = this.el.diffSel.querySelectorAll('.diff-opt'); for (let i = 0; i < opts.length; i++) opts[i].classList.toggle('on', i === (Meta.difficulty | 0)); },
+  _refreshMode() { if (!this.el.modeSel) return; const opts = this.el.modeSel.querySelectorAll('.diff-opt'); for (let i = 0; i < opts.length; i++) opts[i].classList.toggle('on', opts[i].dataset.m === (Meta.mode || 'endless')); if (this.el.modeCap) { if (Meta.mode === 'daily') { const d = DAILY_MODS[dailyIndex()], best = (Meta.dailyBest && Meta.dailyBest.day === dailyIndex()) ? Meta.dailyBest.score : 0; this.el.modeCap.textContent = 'Aujourd’hui : ' + d.name + ' — ' + d.desc + (best ? ' · record ' + formatNum(best) : ''); } else if (Meta.mode === 'bossrush') { this.el.modeCap.textContent = 'Boss en chaîne, toujours plus coriaces.'; } else { this.el.modeCap.textContent = ''; } } },
+  openCurses() { this._buildCurses(); this.show('screen-curses'); },
+  _refreshCurses() { if (!this.el.btnCurses) return; const n = (Meta.curses || []).length; this.el.btnCurses.innerHTML = '<span class="mx-ic">\u2620</span> Mal\u00e9dictions' + (n ? ' \u00b7 ' + n : ''); },
+  _buildCurses() {
+    const body = this.el.cursesBody; if (!body) return;
+    const act = Meta.curses || [];
+    let cw = 1; for (let i = 0; i < CURSES.length; i++) if (act.indexOf(CURSES[i].id) >= 0) cw += CURSES[i].reward;
+    if (this.el.cursesSummary) this.el.cursesSummary.textContent = act.length + ' active(s) \u2014 r\u00e9compense en or \u00d7' + cw.toFixed(2) + ' (plus de risque, plus de butin).';
+    let html = '';
+    for (let i = 0; i < CURSES.length; i++) {
+      const c = CURSES[i], on = act.indexOf(c.id) >= 0;
+      html += '<div class="q-row curse-row' + (on ? ' on' : '') + '" data-c="' + c.id + '">'
+        + '<div class="q-ic">' + (on ? '\u2620' : '\u25cb') + '</div>'
+        + '<div class="q-main"><div class="q-name">' + c.name + '</div><div class="q-desc">' + c.desc + '</div></div>'
+        + '<div class="q-side"><div class="q-reward">+' + Math.round(c.reward * 100) + '% or</div></div></div>';
+    }
+    body.innerHTML = html;
+    const self = this, rows = body.querySelectorAll('.curse-row');
+    for (let i = 0; i < rows.length; i++) rows[i].onclick = function () { const id = this.dataset.c; const arr = Meta.curses || (Meta.curses = []); const idx = arr.indexOf(id); if (idx >= 0) arr.splice(idx, 1); else arr.push(id); Meta.save(); Audio.ui(); self._buildCurses(); self._refreshCurses(); };
+  },
+  openPalmares() { this._buildPalmares(); this.show('screen-palmares'); },
+  _buildPalmares() {
+    const pp = this.el.prestigePanel;
+    if (pp) {
+      const lvl = Meta.prestige || 0, cost = Meta.prestigeCost(), can = Meta.gold >= cost;
+      const bonus = lvl ? ('+' + (lvl * 4) + '% d\u00e9g\u00e2ts \u00b7 +' + (lvl * 5) + '% or \u00b7 +' + (lvl * 2) + '% PV') : 'Aucun bonus actif pour l\u2019instant';
+      pp.innerHTML = '<div class="pp-top"><div class="pp-badge">\u2605</div><div class="pp-info">'
+        + '<div class="pp-k">Prestige</div><div class="pp-lvl">Niveau ' + lvl + '</div>'
+        + '<div class="pp-bonus">' + bonus + '</div></div></div>'
+        + '<button class="pp-btn" id="prestigeBtn"' + (can ? '' : ' disabled') + '>Prestiger \u2014 ' + formatNum(cost) + ' or</button>';
+      const btn = document.getElementById('prestigeBtn');
+      if (btn) btn.onclick = () => { if (Meta.doPrestige()) { Audio.evolve(); this._buildPalmares(); this._refreshBest(); } else { Audio.uiBack(); } };
+    }
+    const body = this.el.achBody; if (!body) return;
+    const done = Meta.achDone || [];
+    const nd = ACHIEVEMENTS.reduce((a, q) => a + (done.indexOf(q.id) >= 0 ? 1 : 0), 0);
+    if (this.el.achSummary) this.el.achSummary.textContent = nd + ' / ' + ACHIEVEMENTS.length + ' succ\u00e8s d\u00e9bloqu\u00e9s \u2014 chaque troph\u00e9e rapporte de l\u2019or.';
+    const prog = (q, v) => q.type === 'time' ? (formatTime(Math.min(v, q.goal)) + ' / ' + formatTime(q.goal)) : (formatNum(Math.min(v, q.goal)) + ' / ' + formatNum(q.goal));
+    let html = '';
+    for (let i = 0; i < ACHIEVEMENTS.length; i++) {
+      const q = ACHIEVEMENTS[i], isD = done.indexOf(q.id) >= 0;
+      const v = Meta.achValue(q.type), pct = (clamp(v / q.goal, 0, 1) * 100).toFixed(0);
+      html += '<div class="q-row' + (isD ? ' done' : '') + '">'
+        + '<div class="q-ic">' + (isD ? '\u2605' : '\u2606') + '</div>'
+        + '<div class="q-main"><div class="q-name">' + q.name + '</div>'
+        + '<div class="q-desc">' + q.desc + '</div>'
+        + '<div class="q-bar"><div class="q-fill" style="width:' + pct + '%"></div></div></div>'
+        + '<div class="q-side"><div class="q-reward">+' + q.gold + ' or</div>'
+        + (isD ? '<div class="q-status got">OBTENU</div>' : '<div class="q-prog">' + prog(q, v) + '</div>')
+        + '</div></div>';
+    }
+    body.innerHTML = html;
+  },
   openQuests() { this._buildQuests(); this.show('screen-quests'); },
   _buildQuests() {
     const body = this.el.questsBody; if (!body) return;
@@ -6066,7 +6518,7 @@ const UI = {
 
   show(screenId) {
     if (screenId !== 'screen-picker' && typeof WPreview !== 'undefined' && WPreview.running) WPreview.stop();
-    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests'];
+    const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests', 'screen-palmares', 'screen-curses'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
       if (s) s.classList.toggle('visible', screens[i] === screenId);
@@ -6113,9 +6565,19 @@ const UI = {
   },
 
   /* --- pause --- */
+  _buildPauseSummary() {
+    const el = this.el.pauseBuild; if (!el || !G || !G.player) return;
+    const p = G.player;
+    const seg = (label, items) => items.length ? '<div class="pb-row"><span class="pb-lbl">' + label + '</span><span class="pb-chips">' + items.join('') + '</span></div>' : '';
+    const wch = p.weapons.map((w) => { const d = WEAPONS[w.key] || EVOLUTIONS[w.key] || {}; const evo = !!d.isEvo; return '<span class="pb-chip' + (evo ? ' evo' : '') + '">' + (d.icon || '\u25c6') + ' ' + (d.name || w.key) + (evo ? '' : ' \u00b7 ' + w.level) + '</span>'; });
+    const pch = []; for (const k in p.passives) { const d = PASSIVES[k]; if (d) pch.push('<span class="pb-chip">' + (d.icon || '\u2022') + ' ' + d.name + ' \u00b7 ' + p.passives[k] + '</span>'); }
+    const sch = (p._synActive || []).map((id) => { const sy = SYNERGIES.find((x) => x.id === id); return sy ? '<span class="pb-chip syn">\u26a1 ' + sy.name + '</span>' : ''; });
+    const cch = (Meta.curses || []).map((id) => { const c = CURSES.find((x) => x.id === id); return c ? '<span class="pb-chip curse">\u2620 ' + c.name + '</span>' : ''; });
+    el.innerHTML = seg('Armes', wch) + seg('Passifs', pch) + seg('Synergies', sch) + seg('Malédictions', cch);
+  },
   togglePause() {
     if (!G) return;
-    if (G.state === 'playing') { G.state = 'paused'; this.show('screen-pause'); Audio.uiBack(); }
+    if (G.state === 'playing') { G.state = 'paused'; this._buildPauseSummary(); this.show('screen-pause'); Audio.uiBack(); }
     else if (G.state === 'paused') { G.state = 'playing'; this.show(null); Audio.ui(); }
   },
 
@@ -6271,6 +6733,12 @@ UI.gameOver = function (game) {
     e.goBest.innerHTML += '<div class="go-quests">\u2726 Qu\u00eate' + (_pops.length > 1 ? 's' : '') + ' accomplie' + (_pops.length > 1 ? 's' : '') + ' : ' + names.join(' \u00b7 ') + '</div>';
     Meta._questPops = [];
   }
+  const _ap = Meta._achPops || [];
+  if (_ap.length) {
+    const an = _ap.map((q) => q.name + ' \u2192 +' + q.gold + ' or');
+    e.goBest.innerHTML += '<div class="go-quests" style="color:var(--gold)">\u2605 Succ\u00e8s : ' + an.join(' \u00b7 ') + '</div>';
+    Meta._achPops = [];
+  }
   this.show('screen-gameover');
   document.body.dataset.state = 'gameover';
 };
@@ -6391,6 +6859,11 @@ ENEMIES.hornet = { name: 'Frelon', hp: 16, speed: 104, dmg: 9, radius: 10, xp: 3
 ENEMIES.revenant = { name: 'Revenant', hp: 72, speed: 58, dmg: 16, radius: 16, xp: 5, shape: 'penta', color: '#7a5a8a' };
 ENEMIES.marauder = { name: 'Maraudeur', hp: 22, speed: 92, dmg: 9, radius: 11, xp: 3, shape: 'tri', color: '#c97a4d', shoot: true, shootCd: 2.0, projSpeed: 250 };
 ENEMIES.boss_cyclone = { name: 'TEMPÊTE', hp: 54, speed: 40, dmg: 16, radius: 15, xp: 55, shape: 'octa', color: COLORS.frost, pattern: 'cyclone', bossHpMult: 46, bossScale: 2.8 };
+ENEMIES.summoner = { name: 'Invocateur', hp: 40, speed: 50, dmg: 10, radius: 15, xp: 5, shape: 'penta', color: '#7a9b6a', summoner: true, summonCd: 4.5, summonCount: 3, summonKey: 'swarm', summonRange: 280 };
+ENEMIES.frenzy = { name: 'Frénétique', hp: 14, speed: 118, dmg: 9, radius: 11, xp: 2, shape: 'tri', color: '#d05a8a', weave: true };
+ENEMIES.bulwark = { name: 'Rempart', hp: 64, speed: 38, dmg: 14, radius: 18, xp: 5, shape: 'octa', color: '#5a6b7a', shield: 30, shoot: true, shootCd: 2.6, projSpeed: 200 };
+ENEMIES.boss_nemesis = { name: 'NÉMÉSIS', hp: 56, speed: 42, dmg: 17, radius: 15, xp: 60, shape: 'star', color: '#b07fd0', pattern: 'nemesis', bossHpMult: 50, bossScale: 2.9 };
+BOSS_CYCLE.push('boss_nemesis');
 
 CHARACTERS.nyx = {
   key: 'nyx', name: 'NYX', color: '#b07fd0', icon: '☾',
@@ -6430,6 +6903,9 @@ WEAPONS.kunai = {
     }
   },
 };
+WEAPON_INFO.mortar = { pattern: 'rocket', range: 'Longue', effect: 'Explosions de zone', how: 'Lobe des obus vers l’ennemi le plus proche ; ils détonnent en zone à l’impact. Idéal pour briser les groupes compacts. La passive Zone agrandit le rayon et permet l’évolution en Obusier Lourd.' };
+WEAPON_INFO.hornet = { pattern: 'drone', range: 'Moyenne', effect: 'Autoguidage + explosion', how: 'Libère des guêpes qui poursuivent les ennemis et explosent au contact. Le nombre grimpe avec les niveaux et la passive Multitude ; évolue en Essaim Furieux — une nuée dense à 360°.' };
+WEAPON_INFO.phare = { pattern: 'beam', range: 'Moyenne', effect: 'Balayage rotatif continu', how: 'Projette un faisceau qui tournoie sans arrêt autour de vous, fauchant tout sur son passage. La passive Durée débloque la Couronne Solaire — trois faisceaux simultanés.' };
 WEAPON_INFO.kunai = { pattern: 'spread', range: 'Longue', effect: 'Perforation en ligne', how: 'Projette une volée de lames rapides qui traversent plusieurs ennemis sur leur trajectoire. La perforation et le nombre de lames montent avec les niveaux — redoutable contre les files d’ennemis.' };
 WEAPONS.hail = {
   name: 'Grêle', icon: '❉', color: COLORS.steel, tag: 'Bombardement de zone',
@@ -6807,6 +7283,38 @@ const ABILITIES = {
       g.rings.push({ x: p.x, y: p.y, from: 160, to: 0, life: 0.4, max: 0.4, color: COLORS.danger });
       Audio.hurt(); Camera.shake(4, 0.2);
     },
+  },
+};
+ABILITIES.meteor = {
+  key: 'meteor', name: 'Pluie de Météores', icon: '☄', color: COLORS.ember, cooldown: 11,
+  desc: 'Fait s’abattre des météores explosifs sur les ennemis proches.',
+  locked: true, unlock: { type: 'quest' },
+  activate(g, p) {
+    const list = g.queryEnemies(p.x, p.y, 480);
+    const n = Math.max(4, Math.min(7, list.length || 4));
+    const dmg = 64 * p.stats.damageMul, br = 88 * Math.sqrt(p.stats.areaMul);
+    for (let i = 0; i < n; i++) {
+      const e = list[i];
+      const x = e ? e.x : p.x + rand(-220, 220), y = e ? e.y : p.y + rand(-220, 220);
+      g.rings.push({ x, y, from: 0, to: br, life: 0.4, max: 0.4, color: COLORS.ember });
+      g.areaBurst(x, y, br, dmg, { knock: 200, color: COLORS.emberHi, ring: true });
+      for (let k = 0; k < 7; k++) g.particle({ x, y, vx: rand(-120, 120), vy: rand(-120, 120), life: 0.4, max: 0.4, size: rand(2, 4), color: COLORS.ember, glow: true, drag: 0.9 });
+    }
+    if (g.hitStop) g.hitStop(0.05); Camera.shake(6, 0.3); Audio.evolve();
+  },
+};
+ABILITIES.barrage = {
+  key: 'barrage', name: 'Salve Totale', icon: '✺', color: COLORS.gold, cooldown: 8,
+  desc: 'Décharge un anneau de projectiles dans toutes les directions.',
+  locked: true, unlock: { type: 'quest' },
+  activate(g, p) {
+    const count = 30, dmg = 15 * p.stats.damageMul;
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * TAU + rand(-0.04, 0.04), c = p.rollCrit();
+      g.spawnProjectile({ x: p.x, y: p.y, angle: a, speed: 470 * p.stats.projSpeedMul, dmg: dmg * (c ? p.stats.critMult : 1), radius: 5, size: 5, life: 1.0 * p.stats.durationMul, pierce: 1, color: COLORS.goldHi, kind: 'bullet', isCrit: c, knock: 120 });
+    }
+    g.rings.push({ x: p.x, y: p.y, from: 0, to: 150, life: 0.4, max: 0.4, color: COLORS.gold });
+    Camera.shake(4, 0.2); Audio.shoot();
   },
 };
 
