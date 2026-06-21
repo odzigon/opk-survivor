@@ -5222,13 +5222,17 @@ const Net = {
     this.channel = ch;
     ch.on('presence', { event: 'sync' }, () => this._syncPresence());
     ch.on('broadcast', { event: 'm' }, (msg) => this._recv(msg && msg.payload));
-    ch.subscribe((status) => {
+    let done = false;
+    ch.subscribe((status, err) => {
+      this.lastErr = err ? (err.message || ('' + err)) : (this.lastErr || '');
       if (status === 'SUBSCRIBED') {
         this.connected = true;
         try { ch.track({ id: this.me.id, name: this.me.name, host: this.isHost, ready: this._ready, t: this._joinT }); } catch (e) {}
-        if (cb) cb(true);
+        if (!done && cb) { done = true; cb(true); }
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-        this.connected = false; if (cb) cb(false, status); if (this._onChange) this._onChange();
+        this.connected = false;
+        if (!done && cb) { done = true; cb(false, status); }
+        if (this._onChange) this._onChange();
       }
     });
   },
@@ -6548,7 +6552,7 @@ const UI = {
     G.spawnMul = (G.spawnMul || 1) * (1 + 0.3 * (N - 1));
     this._enterPlay();
   },
-  _netErr(e) { if (e === 'offline') return 'Hors ligne : connecte-toi via Discord d\u2019abord.'; if (e === 'code') return 'Code invalide (4 caract\u00e8res minimum).'; return 'Connexion impossible. R\u00e9essaie.'; },
+  _netErr(e) { const det = (typeof Net !== 'undefined' && Net.lastErr) ? ' [' + Net.lastErr + ']' : ''; if (e === 'offline') return 'SDK Supabase non charg\u00e9 (r\u00e9seau / bloqueur de scripts ?).'; if (e === 'code') return 'Code invalide (4 caract\u00e8res minimum).'; if (e === 'channel') return 'Impossible de cr\u00e9er le canal (client Supabase absent).'; if (e === 'CHANNEL_ERROR') return 'Realtime refus\u00e9 par Supabase \u2014 autorisation Realtime / RLS \u00e0 r\u00e9gler c\u00f4t\u00e9 projet.' + det; if (e === 'TIMED_OUT') return 'D\u00e9lai d\u00e9pass\u00e9 : Realtime injoignable (Realtime d\u00e9sactiv\u00e9 sur le projet, ou r\u00e9seau).' + det; if (e === 'CLOSED') return 'Canal ferm\u00e9. R\u00e9essaie.' + det; return 'Connexion impossible (' + (e || '?') + ').' + det; },
   openCurses() { this._buildCurses(); this.show('screen-curses'); },
   _refreshCurses() { if (!this.el.btnCurses) return; const n = (Meta.curses || []).length; this.el.btnCurses.innerHTML = '<span class="mx-ic">\u2620</span> Mal\u00e9dictions' + (n ? ' \u00b7 ' + n : ''); },
   _buildCurses() {
