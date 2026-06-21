@@ -1198,7 +1198,7 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 <!-- ============ ÉCRAN : MULTIJOUEUR (CO-OP) ============ -->
 <div class="screen" id="screen-lobby">
   <div class="screen-inner cl-inner">
-    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-3</div>
+    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-4</div>
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Multijoueur</h1>
     <div class="lobby-box" id="lobbyBox"></div>
     <div class="btn-row"><button class="btn btn-ghost" id="lobbyBack">Retour</button></div>
@@ -5232,8 +5232,13 @@ const Net = {
         clearTimeout(watchdog); this.connected = true;
         try { ch.track({ id: this.me.id, name: this.me.name, host: this.isHost, ready: this._ready, t: this._joinT }); } catch (e) {}
         if (!done && cb) { done = true; cb(true); }
+        if (this._onChange) this._onChange();
       } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-        clearTimeout(watchdog); fail(status);
+        clearTimeout(watchdog);
+        const wasConnected = this.connected; this.connected = false;
+        if (!done && cb) { done = true; cb(false, status); }
+        else if (wasConnected) console.warn('[NEXIUM net] canal perdu APRES connexion :', status, '(token anon expiré ? auth requise ?)');
+        if (this._onChange) this._onChange();
       }
     });
   },
@@ -5247,6 +5252,7 @@ const Net = {
       players[id] = { id, name: m.name || 'Opérateur', host: !!m.host, ready: !!m.ready, t: m.t || 0 };
       if (earliest === null || (m.t || 0) < earliest) { earliest = m.t || 0; hostId = id; }
     }
+    console.log('[NEXIUM net] presence sync :', Object.keys(players).length, 'joueur(s)', Object.keys(players));
     this.hostId = hostId; this.isHost = (this.me.id === hostId); this.players = players;
     if (this._onChange) this._onChange();
   },
@@ -6523,8 +6529,8 @@ const UI = {
       box.innerHTML = '<div class="lobby-actions"><button class="btn btn-primary" id="lbHost">Cr\u00e9er un salon</button>'
         + '<div class="lobby-join"><input id="lbCode" maxlength="5" placeholder="CODE" class="lobby-input" autocomplete="off" /><button class="btn btn-ghost" id="lbJoin">Rejoindre</button></div></div>'
         + '<div class="lobby-note">' + (this._lobbyMsg || 'Cr\u00e9e un salon et partage le code, ou rejoins celui d\u2019un ami. La synchronisation de jeu en co-op arrive \u00e0 l\u2019\u00e9tape suivante \u2014 ici le transport et le salon sont d\u00e9j\u00e0 fonctionnels.') + '</div>';
-      const hb = document.getElementById('lbHost'); if (hb) hb.onclick = () => { Audio.ui(); self._lobbyMsg = 'Connexion\u2026'; self._buildLobby(); Net.host((ok, err) => { if (!ok) { self._lobbyMsg = self._netErr(err); } self._buildLobby(); }); };
-      const jb = document.getElementById('lbJoin'); if (jb) jb.onclick = () => { const c = (document.getElementById('lbCode').value || ''); Audio.ui(); self._lobbyMsg = 'Connexion\u2026'; self._buildLobby(); Net.join(c, (ok, err) => { if (!ok) { self._lobbyMsg = self._netErr(err); } self._buildLobby(); }); };
+      const hb = document.getElementById('lbHost'); if (hb) hb.onclick = () => { Audio.ui(); self._lobbyMsg = 'Connexion\u2026'; self._buildLobby(); Net.host((ok, err) => { self._lobbyMsg = ok ? '' : self._netErr(err); self._buildLobby(); }); };
+      const jb = document.getElementById('lbJoin'); if (jb) jb.onclick = () => { const c = (document.getElementById('lbCode').value || ''); Audio.ui(); self._lobbyMsg = 'Connexion\u2026'; self._buildLobby(); Net.join(c, (ok, err) => { self._lobbyMsg = ok ? '' : self._netErr(err); self._buildLobby(); }); };
       return;
     }
     const ps = Object.keys(Net.players).map((k) => Net.players[k]).sort((a, b) => a.t - b.t);
@@ -7952,7 +7958,7 @@ WEAPON_INFO.driller = { pattern: 'pierce', range: 'Ligne droite', effect: 'Perfo
 ['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc','needler','frostcone','driller'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
-  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-3');
+  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-4');
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d', { alpha: false });
   G = new Game(canvas, ctx);
