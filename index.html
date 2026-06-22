@@ -1198,7 +1198,7 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 <!-- ============ ÉCRAN : MULTIJOUEUR (CO-OP) ============ -->
 <div class="screen" id="screen-lobby">
   <div class="screen-inner cl-inner">
-    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-8</div>
+    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-10</div>
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Multijoueur</h1>
     <div class="lobby-box" id="lobbyBox"></div>
     <div class="btn-row"><button class="btn btn-ghost" id="lobbyBack">Retour</button></div>
@@ -3225,7 +3225,7 @@ Pickup.prototype.update = function (dt, p) {
   }
   if (d2 < (p.radius + this.radius + 4) * (p.radius + this.radius + 4)) {
     this.dead = true;
-    G.collectPickup(this);
+    G.collectPickup(this, p);
   }
 };
 Pickup.prototype.draw = function (ctx) {
@@ -4445,6 +4445,7 @@ class Game {
     g.value = value; g.forced = false; g.dead = false; g.bob = rand(0, TAU);
     g.tier = value >= 25 ? 3 : value >= 8 ? 2 : value >= 3 ? 1 : 0;
     g.radius = 6 + (g.tier >= 2 ? 2 : 0);
+    g._nid = (this._gnid = (this._gnid || 0) + 1);
     this.gems.push(g);
   }
   spawnPickup(x, y, type, amount) {
@@ -4452,6 +4453,7 @@ class Game {
     p.x = x; p.y = y; p.type = type; p.amount = amount || 0;
     p.radius = PICKUP_DEFS[type].r; p.bob = rand(0, TAU);
     p.life = (type === 'chest' || type === 'gold') ? 99999 : 16;
+    p._nid = (this._pnid = (this._pnid || 0) + 1);
     this.pickups.push(p);
   }
 
@@ -4688,8 +4690,15 @@ Game.prototype.onEnemyKilled = function (e) {
 };
 
 /* --- ramassages --- */
-Game.prototype.collectPickup = function (p) {
+Game.prototype.collectPickup = function (p, who) {
   const px = this.player;
+  if (who && who._remote) {
+    if (p.type === 'magnet') { for (let i = 0; i < this.gems.length; i++) this.gems[i].forced = true; }
+    else if (p.type === 'bomb') { this.bombScreen(); }
+    else if (p.type === 'freeze') { this.freezeScreen(); }
+    else if (typeof Net !== 'undefined' && Net.connected) Net.send('pk', { to: who._id, t: p.type, a: p.amount || 0 });
+    return;
+  }
   if (p.type === 'heal') { px.heal(Math.round(px.maxHp * 0.25)); Audio.itemPick(); }
   else if (p.type === 'magnet') { for (let i = 0; i < this.gems.length; i++) this.gems[i].forced = true; Audio.itemPick(); this.floater(px.x, px.y - 30, 'AIMANT', COLORS.steel, 16); }
   else if (p.type === 'bomb') { this.bombScreen(); }
@@ -4741,6 +4750,7 @@ Game.prototype.onLevelUp = function () {
   if (this.state === 'playing') this.openUpgradeScreen(false);
 };
 Game.prototype.openUpgradeScreen = function (isChest) {
+  if (this.net && this.state !== 'levelup' && typeof Net !== 'undefined') Net.send('wpause', {});
   this.state = 'levelup';
   this._chestMode = isChest;
   const choices = this.getChoices();
@@ -4856,7 +4866,7 @@ Game.prototype.resolveUpgrade = function () {
   else this.levelQueue = Math.max(0, this.levelQueue - 1);
   UI.hideLevelUp();
   if (this.levelQueue > 0) this.openUpgradeScreen(false);
-  else this.state = 'playing';
+  else { this.state = 'playing'; if (this.net && typeof Net !== 'undefined') Net.send('wresume', {}); }
 };
 Game.prototype.reroll = function () {
   if (this.rerolls <= 0) return;
@@ -5065,6 +5075,11 @@ Game.prototype.update = function (dt) {
 
   if (this.comboTimer > 0) { this.comboTimer -= dt; if (this.comboTimer <= 0) this.combo = 0; }
 
+  if (this.net && this._coopFreeze > 0) {
+    if (performance.now() - (this._freezeT0 || 0) > 20000) this._coopFreeze = 0;
+    else { this._netTick(dt); return; }
+  }
+
   const _client = !!(this.net && this.net.role === 'client');
   if (!_client) this.spawnDirector(dt);
 
@@ -5086,8 +5101,10 @@ Game.prototype.update = function (dt) {
 
   if (!_client) {
     for (let i = 0; i < this.enemyProjectiles.length; i++) this.enemyProjectiles[i].update(dt, p);
-    for (let i = 0; i < this.gems.length; i++) this.gems[i].update(dt, p);
-    for (let i = 0; i < this.pickups.length; i++) this.pickups[i].update(dt, p);
+    if (this.net && this.coopPlayers) { const _gt = this._coopTargets(); for (let i = 0; i < this.gems.length; i++) this.gems[i].update(dt, this._nearestTarget(this.gems[i], _gt, p)); }
+    else for (let i = 0; i < this.gems.length; i++) this.gems[i].update(dt, p);
+    if (this.net && this.coopPlayers) { const _pt = this._coopTargets(); for (let i = 0; i < this.pickups.length; i++) this.pickups[i].update(dt, this._nearestTarget(this.pickups[i], _pt, p)); }
+    else for (let i = 0; i < this.pickups.length; i++) this.pickups[i].update(dt, p);
   }
   for (let i = 0; i < this.particles.length; i++) this.particles[i].update(dt);
   for (let i = 0; i < this.floaters.length; i++) this.floaters[i].update(dt);
@@ -6102,7 +6119,7 @@ Game.prototype.render = function () {
   this._drawRings(ctx);
   for (let i = 0; i < this.enemies.length; i++) { const e = this.enemies[i]; if (!e.dead && (e.isBoss || _onS(e.x, e.y))) e.draw(ctx); }
   for (let i = 0; i < this.enemyProjectiles.length; i++) { const o = this.enemyProjectiles[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
-  if (this.net && this.net.role === 'client') this._drawNetEP(ctx);
+  if (this.net && this.net.role === 'client') { this._drawNetGems(ctx); this._drawNetPickups(ctx); this._drawNetEP(ctx); }
   this._drawBolts(ctx);
   this._drawWeaponAuras(ctx);
   for (let i = 0; i < this.projectiles.length; i++) { const o = this.projectiles[i]; if (_onS(o.x, o.y)) o.draw(ctx); }
@@ -6113,7 +6130,8 @@ Game.prototype.render = function () {
   this._drawFloaters(ctx);
   this._drawBossArrow(ctx);
   this._drawEdgeMarkers(ctx);
-  if (this.net && this.coopPlayers) this._drawCoop(ctx);
+  if (this.net && this.coopPlayers) { this._drawCoop(ctx); this._drawCoopHud(ctx); }
+  if (this.net && this._coopFreeze > 0) this._drawFreezeOverlay(ctx);
   this._drawVignette(ctx);
 };
 
@@ -6225,8 +6243,7 @@ const UI = {
       const ne = G._netE || (G._netE = {}); const seen = {}; const en = d.e || [];
       for (let i = 0; i < en.length; i++) { const a = en[i], nid = a[0]; seen[nid] = 1; let e = ne[nid]; if (!e) e = ne[nid] = {}; e.x = a[1]; e.y = a[2]; e.ti = a[3]; e.hpr = (a[4] || 100) / 100; e.bf = a[5]; }
       for (const nid in ne) { if (!seen[nid]) delete ne[nid]; }
-      G._netEP = d.p || []; G._netBoss = d.b || 0;
-      if (d.kx && G.player) G.player.addXp(d.kx);
+      G._netEP = d.p || []; G._netBoss = d.b || 0; G._netBossName = d.bn || 'BOSS'; G._netGems = d.g || []; G._netPickups = d.k || [];
     });
     Net.on('hit', (d) => {
       if (!G || !G.net || G.net.role !== 'host' || !d) return;
@@ -6235,6 +6252,21 @@ const UI = {
     Net.on('eff', (d) => {
       if (!G || !G.net || G.net.role !== 'host' || !d) return;
       const arr = G.enemies; for (let i = 0; i < arr.length; i++) { const e = arr[i]; if (e.dead || e._nid !== d.n) continue; if (d.s && e.slow) e.slow(d.s); if (d.b && e.burn) e.burn(d.b, d.bt || 1.5); break; }
+    });
+    Net.on('gemxp', (d) => {
+      if (!G || !G.net || G.net.role !== 'client' || !d) return;
+      if (d.to === Net.me.id && G.player) { G.player.addXp(d.v || 0); if (Audio.gem) Audio.gem(); }
+    });
+    Net.on('wpause', () => { if (!G) return; G._coopFreeze = (G._coopFreeze || 0) + 1; G._freezeT0 = performance.now(); });
+    Net.on('wresume', () => { if (!G) return; G._coopFreeze = Math.max(0, (G._coopFreeze || 0) - 1); });
+    Net.on('pk', (d) => {
+      if (!G || !G.net || G.net.role !== 'client' || !d || d.to !== Net.me.id || !G.player) return;
+      const p = G.player;
+      if (d.t === 'heal') p.heal(Math.round(p.maxHp * 0.25));
+      else if (d.t === 'gold') G.addGold(d.a || 3);
+      else if (d.t === 'xp') p.addXp(d.a || 60);
+      else if (d.t === 'chest') { G.addGold(10); G.openUpgradeScreen(true); }
+      if (Audio.itemPick) Audio.itemPick();
     });
     if (this.el.helpBack) this.el.helpBack.addEventListener('click', () => { Audio.uiBack(); this.show('screen-start'); this._refreshBest(); });
     if (this.el.currentOp) this.el.currentOp.addEventListener('click', () => { Audio.ui(); this._buildChars(); this._refreshRosterGold(); this.show('screen-roster'); });
@@ -6832,7 +6864,10 @@ UI.updateHUD = function (game) {
   if (game.combo >= 5) { e.hudCombo.style.opacity = '1'; e.hudCombo.textContent = '×' + game.combo; }
   else e.hudCombo.style.opacity = '0';
 
-  if (game.activeBoss && !game.activeBoss.dead) {
+  if (game.net && game.net.role === 'client') {
+    if (game._netBoss > 0) { e.bossBar.classList.add('show'); e.bossName.textContent = game._netBossName || 'BOSS'; e.bossFill.style.transform = 'scaleX(' + clamp(game._netBoss, 0, 1) + ')'; }
+    else e.bossBar.classList.remove('show');
+  } else if (game.activeBoss && !game.activeBoss.dead) {
     const b = game.activeBoss;
     e.bossBar.classList.add('show');
     e.bossName.textContent = b.bossName || 'BOSS';
@@ -7748,7 +7783,7 @@ Game.prototype._coopTargets = function () {
   for (const id in cp) {
     const c = cp[id]; if (c.down) continue;
     let pr = this._rProxies[id];
-    if (!pr) pr = this._rProxies[id] = { x: 0, y: 0, radius: 13, alive: true, downed: false, hp: 1, maxHp: 1, takeDamage: function () {}, hit: function () {}, _remote: true };
+    if (!pr) pr = this._rProxies[id] = { x: 0, y: 0, radius: 13, pickupRadius: 130, alive: true, downed: false, hp: 1, maxHp: 1, takeDamage: function () {}, hit: function () {}, _id: id, _remote: true, addXp: function (v) { if (typeof Net !== 'undefined' && Net.connected) Net.send('gemxp', { to: this._id, v: Math.round(v) }); } };
     pr.x = c.rx !== undefined ? c.rx : c.x; pr.y = c.ry !== undefined ? c.ry : c.y;
     out.push(pr);
   }
@@ -7766,9 +7801,13 @@ Game.prototype._coopBroadcast = function () {
   for (let i = 0; i < arr.length && en.length < 120; i++) { const e = arr[i]; if (e.dead || e._ghost) continue; en.push([e._nid | 0, Math.round(e.x), Math.round(e.y), this._ekIdx[e.type] | 0, Math.round((e.hp / e.maxHp) * 100), e.isBoss ? 1 : 0]); }
   const ep = [], ea = this.enemyProjectiles;
   for (let i = 0; i < ea.length && ep.length < 70; i++) { const o = ea[i]; if (o.dead) continue; ep.push([Math.round(o.x), Math.round(o.y)]); }
-  let boss = 0; if (this.activeBoss && !this.activeBoss.dead) boss = +(this.activeBoss.hp / this.activeBoss.maxHp).toFixed(3);
-  const kx = Math.round(this._coopKxp || 0); this._coopKxp = 0;
-  Net.send('snap', { e: en, p: ep, b: boss, t: Math.round(this.time), kx: kx });
+  let boss = 0, bossName = '';
+  if (this.activeBoss && !this.activeBoss.dead) { boss = +(this.activeBoss.hp / this.activeBoss.maxHp).toFixed(3); bossName = this.activeBoss.bossName || 'BOSS'; }
+  const gm = [], ga = this.gems;
+  for (let i = 0; i < ga.length && gm.length < 80; i++) { const g = ga[i]; if (g.dead) continue; gm.push([g._nid | 0, Math.round(g.x), Math.round(g.y), g.value | 0]); }
+  const pk = [], pa = this.pickups;
+  for (let i = 0; i < pa.length && pk.length < 30; i++) { const o = pa[i]; if (o.dead) continue; pk.push([o._nid | 0, Math.round(o.x), Math.round(o.y), o.type]); }
+  Net.send('snap', { e: en, p: ep, g: gm, k: pk, b: boss, bn: bossName, t: Math.round(this.time) });
 };
 Game.prototype._netClientSync = function (dt) {
   if (!this._ekArr) this._ekArr = Object.keys(ENEMIES);
@@ -7795,6 +7834,59 @@ Game.prototype._netClientSync = function (dt) {
     if (!g._ghost || !ne[g._nid]) { if (g._ghost) delete map[g._nid]; this.enemies.splice(i, 1); continue; }
     g.x += ((g.tx != null ? g.tx : g.x) - g.x) * k;
     g.y += ((g.ty != null ? g.ty : g.y) - g.y) * k;
+  }
+};
+Game.prototype._drawCoopHud = function (ctx) {
+  const cp = this.coopPlayers; if (!cp) return;
+  const ids = Object.keys(cp); if (!ids.length) return;
+  let y = 96;
+  ctx.save(); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  for (let i = 0; i < ids.length && i < 3; i++) {
+    const c = cp[ids[i]]; const ch = (typeof CHARACTERS !== 'undefined' && CHARACTERS[c.char]) || null;
+    const accent = c.down ? COLORS.danger : (ch ? ch.color : COLORS.frost);
+    const x = 16;
+    ctx.fillStyle = 'rgba(8,8,12,0.45)'; ctx.fillRect(x - 6, y - 13, 158, 28);
+    ctx.fillStyle = accent; ctx.fillRect(x - 6, y - 13, 3, 28);
+    ctx.font = '600 11px ui-monospace, monospace'; ctx.fillStyle = COLORS.bone;
+    ctx.fillText((c.name || 'Allié').slice(0, 12), x, y - 1);
+    ctx.fillStyle = COLORS.muted; ctx.font = '600 10px ui-monospace, monospace';
+    ctx.fillText('Niv.' + (c.lvl || 1), x, y + 11);
+    const bw = 86, hr = clamp((c.hp || 0) / (c.mhp || 1), 0, 1);
+    ctx.fillStyle = 'rgba(255,255,255,.14)'; ctx.fillRect(x + 58, y + 3, bw, 6);
+    ctx.fillStyle = c.down ? COLORS.danger : (hr < 0.3 ? COLORS.danger : COLORS.heal); ctx.fillRect(x + 58, y + 3, bw * hr, 6);
+    y += 34;
+  }
+  ctx.restore();
+};
+Game.prototype._drawFreezeOverlay = function (ctx) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(8,8,12,0.55)'; ctx.fillRect(0, 0, VIEW.w, VIEW.h);
+  ctx.textAlign = 'center'; ctx.fillStyle = COLORS.bone; ctx.font = '700 22px sans-serif';
+  ctx.fillText('\u23f8 UN ALLIÉ MONTE DE NIVEAU', VIEW.w / 2, VIEW.h / 2 - 6);
+  ctx.font = '600 12px ui-monospace, monospace'; ctx.fillStyle = COLORS.muted;
+  ctx.fillText('Reprise imminente\u2026', VIEW.w / 2, VIEW.h / 2 + 20);
+  ctx.restore();
+};
+Game.prototype._drawNetPickups = function (ctx) {
+  const pk = this._netPickups; if (!pk || !pk.length) return;
+  for (let i = 0; i < pk.length; i++) {
+    const type = pk[i][3], def = PICKUP_DEFS[type]; if (!def) continue;
+    const sx = Camera.sx(pk[i][1]), sy = Camera.sy(pk[i][2]); if (sx < -24 || sx > VIEW.w + 24 || sy < -24 || sy > VIEW.h + 24) continue;
+    const r = def.r || 10;
+    ctx.save(); ctx.translate(sx, sy); ctx.shadowColor = def.color; ctx.shadowBlur = 12; ctx.fillStyle = def.color;
+    ctx.beginPath(); ctx.arc(0, 0, r * 0.72, 0, TAU); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.strokeStyle = hexA('#ffffff', 0.85); ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+  }
+};
+Game.prototype._drawNetGems = function (ctx) {
+  const gm = this._netGems; if (!gm || !gm.length) return;
+  for (let i = 0; i < gm.length; i++) {
+    const v = gm[i][3], tier = v >= 25 ? 3 : v >= 8 ? 2 : v >= 3 ? 1 : 0;
+    const sx = Camera.sx(gm[i][1]), sy = Camera.sy(gm[i][2]); if (sx < -20 || sx > VIEW.w + 20 || sy < -20 || sy > VIEW.h + 20) continue;
+    const c = Gem.tierColor(tier), r = 6 + (tier >= 2 ? 2 : 0);
+    ctx.save(); ctx.translate(sx, sy); ctx.shadowColor = c; ctx.shadowBlur = 5; ctx.fillStyle = c;
+    ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * 0.8, 0); ctx.lineTo(0, r); ctx.lineTo(-r * 0.8, 0); ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0; ctx.strokeStyle = hexA('#ffffff', 0.8); ctx.lineWidth = 1.2; ctx.stroke(); ctx.restore();
   }
 };
 Game.prototype._drawNetEP = function (ctx) {
@@ -8076,7 +8168,7 @@ WEAPON_INFO.driller = { pattern: 'pierce', range: 'Ligne droite', effect: 'Perfo
 ['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc','needler','frostcone','driller'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
-  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-8');
+  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-10');
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d', { alpha: false });
   G = new Game(canvas, ctx);
