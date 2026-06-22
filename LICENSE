@@ -1,0 +1,280 @@
+NEXIUM // SURVIVANT — LICENCE PROPRIÉTAIRE EXCLUSIVE
+======================================================
+Copyright © 2026 ODZIGON. Tous droits réservés.
+
+Version 1.0 — En vigueur à compter de la date de première publication.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AVERTISSEMENT PRÉLIMINAIRE
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ce dépôt et l'intégralité de son contenu sont la propriété exclusive et
+intégrale d'ODZIGON (ci-après « l'Auteur »). Aucun droit d'utilisation,
+de reproduction, de modification, de distribution ou d'exploitation n'est
+accordé à quiconque, sous quelque forme que ce soit, sauf autorisation
+écrite, explicite et préalable de l'Auteur.
+
+Tout accès à ce dépôt — par quelque moyen que ce soit — vaut acceptation
+inconditionnelle des termes de la présente licence. Si vous n'acceptez pas
+ces termes dans leur intégralité, vous êtes tenu de cesser immédiatement
+tout accès, toute copie et toute utilisation du contenu concerné.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 1 — OBJET ET CHAMP D'APPLICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.1  La présente licence régit l'ensemble des éléments constitutifs du
+     projet NEXIUM // SURVIVANT, sans exception ni restriction de périmètre,
+     notamment :
+
+       (a) le code source, sous toutes ses formes — brut, compilé, minifié,
+           obfusqué, transpilé ou autrement transformé ;
+       (b) les ressources graphiques, visuelles et audiovisuelles — sprites,
+           textures, interfaces, animations, effets, polices, icônes ;
+       (c) les ressources sonores et musicales — effets sonores, musiques,
+           ambiances, voix ;
+       (d) les données de conception — niveaux, configurations, paramètres,
+           équilibrage, lore, noms propres fictifs, univers narratif ;
+       (e) la documentation, les fichiers de configuration, les scripts de
+           déploiement et tout fichier auxiliaire présent dans le dépôt ;
+       (f) le concept général, l'architecture logique, les systèmes de jeu
+           et les mécaniques originales décrits ou implémentés dans le projet.
+
+1.2  Cette licence s'applique à tout contenu accessible via le dépôt
+     officiel, la démo hébergée, ou tout miroir ou archive — qu'elle qu'en
+     soit l'origine.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 2 — DROITS CONCÉDÉS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1  DROIT DE CONSULTATION LIMITÉ
+     L'Auteur concède uniquement le droit de consulter le contenu du dépôt
+     à des fins strictement personnelles, non commerciales et non
+     reproductibles. Ce droit est révocable à tout moment, sans préavis ni
+     justification.
+
+2.2  DROIT DE JETER LA DÉMO PUBLIQUE
+     L'Auteur concède le droit de jouer à la démo publique hébergée à
+     l'adresse officielle, à titre personnel et non commercial, sans
+     modification du contenu servi.
+
+2.3  ABSENCE DE TOUTE AUTRE CONCESSION
+     Aucun autre droit n'est accordé, implicitement ou explicitement. Le
+     silence de la présente licence sur un usage particulier vaut
+     interdiction formelle de cet usage.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 3 — INTERDICTIONS ABSOLUES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1  Il est strictement et expressément interdit, sans autorisation écrite
+     préalable de l'Auteur, d'effectuer tout ou partie des actes suivants :
+
+       (a) REPRODUCTION — copier, cloner, archiver, capturer, imprimer ou
+           dupliquer tout ou partie du contenu, sous quelque forme que ce
+           soit, sur quelque support que ce soit ;
+
+       (b) DISTRIBUTION — distribuer, partager, publier, diffuser, transmettre
+           ou mettre à disposition de tiers tout ou partie du contenu, à titre
+           gratuit ou onéreux, par quelque moyen que ce soit ;
+
+       (c) MODIFICATION — modifier, adapter, corriger, traduire, localiser,
+           reformater, restructurer ou altérer de quelque manière que ce soit
+           tout ou partie du contenu ;
+
+       (d) DÉRIVATION — créer une œuvre dérivée, un fork, un mod, un patch,
+           un plugin, une extension, un portage ou tout projet inspiré de
+           manière substantielle des éléments du présent projet ;
+
+       (e) EXPLOITATION COMMERCIALE — utiliser directement ou indirectement
+           tout élément du projet à des fins commerciales, lucratives,
+           promotionnelles ou publicitaires ;
+
+       (f) INGÉNIERIE INVERSE — décompiler, désassembler, désobfusquer,
+           analyser, extraire ou tenter de reconstituer tout ou partie du
+           code source ou des données internes du projet ;
+
+       (g) HÉBERGEMENT NON AUTORISÉ — héberger, miroir, déployer ou rendre
+           accessible une copie du projet ou de la démo sur tout serveur,
+           plateforme, CDN ou support non expressément autorisé par l'Auteur ;
+
+       (h) INTÉGRATION TIERCE — intégrer, incorporer ou inclure tout élément
+           du projet dans un projet, produit, service ou système tiers ;
+
+       (i) USAGE D'ENTRAÎNEMENT — utiliser tout ou partie du contenu comme
+           données d'entraînement, de fine-tuning, d'évaluation ou d'analyse
+           pour tout système d'intelligence artificielle ou d'apprentissage
+           automatique ;
+
+       (j) CONTOURNEMENT TECHNIQUE — tenter de contourner, neutraliser ou
+           supprimer toute mesure technique de protection, d'obfuscation ou
+           de contrôle d'accès mise en place par l'Auteur.
+
+3.2  Ces interdictions s'appliquent sans limitation de territoire, de
+     support, de format, de durée ou de finalité.
+
+3.3  Aucun usage prévu par une exception légale nationale (citation courte,
+     enseignement, recherche, parodie, etc.) ne peut être invoqué pour
+     déroger aux interdictions visées à l'article 3.1, sauf dans la mesure
+     strictement imposée par une disposition légale impérative à laquelle
+     il est impossible de déroger contractuellement.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 4 — PROPRIÉTÉ INTELLECTUELLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1  L'Auteur est et demeure le seul et unique titulaire de l'ensemble des
+     droits de propriété intellectuelle afférents au projet, incluant sans
+     s'y limiter : les droits d'auteur, les droits moraux, les droits sur
+     les bases de données, les droits sui generis, et tout droit connexe.
+
+4.2  La mise à disposition publique du dépôt — y compris sous forme de code
+     visible — ne constitue en aucun cas une cession, une licence ouverte,
+     un abandon de droits, ou une renonciation quelconque aux droits de
+     l'Auteur.
+
+4.3  Les noms, identifiants, personnages, opérateurs, lieux et tout élément
+     narratif ou conceptuel original du projet constituent des créations
+     protégées appartenant exclusivement à l'Auteur.
+
+4.4  Toute œuvre créée en violation de la présente licence sera réputée
+     appartenir de plein droit à l'Auteur, sans préjudice des dommages et
+     intérêts réclamables.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 5 — CONTRIBUTIONS ET SOUMISSIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1  Toute contribution soumise à l'Auteur — pull request, suggestion,
+     patch, rapport de bug, ou tout autre apport — est réputée cédée à
+     l'Auteur de façon définitive, irrévocable et exclusive, sans contrepartie
+     financière ni crédit obligatoire, sauf accord écrit contraire.
+
+5.2  En soumettant une contribution, le contributeur déclare et garantit
+     qu'il en détient tous les droits nécessaires et qu'elle est libre de
+     tout droit de tiers.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 6 — EXCLUSION DE GARANTIE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6.1  LE PROJET EST FOURNI « EN L'ÉTAT », SANS GARANTIE D'AUCUNE SORTE,
+     EXPRESSE OU IMPLICITE, NOTAMMENT SANS GARANTIE D'ADÉQUATION À UN
+     USAGE PARTICULIER, DE QUALITÉ MARCHANDE, D'ABSENCE DE DÉFAUT, DE
+     CONTINUITÉ DE SERVICE OU DE NON-VIOLATION DE DROITS DE TIERS.
+
+6.2  L'Auteur ne garantit pas que le projet est exempt d'erreurs, de bugs,
+     de vulnérabilités ou d'interruptions. Toute utilisation se fait aux
+     risques et périls exclusifs de l'utilisateur.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 7 — LIMITATION DE RESPONSABILITÉ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+7.1  EN AUCUN CAS L'AUTEUR NE POURRA ÊTRE TENU RESPONSABLE DE DOMMAGES
+     DIRECTS, INDIRECTS, ACCIDENTELS, SPÉCIAUX, EXEMPLAIRES OU CONSÉCUTIFS
+     RÉSULTANT DE L'UTILISATION OU DE L'IMPOSSIBILITÉ D'UTILISER LE PROJET,
+     MÊME SI L'AUTEUR A ÉTÉ AVERTI DE LA POSSIBILITÉ DE TELS DOMMAGES.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 8 — SANCTIONS ET RECOURS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+8.1  Toute violation de la présente licence constitue une contrefaçon au
+     sens des articles L. 335-2 et suivants du Code de la propriété
+     intellectuelle français, et peut exposer son auteur à des poursuites
+     civiles et pénales.
+
+8.2  En cas de violation, l'Auteur se réserve le droit de :
+
+       (a) exiger la cessation immédiate et définitive de toute activité
+           contrevenante ;
+       (b) réclamer la destruction ou la mise hors ligne de toute copie,
+           dérivée ou exploitation non autorisée ;
+       (c) demander réparation de l'intégralité du préjudice subi, y compris
+           le manque à gagner, l'atteinte à l'image et les frais engagés ;
+       (d) engager toute procédure judiciaire appropriée, y compris en
+           référé ou en urgence, devant toute juridiction compétente.
+
+8.3  L'absence de réaction immédiate de l'Auteur face à une violation ne
+     vaut ni tolérance, ni renonciation, ni acceptation tacite. L'Auteur
+     conserve l'intégralité de ses droits à agir à tout moment.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 9 — RÉSILIATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+9.1  Tout droit concédé par la présente licence est automatiquement et
+     immédiatement résilié en cas de violation de l'un quelconque de ses
+     termes, sans mise en demeure préalable.
+
+9.2  À compter de la résiliation, l'utilisateur est tenu de cesser toute
+     utilisation, de détruire toute copie en sa possession ou sous son
+     contrôle, et de confirmer par écrit à l'Auteur l'exécution de ces
+     obligations si celui-ci le demande.
+
+9.3  Les articles 4, 6, 7, 8 et 10 survivent à la résiliation ou à
+     l'expiration de la présente licence.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ARTICLE 10 — DISPOSITIONS GÉNÉRALES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+10.1 LOI APPLICABLE
+     La présente licence est régie par le droit français. En cas de litige,
+     les juridictions françaises seront seules compétentes, sauf disposition
+     légale impérative contraire applicable à l'utilisateur.
+
+10.2 DIVISIBILITÉ
+     Si une disposition de la présente licence est jugée nulle, illégale ou
+     inapplicable, les autres dispositions demeurent pleinement en vigueur.
+     La disposition concernée sera remplacée par la disposition valide la
+     plus proche de l'intention initiale.
+
+10.3 INTÉGRALITÉ
+     La présente licence constitue l'intégralité de l'accord entre l'Auteur
+     et l'utilisateur concernant l'objet décrit, et remplace tout accord,
+     représentation ou entente antérieure, écrite ou orale.
+
+10.4 ABSENCE DE RENONCIATION
+     Le fait pour l'Auteur de ne pas exercer un droit prévu par la présente
+     licence ne constitue pas une renonciation à ce droit pour l'avenir.
+
+10.5 MODIFICATIONS
+     L'Auteur se réserve le droit de modifier les termes de la présente
+     licence à tout moment. Toute version mise à jour sera publiée dans le
+     dépôt officiel. L'utilisation continue du projet après publication
+     d'une nouvelle version vaut acceptation de celle-ci.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEMANDES D'AUTORISATION
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+Toute demande d'autorisation d'usage doit être adressée à l'Auteur via
+le dépôt officiel GitHub. Aucune autorisation n'est accordée verbalement
+ou de manière implicite. Seule une réponse écrite, explicite et signée
+de l'Auteur vaut autorisation.
+
+  Dépôt officiel : https://github.com/odzigon/opk-survivor
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Copyright © 2026 ODZIGON — Tous droits réservés.
+NEXIUM // SURVIVANT est une création originale d'ODZIGON.
+Aucun droit n'est accordé au-delà de ce qui est expressément stipulé
+dans la présente licence.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
