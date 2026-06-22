@@ -229,19 +229,12 @@ Chaque opérateur propose un style de jeu distinct. L'unité équipée est dépl
 - **Sauvegarde locale** automatique, avec **sauvegarde cloud et multijoueur via Supabase** (connexion Discord)
 - Interface et contrôles adaptés au **clavier, à la souris et au tactile (mobile)**
 
-## // INSTALLATION / LANCEMENT
+## JOUER
 
 **Jouer directement (recommandé) :**
 
 ```
 $ ouvrir → https://odzigon.github.io/opk-survivor/
-```
-
-**Lancer en local (développement) :**
-
-```
-$ git clone https://github.com/odzigon/opk-survivor.git
-$ cd opk-survivor
 ```
 
 Puis ouvrez le fichier principal (`index.html`) dans un navigateur récent (Chrome, Firefox, Edge). Aucune installation supplémentaire n'est nécessaire.
