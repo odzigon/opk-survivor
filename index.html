@@ -43,10 +43,10 @@ body[data-state="playing"] #hud, body[data-state="gameover"] #hud{opacity:1;}
 .lvl-row{display:flex;align-items:center;gap:10px;}
 .lvl-chip{font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.14em;
   color:var(--bg);background:var(--bone);padding:3px 10px;border-radius:6px;white-space:nowrap;}
-.xp-track{position:relative;height:7px;border-radius:5px;background:var(--panel-2);
+.xp-track{position:relative;height:11px;border-radius:6px;background:var(--panel-2);
   border:1px solid var(--line);overflow:hidden;flex:1;}
 .xp-fill{position:absolute;inset:0;transform-origin:left center;transform:scaleX(0);
-  background:linear-gradient(90deg,var(--gold),#ffe39a);transition:transform .18s ease;}
+  background:linear-gradient(90deg,var(--gold),#ffe39a);transition:transform .18s ease;box-shadow:0 0 10px var(--gold);}
 .hud-center{display:flex;flex-direction:column;align-items:center;gap:2px;}
 .timer{font-family:var(--f-mono);font-weight:800;font-size:30px;letter-spacing:.02em;
   color:var(--bone);text-shadow:0 2px 14px rgba(0,0,0,.6);line-height:1;}
@@ -966,12 +966,59 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
   width:64px;height:64px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line-2);
   color:var(--frost);font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;align-items:center;justify-content:center;}
 #btnPing:active{transform:scale(0.92);}
+#coopHud{position:absolute;top:74px;left:14px;z-index:7;display:none;flex-direction:column;gap:6px;pointer-events:none;}
+.ch-row{display:flex;align-items:stretch;gap:8px;min-width:174px;padding:5px 9px 5px 6px;border-radius:9px;
+  background:rgba(10,11,15,.6);border:1px solid var(--line-2);backdrop-filter:blur(6px);font-family:var(--f-mono);}
+.ch-row.down{border-color:color-mix(in srgb,var(--danger) 55%,transparent);}
+.ch-accent{width:3px;border-radius:2px;background:var(--frost);flex:none;}
+.ch-main{flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center;}
+.ch-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.ch-name{font-size:11px;font-weight:600;color:var(--bone);max-width:108px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ch-lvl{font-size:9px;color:var(--muted);letter-spacing:.06em;flex:none;}
+.ch-hpwrap{height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;}
+.ch-hp{height:100%;border-radius:3px;background:var(--heal);transition:width .12s linear;width:100%;}
+#coopChat{position:absolute;left:14px;bottom:240px;z-index:7;display:flex;flex-direction:column;gap:4px;pointer-events:none;max-width:300px;}
+.cc-msg{font-family:var(--f-mono);font-size:11px;padding:4px 9px;border-radius:8px;background:rgba(10,11,15,.72);
+  border:1px solid var(--line-2);color:var(--bone);opacity:1;transition:opacity .55s ease;line-height:1.35;}
+.cc-msg b{font-weight:700;color:var(--frost);}
+.cc-msg.sys{color:var(--muted);font-style:italic;}
+.cc-msg.sys b{color:var(--muted);}
+.cc-msg.out{opacity:0;}
+#commsBtn{position:absolute;left:18px;bottom:162px;z-index:9;pointer-events:auto;cursor:pointer;display:none;
+  width:64px;height:64px;border-radius:50%;background:var(--panel-2);border:1px solid var(--line-2);
+  color:var(--gold);font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;align-items:center;justify-content:center;}
+#commsBtn:active{transform:scale(.92);}
+#commsMenu{position:absolute;left:18px;bottom:234px;z-index:10;display:none;flex-direction:column;gap:4px;
+  pointer-events:auto;background:rgba(10,11,15,.94);border:1px solid var(--line-2);border-radius:12px;padding:8px;backdrop-filter:blur(8px);}
+#commsMenu.open{display:flex;}
+.cm-item{font-family:var(--f-mono);font-size:12px;text-align:left;padding:7px 12px;border-radius:8px;
+  background:var(--panel-2);border:1px solid transparent;color:var(--bone);cursor:pointer;white-space:nowrap;}
+.cm-item:hover{border-color:var(--line-2);color:#fff;}
+.pause-build{max-height:50vh;overflow-y:auto;}
+.pb-statshead{font-family:var(--f-mono);font-size:10px;letter-spacing:.24em;color:var(--muted);margin:16px 0 8px;text-align:left;}
+.pb-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;}
+.ps-cell{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 10px;
+  border:1px solid var(--line-2);border-radius:8px;background:var(--panel-2);font-family:var(--f-mono);cursor:help;}
+.ps-lbl{font-size:10px;color:var(--muted);white-space:nowrap;}
+.ps-val{font-size:12px;color:var(--bone);font-weight:700;white-space:nowrap;}
+#screenClose{position:fixed;top:16px;right:16px;z-index:60;display:none;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line-2);
+  color:var(--bone);font-size:17px;cursor:pointer;line-height:1;pointer-events:auto;transition:border-color .15s,color .15s,transform .1s;}
+#screenClose:hover{border-color:var(--ember);color:var(--ember);}
+#screenClose:active{transform:scale(.92);}
+.roster-sec{grid-column:1/-1;flex:0 0 100%;font-family:var(--f-mono);font-size:11px;letter-spacing:.22em;color:var(--muted);
+  text-transform:uppercase;margin:14px 2px 2px;padding-bottom:7px;border-bottom:1px solid var(--line-2);}
+.lock-quest{margin-top:6px;font-family:var(--f-mono);font-size:11px;color:var(--frost);cursor:pointer;opacity:.85;}
+.lock-quest:hover{opacity:1;text-decoration:underline;}
+.q-row{cursor:pointer;transition:box-shadow .15s,border-color .15s;}
+.q-row.q-target{border-color:var(--ember)!important;box-shadow:0 0 0 1px var(--ember),0 0 18px rgba(255,82,48,.22);}
 </style>
 </head>
 <body data-state="menu">
 <canvas id="game"></canvas>
 <div id="grain"></div>
 <div id="lowhp"></div>
+<button id="screenClose" type="button" aria-label="Fermer">✕</button>
 <div id="bootScreen">
   <div class="boot-inner">
     <div class="boot-mark">NEXIUM</div>
@@ -1011,6 +1058,10 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
   <button id="btnDash" aria-label="Dash"><span>DASH</span><div id="dashFill"></div></button>
   <button id="btnPing" aria-label="Ping" type="button">PING</button>
   <div id="nowPlaying"></div>
+  <div id="coopHud"></div>
+  <div id="coopChat"></div>
+  <button id="commsBtn" aria-label="Communication" type="button">MSG</button>
+  <div id="commsMenu"></div>
 </div>
 <div id="joystick"><div id="joyKnob"></div></div>
 <div id="joystickR"><div id="joyKnobR"></div></div>
@@ -1210,7 +1261,7 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 <!-- ============ ÉCRAN : MULTIJOUEUR (CO-OP) ============ -->
 <div class="screen" id="screen-lobby">
   <div class="screen-inner cl-inner">
-    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-11</div>
+    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-15</div>
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Multijoueur</h1>
     <div class="lobby-box" id="lobbyBox"></div>
     <div class="btn-row"><button class="btn btn-ghost" id="lobbyBack">Retour</button></div>
@@ -1299,10 +1350,11 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
     <div id="goStats"></div>
     <div id="goCoop"></div>
     <div class="go-best" id="goBest"></div>
-    <div class="btn-row" style="justify-content:center">
+    <div class="btn-row" id="goSoloBtns" style="justify-content:center">
       <button class="btn btn-primary" id="btnRetry">Recommencer</button>
       <button class="btn btn-ghost" id="btnMenu">Menu</button>
     </div>
+    <div class="btn-row" id="goCoopBtns" style="display:none;justify-content:center;flex-wrap:wrap"></div>
   </div>
 </div>
 
@@ -1618,7 +1670,13 @@ const Audio = {
       const a = document.createElement('audio');
       a.preload = 'auto'; a.loop = false; a.volume = 0;
       a.addEventListener('ended', () => this.nextTrack());
-      a.addEventListener('error', () => { if (this._mStarted) setTimeout(() => this.nextTrack(), 500); });
+      a.addEventListener('playing', () => { this._mErrCount = 0; if (this.onTrack && this._mActive === a) this.onTrack('PISTE ' + String(this._mIdx + 1).padStart(2, '0')); });
+      a.addEventListener('error', () => {
+        if (!this._mStarted) return;
+        this._mErrCount = (this._mErrCount || 0) + 1;
+        if (this._mErrCount > this.musicTracks.length) { if (this.onTrack) this.onTrack(''); return; }
+        setTimeout(() => this.nextTrack(), 700);
+      });
       return a;
     };
     this._mA = make(); this._mB = make();
@@ -1649,7 +1707,6 @@ const Audio = {
     this._mPos = ((pos % this._mOrder.length) + this._mOrder.length) % this._mOrder.length;
     this._mIdx = this._mOrder[this._mPos];
     this._crossfadeTo(this.musicTracks[this._mIdx]);
-    if (this.onTrack) this.onTrack('PISTE ' + String(this._mIdx + 1).padStart(2, '0'));
   },
   nextTrack() { if (!this._mStarted) return; this._playPos(this._mPos + 1); },
   prevTrack() { if (!this._mStarted) return; this._playPos(this._mPos - 1); },
@@ -2143,7 +2200,8 @@ class Player {
     if (this.stats.dodge > 0 && chance(this.stats.dodge)) { this.iTimer = BASE.iFrames * 0.5; G.floater(this.x, this.y - 24, 'esquive', COLORS.frost, 13); Audio.uiBack(); return; }
     let d = Math.max(1, dmg - this.stats.armor);
     this.hp -= d;
-    if (this.stats.thornsDmg > 0) {
+    if (this.stats.thornsDmg > 0 && (this._thornsCd || 0) <= 0) {
+      this._thornsCd = 1.1;
       const tr = 130 * this.stats.areaMul;
       G.areaBurst(this.x, this.y, tr, this.stats.thornsDmg * this.stats.damageMul, { knock: 220, color: COLORS.danger });
       G.rings.push({ x: this.x, y: this.y, from: 0, to: tr, life: 0.3, max: 0.3, color: COLORS.danger });
@@ -2161,7 +2219,7 @@ class Player {
     if (this.hp <= 0) {
       this.hp = 0;
       if (G.net && !this.downed) {
-        if (!Meta.tryRevive(this)) { this.downed = true; this.reviveP = 0; this.iTimer = 1.0; Camera.shake(9, 0.4); G.floater(this.x, this.y - 30, 'À TERRE', COLORS.danger, 18, true); }
+        if (!Meta.tryRevive(this)) { this.downed = true; this.reviveP = 0; this.downedTime = 0; this.iTimer = 1.0; Camera.shake(9, 0.4); G.floater(this.x, this.y - 30, 'À TERRE', COLORS.danger, 18, true); }
       } else if (Meta.tryRevive(this)) {
         // ressuscité
       } else {
@@ -2173,13 +2231,18 @@ class Player {
 
   _downedTick(dt) {
     this.iTimer = Math.max(this.iTimer, 0.4); this.aimAngle = this.aimAngle || 0;
+    this.downedTime = (this.downedTime || 0) + dt;
     let reviver = false; const cp = G.coopPlayers || {};
     for (const id in cp) { const c = cp[id]; if (c.down) continue; const rx = c.rx !== undefined ? c.rx : c.x, ry = c.ry !== undefined ? c.ry : c.y; if (dist2(this.x, this.y, rx, ry) < 95 * 95) { reviver = true; break; } }
     if (reviver) {
       this.reviveP = (this.reviveP || 0) + dt;
       if (G.frame % 5 === 0) G.particle({ x: this.x + rand(-14, 14), y: this.y + 12, vx: 0, vy: -55, life: 0.5, max: 0.5, size: 3, color: COLORS.heal, glow: true });
-      if (this.reviveP >= 3) { this.downed = false; this.reviveP = 0; this.hp = Math.max(1, this.maxHp * 0.4); this.iTimer = 1.4; G.floater(this.x, this.y - 30, 'RELEVÉ', COLORS.heal, 18, true); G.rings.push({ x: this.x, y: this.y, from: 0, to: 72, life: 0.4, max: 0.4, color: COLORS.heal }); }
+      if (this.reviveP >= 3) { this.downed = false; this.reviveP = 0; this.downedTime = 0; this.hp = Math.max(1, this.maxHp * 0.4); this.iTimer = 1.4; G.floater(this.x, this.y - 30, 'RELEVÉ', COLORS.heal, 18, true); G.rings.push({ x: this.x, y: this.y, from: 0, to: 72, life: 0.4, max: 0.4, color: COLORS.heal }); }
     } else { this.reviveP = Math.max(0, (this.reviveP || 0) - dt * 0.5); }
+    if (!reviver && this.downedTime > 18) {
+      let anyAlive = false; for (const id in cp) { if (!cp[id].down) { anyAlive = true; break; } }
+      if (anyAlive) { this.downed = false; this.downedTime = 0; this.reviveP = 0; this.hp = Math.max(1, this.maxHp * 0.25); this.iTimer = 1.4; G.floater(this.x, this.y - 30, 'REL\u00c8VE AUTO', COLORS.heal, 16, true); return; }
+    }
     if (G._allDowned && G._allDowned()) { this.alive = false; G.onPlayerDeath(); }
   }
   update(dt) {
@@ -2192,6 +2255,7 @@ class Player {
     // --- capacité active (Espace / Maj / bouton tactile) ---
     if (this.abilityCd > 0) this.abilityCd -= dt;
     if (this.dashT > 0) this.dashT -= dt;
+    if (this._thornsCd > 0) this._thornsCd -= dt;
     if (this.shieldT > 0) this.shieldT -= dt;
     if (this.overdriveT > 0) this.overdriveT -= dt;
     // buffs temporels réappliqués par-dessus la base recalculée
@@ -2568,12 +2632,13 @@ class Enemy {
         if (this.orbitDir === undefined) this.orbitDir = chance(0.5) ? 1 : -1;
         const toP = angleTo(this.x, this.y, p.x, p.y);
         const d = dist(this.x, this.y, p.x, p.y);
-        const desired = this.def.orbitR || 210;
+        this._orbAge = (this._orbAge || 0) + dt;
+        const desired = Math.max(120, (this.def.orbitR || 210) - this._orbAge * 14);
         const tang = toP + HALF_PI * this.orbitDir;
         const s = this.speed * slowMul;
         const radial = clamp((d - desired) / 60, -1, 1);
-        const vx = Math.cos(toP) * radial * s * 1.1 + Math.cos(tang) * s;
-        const vy = Math.sin(toP) * radial * s * 1.1 + Math.sin(tang) * s;
+        const vx = Math.cos(toP) * radial * s * 1.1 + Math.cos(tang) * s * 0.78;
+        const vy = Math.sin(toP) * radial * s * 1.1 + Math.sin(tang) * s * 0.78;
         this.x += vx * dt; this.y += vy * dt; this.angle = Math.atan2(vy, vx);
         if (this.def.shoot) {
           this.shootTimer -= dt;
@@ -2701,6 +2766,11 @@ class Enemy {
     if (a.type === 'strike' || a.type === 'nova') {
       const cx = a.type === 'strike' ? a.x : this.x, cy = a.type === 'strike' ? a.y : this.y;
       G.rings.push({ x: cx, y: cy, from: 0, to: a.r || 150, life: delay, max: delay, color: hexA(a.color || COLORS.danger, 0.5) });
+      if (a.type === 'strike') {
+        const rr = a.r || 140;
+        G.rings.push({ x: cx, y: cy, from: rr - 6, to: rr, life: delay, max: delay, color: hexA(COLORS.danger, 0.95) });
+        if (typeof Audio !== 'undefined' && Audio.warn) Audio.warn();
+      }
     }
   }
   _fire(a, p) {
@@ -3889,7 +3959,7 @@ const PASSIVES = {
   thorns: {
     name: 'Représailles', icon: '✸', color: COLORS.danger, maxLevel: 5,
     desc: 'Émet une onde de choc quand vous êtes touché.',
-    detail: (lv) => Math.round(lv * 14) + ' dégâts de riposte',
+    detail: (lv) => Math.round(lv * 14) + ' dégâts de riposte · recharge 1,1 s',
     apply: (s, lv) => { s.thornsDmg += 14 * lv; },
   },
   ignite: {
@@ -4027,7 +4097,7 @@ const CHARACTERS = {
   },
   texas: {
     key: 'texas', name: 'TEXAS', color: COLORS.gold, icon: '➤',
-    role: 'Éclaireur', blurb: 'Rapide et chanceux, frappe fort et ramasse loin.',
+    role: 'Éclaireur', blurb: 'Rapide et chanceux\u202f: critiques fr\u00e9quents et ramassage longue port\u00e9e.',
     perks: ['+15% vitesse', '+5% crit', '+30 aimant'],
     apply: (s) => { s.speedMul += 0.15; s.critChance += 0.05; s.pickupAdd += 30; },
   },
@@ -4041,8 +4111,8 @@ const CHARACTERS = {
   atlas: {
     key: 'atlas', name: 'ATLAS', color: '#7fa6c9', icon: '◧',
     role: 'Titan', blurb: 'Forteresse ambulante : lent, mais quasiment increvable.',
-    perks: ['+60% PV max', '+4 armure', '+20% zone', '-15% vitesse'],
-    apply: (s) => { s.hpMul += 0.60; s.armor += 4; s.areaMul += 0.20; s.speedMul -= 0.15; },
+    perks: ['+45% PV max', '+3 armure', '-22% vitesse'],
+    apply: (s) => { s.hpMul += 0.45; s.armor += 3; s.speedMul -= 0.22; },
     locked: true, unlock: { bosses: 14 },
   },
   rift: {
@@ -4204,7 +4274,7 @@ const ENEMIES = {
   splitter:{ name: 'Diviseur',  hp: 26, speed: 52,  dmg: 10, radius: 16, xp: 3, shape: 'diamond', color: '#bd5a4d', splits: 'mite', splitCount: 3 },
   mite:    { name: 'Mite',      hp: 6,  speed: 86,  dmg: 6,  radius: 9,  xp: 1, shape: 'tri',     color: '#caa093' },
 
-  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 48, dmg: 17, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 40, bossScale: 2.6 },
+  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 48, dmg: 17, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 28, bossScale: 2.6 },
   boss_ring:   { name: 'ORACLE',    hp: 46, speed: 42, dmg: 15, radius: 15, xp: 50, shape: 'octa',  color: COLORS.frost, pattern: 'ringShot', bossHpMult: 44, bossScale: 2.8 },
   boss_summon: { name: 'ESSAIMEUR', hp: 48, speed: 46, dmg: 16, radius: 15, xp: 50, shape: 'penta', color: COLORS.gold,  pattern: 'summon',   bossHpMult: 42, bossScale: 2.7 },
 };
@@ -4566,7 +4636,7 @@ Game.prototype.spawnDirector = function (dt) {
     return;
   }
   this.spawnTimer -= dt;
-  if (this.spawnTimer <= 0) { this.spawnTimer += BAL.spawnInterval(this.time) / (this.spawnMul || 1); this.spawnBatch(); }
+  if (this.spawnTimer <= 0) { this.spawnTimer += BAL.spawnInterval(this.time) / ((this.spawnMul || 1) * this._coopReliefMul()); this.spawnBatch(); }
   if (!this.activeBoss) {
     this.eliteTimer -= dt;
     if (this.eliteTimer <= 0) { this.eliteTimer = BAL.eliteEvery; if (this.time > 20) this.spawnElite(); }
@@ -4633,7 +4703,6 @@ Game.prototype.spawnBoss = function () {
   e._acts = []; e._atkN = 0; e._atkT = rand(1.0, 1.8); e._phaseStage = 0; e._spinT = 0;
   this.activeBoss = e;
   this.rings.push({ x: pos.x, y: pos.y, from: 0, to: e.radius + 70, life: 0.9, max: 0.9, color: e.color });
-  this.stats.bosses++;
   Audio.bossSpawn(); Audio.bossMusicStart(key); Camera.shake(11, 0.7);
   UI.flash(); UI.announce('⚠ BOSS — ' + e.bossName);
 };
@@ -4672,6 +4741,7 @@ Game.prototype.onEnemyKilled = function (e) {
 
   if (e.isBoss) {
     this.activeBoss = null;
+    this.stats.bosses++;
     this.hitStop(0.16);
     Audio.bossMusicEnd();
     for (let i = 0; i < 7; i++) { const a = rand(0, TAU), d = rand(20, 70); this.spawnGem(e.x + Math.cos(a) * d, e.y + Math.sin(a) * d, 12); }
@@ -5144,8 +5214,8 @@ Game.prototype.update = function (dt) {
   this._ambientT += dt;
   if (!this.net && this._ambientT > 0.11 && this.particles.length < 380) {
     this._ambientT = 0;
-    const ex = p.x + rand(-VIEW.w / 2, VIEW.w / 2);
-    const ey = p.y + VIEW.h / 2 + rand(0, 90);
+    const ex = p.x + rand(-VIEW.w / 2 - 30, VIEW.w / 2 + 30);
+    const ey = p.y + rand(-VIEW.h / 2 - 30, VIEW.h / 2 + 30);
     this.particle({ x: ex, y: ey, vx: rand(-8, 8), vy: -rand(12, 34), life: rand(2.4, 4.4), max: 4.4,
       size: rand(1.2, 2.6), color: chance(0.55) ? COLORS.ember : hexA(COLORS.bone, 0.55), drag: 0.99, glow: true });
   }
@@ -6160,6 +6230,7 @@ Game.prototype.render = function () {
   this._drawEdgeMarkers(ctx);
   if (this.net && this.coopPlayers) { this._drawCoop(ctx); this._drawCoopHud(ctx); }
   if (this.net && this._pings && this._pings.length) this._drawPings(ctx);
+  if (this.net && this.coopPlayers && typeof Input !== 'undefined' && !Input.touch) this._drawCoopBuilds(ctx);
   if (this.net && this._coopFreeze > 0) this._drawFreezeOverlay(ctx);
   this._drawVignette(ctx);
 };
@@ -6226,7 +6297,7 @@ const UI = {
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAim', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
       'changelogBody', 'changelogBack', 'btnHelp', 'helpBack', 'screen-help',
       'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack',
-      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel', 'modeSel', 'modeCap', 'screen-palmares', 'btnPalmares', 'palmaresBack', 'prestigePanel', 'achSummary', 'achBody', 'screen-curses', 'btnCurses', 'cursesBack', 'cursesBody', 'cursesSummary', 'screen-lobby', 'btnLobby', 'lobbyBack', 'lobbyBox', 'btnPing'];
+      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel', 'modeSel', 'modeCap', 'screen-palmares', 'btnPalmares', 'palmaresBack', 'prestigePanel', 'achSummary', 'achBody', 'screen-curses', 'btnCurses', 'cursesBack', 'cursesBody', 'cursesSummary', 'screen-lobby', 'btnLobby', 'lobbyBack', 'lobbyBox', 'btnPing', 'goCoopBtns', 'screenClose'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
@@ -6266,7 +6337,17 @@ const UI = {
     if (this.el.btnCurses) this.el.btnCurses.addEventListener('click', () => { Audio.ui(); this.openCurses(); });
     if (this.el.btnLobby) this.el.btnLobby.addEventListener('click', () => { Audio.ui(); this.openLobby(); });
     if (this.el.btnPing) this.el.btnPing.addEventListener('click', () => { if (G && G.net && G.state === 'playing') { G.coopPing(); Audio.ui(); } });
+    if (this.el.screenClose) this.el.screenClose.addEventListener('click', () => { Audio.uiBack(); const cur = UI._curScreen; if (cur === 'screen-lobby' && UI.el.lobbyBack) { UI.el.lobbyBack.click(); } else { UI._toMenu(); } });
     window.addEventListener('keydown', (ev) => { if ((ev.key === 'v' || ev.key === 'V') && G && G.net && G.state === 'playing') G.coopPing(); });
+    window.addEventListener('keydown', (ev) => {
+      if (ev.key !== 'Escape') return;
+      if (!G || G.state === 'playing' || G.state === 'paused') return;
+      const cur = UI._curScreen;
+      if (!cur || cur === 'screen-start' || cur === 'screen-levelup') return;
+      ev.preventDefault();
+      if (cur === 'screen-lobby' && UI.el.lobbyBack) { UI.el.lobbyBack.click(); return; }
+      UI._toMenu();
+    });
     Net.on('pp', (d, from) => { if (!G || !G.coopPlayers || from === Net.me.id) return; const c = G.coopPlayers[from] || (G.coopPlayers[from] = { rx: d.x, ry: d.y }); c.x = d.x; c.y = d.y; c.aim = d.a; c.hp = d.h; c.mhp = d.m; c.lvl = d.l; c.down = !!d.dn; c.char = d.c; c.name = (Net.players[from] && Net.players[from].name) || 'Allié'; c.tNow = performance.now(); });
     Net.on('start', (cfg) => { if (G && G.state !== 'playing' && this.startCoop) this.startCoop(false, cfg || {}); });
     Net.on('snap', (d) => {
@@ -6292,6 +6373,7 @@ const UI = {
       const nm = (Net.players[from] && Net.players[from].name) || 'Allié';
       G._addPing(d.x, d.y, col, nm);
     });
+    Net.on('build', (d, from) => { if (!G || !d) return; G._coopBuilds = G._coopBuilds || {}; G._coopBuilds[from] = { w: d.w || [], p: d.p || [] }; });
     Net.on('eff', (d) => {
       if (!G || !G.net || G.net.role !== 'host' || !d) return;
       const arr = G.enemies; for (let i = 0; i < arr.length; i++) { const e = arr[i]; if (e.dead || e._nid !== d.n) continue; if (d.s && e.slow) e.slow(d.s); if (d.b && e.burn) e.burn(d.b, d.bt || 1.5); break; }
@@ -6395,40 +6477,65 @@ const UI = {
   _buildChars() {
     const cc = this.el.rosterGrid; if (!cc) return;
     cc.innerHTML = '';
+    const buckets = { dispo: [], gold: [], quete: [], kills: [] };
     for (const key in CHARACTERS) {
       const c = CHARACTERS[key];
       const st = Meta.unlockState('char', key, c);
-      const equipped = (this.selectedChar === key) && st.unlocked;
-      const div = document.createElement('div');
-      div.className = 'char-card' + (st.unlocked ? '' : ' locked') + (equipped ? ' selected' : '');
-      div.dataset.key = key;
-      div.style.setProperty('--accent', c.color);
-      let html =
-        '<div class="char-glyph">' + (c.icon || '◆') + '</div>' +
-        '<div class="char-name">' + c.name + '</div>' +
-        '<div class="char-role">' + c.role + '</div>' +
-        '<div class="char-blurb">' + c.blurb + '</div>' +
-        '<ul class="char-perks">' + c.perks.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
-      if (st.unlocked) {
-        html += '<div class="op-action' + (equipped ? ' eq' : '') + '">' + (equipped ? '✓ Équipé' : 'Équiper') + '</div>';
-      } else {
-        html += '<div class="lock-chip">VERROUILLÉ</div>';
-        const txt = st.type === 'gold' ? (st.canDo ? 'Acheter · ' + st.label : st.label) : st.label;
-        html += '<div class="lock-tag' + (st.canDo ? ' can' : '') + '">' + txt + '</div>';
-      }
-      div.innerHTML = html;
-      div.addEventListener('click', () => {
-        const s = Meta.unlockState('char', key, c);
-        if (s.unlocked) {
-          if (this.selectedChar === key) { Audio.uiBack(); return; }
-          this.selectedChar = key; Meta.equip('char', key); Audio.ui(); this._buildChars(); this._refreshCurrentOp();
-        } else if (Meta.tryUnlock('char', key, c)) {
-          this.selectedChar = key; Meta.equip('char', key); Audio.evolve(); this._buildChars(); this._refreshCurrentOp(); this._refreshRosterGold(); this._refreshBest();
-        } else { Audio.uiBack(); }
-      });
-      cc.appendChild(div);
+      let sec, sk;
+      if (st.unlocked) { sec = 'dispo'; sk = 0; }
+      else if (st.type === 'gold') { sec = 'gold'; sk = st.cost || 0; }
+      else if (st.type === 'kills') { sec = 'kills'; sk = st.need || 0; }
+      else { sec = 'quete'; const qg = Meta._questGate('char', key); sk = (qg && qg.goal) || st.need || 0; }
+      buckets[sec].push({ key: key, c: c, st: st, sk: sk });
+    }
+    const order = [['dispo', 'Disponibles'], ['gold', 'Achetables'], ['quete', 'Qu\u00eates & d\u00e9fis'], ['kills', 'Victimes']];
+    for (let oi = 0; oi < order.length; oi++) {
+      const arr = buckets[order[oi][0]]; if (!arr.length) continue;
+      arr.sort((a, b) => (a.sk - b.sk) || a.c.name.localeCompare(b.c.name));
+      const head = document.createElement('div'); head.className = 'roster-sec'; head.textContent = order[oi][1];
+      cc.appendChild(head);
+      for (let i = 0; i < arr.length; i++) cc.appendChild(this._charCard(arr[i].key, arr[i].c, arr[i].st));
     }
     this._refreshRosterGold();
+  },
+  _charCard(key, c, st) {
+    const equipped = (this.selectedChar === key) && st.unlocked;
+    const div = document.createElement('div');
+    div.className = 'char-card' + (st.unlocked ? '' : ' locked') + (equipped ? ' selected' : '');
+    div.dataset.key = key;
+    div.style.setProperty('--accent', c.color);
+    let html =
+      '<div class="char-glyph">' + (c.icon || '\u25c6') + '</div>' +
+      '<div class="char-name">' + c.name + '</div>' +
+      '<div class="char-role">' + c.role + '</div>' +
+      '<div class="char-blurb">' + c.blurb + '</div>' +
+      '<ul class="char-perks">' + c.perks.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
+    const qg = Meta._questGate('char', key);
+    if (st.unlocked) {
+      html += '<div class="op-action' + (equipped ? ' eq' : '') + '">' + (equipped ? '\u2713 \u00c9quip\u00e9' : '\u00c9quiper') + '</div>';
+    } else {
+      html += '<div class="lock-chip">VERROUILL\u00c9</div>';
+      const txt = st.type === 'gold' ? (st.canDo ? 'Acheter \u00b7 ' + st.label : st.label) : st.label;
+      html += '<div class="lock-tag' + (st.canDo ? ' can' : '') + '">' + txt + '</div>';
+      if (qg) html += '<div class="lock-quest" data-qid="' + qg.id + '">\u2192 Voir la qu\u00eate</div>';
+    }
+    div.innerHTML = html;
+    const self = this;
+    div.addEventListener('click', (ev) => {
+      const lq = ev.target && ev.target.closest ? ev.target.closest('.lock-quest') : null;
+      if (lq) { ev.stopPropagation(); Audio.ui(); self.openQuests(lq.getAttribute('data-qid')); return; }
+      const s2 = Meta.unlockState('char', key, c);
+      if (s2.unlocked) {
+        if (self.selectedChar === key) { Audio.uiBack(); return; }
+        self.selectedChar = key; Meta.equip('char', key); Audio.ui(); self._buildChars(); self._refreshCurrentOp();
+      } else if (Meta.tryUnlock('char', key, c)) {
+        self.selectedChar = key; Meta.equip('char', key); Audio.evolve(); self._buildChars(); self._refreshCurrentOp(); self._refreshRosterGold(); self._refreshBest();
+      } else {
+        const qg2 = Meta._questGate('char', key);
+        if (qg2) { Audio.ui(); self.openQuests(qg2.id); } else { Audio.uiBack(); }
+      }
+    });
+    return div;
   },
   _refreshCurrentOp() {
     const c = CHARACTERS[this.selectedChar] || CHARACTERS.odzigon;
@@ -6714,8 +6821,8 @@ const UI = {
     }
     body.innerHTML = html;
   },
-  openQuests() { this._buildQuests(); this.show('screen-quests'); },
-  _buildQuests() {
+  openQuests(hi) { this._buildQuests(hi); this.show('screen-quests'); },
+  _buildQuests(hi) {
     const body = this.el.questsBody; if (!body) return;
     const done = Meta.questsDone || [];
     const nDone = QUESTS.reduce((a, q) => a + (done.indexOf(q.id) >= 0 ? 1 : 0), 0);
@@ -6730,16 +6837,28 @@ const UI = {
     for (let i = 0; i < QUESTS.length; i++) {
       const q = QUESTS[i], isDone = done.indexOf(q.id) >= 0;
       const v = Meta.questValue(q.type), pct = (clamp(v / q.goal, 0, 1) * 100).toFixed(0);
-      html += '<div class="q-row' + (isDone ? ' done' : '') + '">'
+      const rl = rewardLabel(q), rkind = q.reward.gold ? 'or' : (q.reward.kind === 'char' ? 'op\u00e9rateur' : q.reward.kind === 'ability' ? 'capacit\u00e9' : 'arme');
+      html += '<div class="q-row' + (isDone ? ' done' : '') + '" data-qid="' + q.id + '" title="' + q.desc + ' \u2014 r\u00e9compense : ' + rl + ' (' + rkind + ')">'
         + '<div class="q-ic">' + (isDone ? '\u2713' : '\u2726') + '</div>'
         + '<div class="q-main"><div class="q-name">' + q.name + '</div>'
         + '<div class="q-desc">' + q.desc + '</div>'
         + '<div class="q-bar"><div class="q-fill" style="width:' + pct + '%"></div></div></div>'
-        + '<div class="q-side"><div class="q-reward">' + rewardLabel(q) + '</div>'
-        + (isDone ? '<div class="q-status">DÉBLOQUÉ</div>' : '<div class="q-prog">' + prog(q, v) + '</div>')
+        + '<div class="q-side"><div class="q-reward">' + rl + '</div>'
+        + (isDone ? '<div class="q-status">D\u00c9BLOQU\u00c9</div>' : '<div class="q-prog">' + prog(q, v) + '</div>')
         + '</div></div>';
     }
     body.innerHTML = html;
+    const rows = body.querySelectorAll('.q-row');
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].addEventListener('click', () => {
+        for (let j = 0; j < rows.length; j++) rows[j].classList.remove('q-target');
+        rows[i].classList.add('q-target'); Audio.ui();
+      });
+    }
+    if (hi) {
+      const row = body.querySelector('.q-row[data-qid="' + hi + '"]');
+      if (row) { row.classList.add('q-target'); setTimeout(() => { try { row.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} }, 60); }
+    }
   },
   openSettings() { this._syncSettings(); this._refreshAccount(); this._armReset(false); this.show('screen-settings'); },
   openChangelog() {
@@ -6790,6 +6909,11 @@ const UI = {
 
   show(screenId) {
     if (screenId !== 'screen-picker' && typeof WPreview !== 'undefined' && WPreview.running) WPreview.stop();
+    this._curScreen = screenId;
+    if (this.el && this.el.screenClose) {
+      const _closable = ['screen-shop', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests', 'screen-palmares', 'screen-curses', 'screen-picker', 'screen-lobby'];
+      this.el.screenClose.style.display = (screenId && _closable.indexOf(screenId) >= 0) ? 'flex' : 'none';
+    }
     const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests', 'screen-palmares', 'screen-curses', 'screen-lobby'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
@@ -6841,11 +6965,40 @@ const UI = {
     const el = this.el.pauseBuild; if (!el || !G || !G.player) return;
     const p = G.player;
     const seg = (label, items) => items.length ? '<div class="pb-row"><span class="pb-lbl">' + label + '</span><span class="pb-chips">' + items.join('') + '</span></div>' : '';
-    const wch = p.weapons.map((w) => { const d = WEAPONS[w.key] || EVOLUTIONS[w.key] || {}; const evo = !!d.isEvo; return '<span class="pb-chip' + (evo ? ' evo' : '') + '">' + (d.icon || '\u25c6') + ' ' + (d.name || w.key) + (evo ? '' : ' \u00b7 ' + w.level) + '</span>'; });
-    const pch = []; for (const k in p.passives) { const d = PASSIVES[k]; if (d) pch.push('<span class="pb-chip">' + (d.icon || '\u2022') + ' ' + d.name + ' \u00b7 ' + p.passives[k] + '</span>'); }
-    const sch = (p._synActive || []).map((id) => { const sy = SYNERGIES.find((x) => x.id === id); return sy ? '<span class="pb-chip syn">\u26a1 ' + sy.name + '</span>' : ''; });
-    const cch = (Meta.curses || []).map((id) => { const c = CURSES.find((x) => x.id === id); return c ? '<span class="pb-chip curse">\u2620 ' + c.name + '</span>' : ''; });
-    el.innerHTML = seg('Armes', wch) + seg('Passifs', pch) + seg('Synergies', sch) + seg('Malédictions', cch);
+    const wch = p.weapons.map((w) => { const d = WEAPONS[w.key] || EVOLUTIONS[w.key] || {}; const evo = !!d.isEvo; return '<span class="pb-chip' + (evo ? ' evo' : '') + '" title="' + (d.desc || '') + '">' + (d.icon || '\u25c6') + ' ' + (d.name || w.key) + (evo ? '' : ' \u00b7 ' + w.level) + '</span>'; });
+    const pch = []; for (const k in p.passives) { const d = PASSIVES[k]; if (d) pch.push('<span class="pb-chip" title="' + (d.detail ? d.detail(p.passives[k]) : (d.desc || '')) + '">' + (d.icon || '\u2022') + ' ' + d.name + ' \u00b7 ' + p.passives[k] + '</span>'); }
+    const sch = (p._synActive || []).map((id) => { const sy = SYNERGIES.find((x) => x.id === id); return sy ? '<span class="pb-chip syn" title="' + (sy.desc || '') + '">\u26a1 ' + sy.name + '</span>' : ''; });
+    const cch = (Meta.curses || []).map((id) => { const c = CURSES.find((x) => x.id === id); return c ? '<span class="pb-chip curse" title="' + (c.desc || '') + '">\u2620 ' + c.name + '</span>' : ''; });
+    el.innerHTML = seg('Armes', wch) + seg('Passifs', pch) + seg('Synergies', sch) + seg('Mal\u00e9dictions', cch)
+      + '<div class="pb-statshead">STATISTIQUES \u2014 survol pour le d\u00e9tail</div>' + this._statsGridHTML(p);
+  },
+  _statsGridHTML(p) {
+    const s = p.stats || {}, pct = (v) => Math.round((v || 0) * 100) + '%', xx = (v) => '\u00d7' + (v == null ? 1 : v).toFixed(2);
+    const base = (typeof BASE !== 'undefined') ? BASE : { pickup: 78 };
+    const rows = [
+      ['PV max', Math.round(p.maxHp || 0), 'Points de vie maximum'],
+      ['Armure', Math.round(s.armor || 0), 'R\u00e9duction plate retir\u00e9e \u00e0 chaque coup re\u00e7u'],
+      ['R\u00e9g\u00e9n', (s.regen || 0).toFixed(1) + '/s', 'PV r\u00e9g\u00e9n\u00e9r\u00e9s par seconde'],
+      ['D\u00e9g\u00e2ts', xx(s.damageMul), 'Multiplicateur de d\u00e9g\u00e2ts global'],
+      ['Recharge', xx(s.cooldownMul), 'Intervalle entre tirs \u2014 plus bas = plus rapide'],
+      ['Crit', pct(s.critChance), 'Probabilit\u00e9 de coup critique'],
+      ['D\u00e9g. crit', xx(s.critMult), 'Multiplicateur de d\u00e9g\u00e2ts d un critique'],
+      ['Vitesse', xx(s.speedMul), 'Vitesse de d\u00e9placement'],
+      ['Zone', xx(s.areaMul), 'Taille des zones d effet et des projectiles'],
+      ['Projectiles', '+' + (s.amount || 0), 'Projectiles suppl\u00e9mentaires par tir'],
+      ['Perforation', '+' + (s.pierceBonus || 0), 'Ennemis travers\u00e9s en plus'],
+      ['Vit. proj.', xx(s.projSpeedMul), 'Vitesse des projectiles'],
+      ['Dur\u00e9e', xx(s.durationMul), 'Dur\u00e9e des effets et des zones'],
+      ['Esquive', pct(s.dodge), 'Chance d annuler enti\u00e8rement un coup'],
+      ['Vol de vie', pct(s.lifesteal), 'PV vol\u00e9s sur les d\u00e9g\u00e2ts inflig\u00e9s'],
+      ['Soin/kill', (s.healOnKill || 0).toFixed(1), 'PV r\u00e9cup\u00e9r\u00e9s par victime'],
+      ['Aimant', Math.round((base.pickup + (s.pickupAdd || 0)) * (s.magnetMul || 1)), 'Rayon de ramassage des gemmes'],
+      ['Or', xx(s.goldMul), 'Multiplicateur d or r\u00e9colt\u00e9'],
+      ['XP', xx(s.xpMul), 'Multiplicateur d exp\u00e9rience gagn\u00e9e'],
+    ];
+    let h = '<div class="pb-stats">';
+    for (let i = 0; i < rows.length; i++) h += '<div class="ps-cell" title="' + rows[i][2] + '"><span class="ps-lbl">' + rows[i][0] + '</span><span class="ps-val">' + rows[i][1] + '</span></div>';
+    return h + '</div>';
   },
   togglePause() {
     if (!G) return;
@@ -7023,6 +7176,20 @@ UI.gameOver = function (game) {
     e.goBest.innerHTML += '<div class="go-quests" style="color:var(--gold)">\u2605 Succ\u00e8s : ' + an.join(' \u00b7 ') + '</div>';
     Meta._achPops = [];
   }
+  const _solo = document.getElementById('goSoloBtns'), _coop = e.goCoopBtns;
+  if (game.net && _coop) {
+    if (_solo) _solo.style.display = 'none';
+    _coop.style.display = 'flex';
+    let h = '';
+    if (Net.isHost) h += '<button class="btn btn-primary" id="goReplay">Rejouer (\u00e9quipe)</button>';
+    else h += '<span class="lobby-wait">En attente de l\u2019h\u00f4te\u2026</span>';
+    h += '<button class="btn btn-ghost" id="goLobby">Salon</button><button class="btn btn-ghost" id="goLeave">Quitter</button>';
+    _coop.innerHTML = h;
+    const self = this;
+    const rb = document.getElementById('goReplay'); if (rb) rb.onclick = () => { Audio.ui(); Net.send('start', { mode: Meta.mode, diff: Meta.difficulty }); self.startCoop(true, {}); };
+    const lb = document.getElementById('goLobby'); if (lb) lb.onclick = () => { Audio.uiBack(); self.openLobby(); };
+    const qb = document.getElementById('goLeave'); if (qb) qb.onclick = () => { Audio.uiBack(); Net.leave(); Net._onChange = null; self._toMenu(); };
+  } else if (_coop) { _coop.style.display = 'none'; if (_solo) _solo.style.display = 'flex'; }
   this.show('screen-gameover');
   document.body.dataset.state = 'gameover';
 };
@@ -7815,6 +7982,12 @@ Game.prototype._netTick = function (dt) {
     const p = this.player;
     if (p) Net.send('pp', { x: Math.round(p.x), y: Math.round(p.y), a: +(p.aimAngle || 0).toFixed(2), h: Math.round(p.hp), m: Math.round(p.maxHp), l: p.level, dn: p.downed ? 1 : 0, c: (p.char && p.char.key) || '' });
   }
+  this._buildSendT = (this._buildSendT || 0) - dt;
+  if (this._buildSendT <= 0) {
+    this._buildSendT = 2.5;
+    const pl = this.player;
+    if (pl) { const w = pl.weapons.map((x) => [x.key, x.level]); const ps = []; for (const k in pl.passives) ps.push([k, pl.passives[k]]); Net.send('build', { w: w, p: ps }); }
+  }
   if (this.net.role === 'host') {
     this._netSnapT = (this._netSnapT || 0) - dt;
     if (this._netSnapT <= 0) { this._netSnapT = 0.066; this._coopBroadcast(); }
@@ -7826,6 +7999,15 @@ Game.prototype._netEPContact = function (dt) {
   const ep = this._netEP, p = this.player; if (!ep || !ep.length || !p || p.downed || p.iTimer > 0) return;
   const rr = (p.radius || 12) + 7;
   for (let i = 0; i < ep.length; i++) { if (dist2(p.x, p.y, ep[i][0], ep[i][1]) <= rr * rr) { p.takeDamage(12 * DIFF.dmg); break; } }
+};
+Game.prototype._coopReliefMul = function () {
+  if (!this.net) return 1;
+  let down = 0;
+  if (this.player && this.player.downed) down++;
+  const cp = this.coopPlayers || {};
+  for (const id in cp) { if (cp[id].down) down++; }
+  if (down <= 0) return 1;
+  return Math.max(0.45, 1 - 0.4 * down);
 };
 Game.prototype._coopTargets = function () {
   const out = [];
@@ -7898,6 +8080,30 @@ Game.prototype._addPing = function (x, y, color, name) {
   this._pings = this._pings || [];
   this._pings.push({ x: x, y: y, color: color, name: name || '', until: performance.now() + 3800 });
   if (this._pings.length > 12) this._pings.shift();
+};
+Game.prototype._drawCoopBuilds = function (ctx) {
+  const cp = this.coopPlayers, bd = this._coopBuilds; if (!cp || !bd || typeof Input === 'undefined' || Input.touch) return;
+  const mx = Input.mouse.x, my = Input.mouse.y;
+  for (const id in cp) {
+    const c = cp[id], b = bd[id]; if (!b) continue;
+    const sx = Camera.sx(c.rx !== undefined ? c.rx : c.x), sy = Camera.sy(c.ry !== undefined ? c.ry : c.y);
+    if (dist2(mx, my, sx, sy) > 34 * 34) continue;
+    const lines = [];
+    (b.w || []).forEach((w) => { const d = WEAPONS[w[0]] || EVOLUTIONS[w[0]] || {}; lines.push((d.icon || '\u25c6') + ' ' + (d.name || w[0]) + ' \u00b7' + w[1]); });
+    (b.p || []).forEach((pp) => { const d = PASSIVES[pp[0]]; if (d) lines.push((d.icon || '\u2022') + ' ' + d.name + ' \u00b7' + pp[1]); });
+    if (!lines.length) lines.push('(rien)');
+    const ch = (typeof CHARACTERS !== 'undefined' && CHARACTERS[c.char]) || null, col = ch ? ch.color : COLORS.frost;
+    const bw = 168, bh = 20 + lines.length * 14, bx = clamp(sx + 20, 8, VIEW.w - bw - 8), by = clamp(sy - bh / 2, 8, VIEW.h - bh - 8);
+    ctx.save();
+    ctx.fillStyle = 'rgba(8,8,12,0.92)'; ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.rect(bx, by, bw, bh); ctx.fill(); ctx.stroke();
+    ctx.textAlign = 'left'; ctx.fillStyle = col; ctx.font = '700 10px ui-monospace, monospace';
+    ctx.fillText((c.name || 'Allié') + ' \u2014 build', bx + 9, by + 14);
+    ctx.fillStyle = COLORS.boneDim; ctx.font = '600 10px ui-monospace, monospace';
+    for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], bx + 9, by + 30 + i * 14);
+    ctx.restore();
+    break;
+  }
 };
 Game.prototype._drawPings = function (ctx) {
   const pg = this._pings; if (!pg || !pg.length) return;
@@ -8087,6 +8293,7 @@ UI._refreshMusicBtn = function (on) {
 UI.nowPlaying = function (name) {
   const e = this.el.nowPlaying;
   if (!e) return;
+  if (!name) { e.classList.remove('show'); return; }
   e.textContent = '♪  ' + name;
   e.classList.remove('show'); void e.offsetWidth; e.classList.add('show');
   if (this._npTimer) clearTimeout(this._npTimer);
@@ -8246,7 +8453,7 @@ WEAPON_INFO.driller = { pattern: 'pierce', range: 'Ligne droite', effect: 'Perfo
 ['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc','needler','frostcone','driller'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
-  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-11');
+  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-15');
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d', { alpha: false });
   G = new Game(canvas, ctx);
