@@ -237,8 +237,6 @@ Chaque opérateur propose un style de jeu distinct. L'unité équipée est dépl
 $ ouvrir → https://odzigon.github.io/opk-survivor/
 ```
 
-Puis ouvrez le fichier principal (`index.html`) dans un navigateur récent (Chrome, Firefox, Edge). Aucune installation supplémentaire n'est nécessaire.
-
 ## // CRÉDITS
 
 - **Créateur** : ODZIGON
