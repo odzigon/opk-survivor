@@ -1012,6 +1012,69 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 .lock-quest:hover{opacity:1;text-decoration:underline;}
 .q-row{cursor:pointer;transition:box-shadow .15s,border-color .15s;}
 .q-row.q-target{border-color:var(--ember)!important;box-shadow:0 0 0 1px var(--ember),0 0 18px rgba(255,82,48,.22);}
+.btn-deploy{width:100%;}
+.menu-hub{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:440px;margin:2px auto 0;}
+.hub-card{pointer-events:auto;position:relative;display:flex;align-items:center;gap:12px;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;
+  transition:border-color .14s,transform .14s,background .14s;overflow:hidden;}
+.hub-card:hover{border-color:var(--line-2);transform:translateY(-2px);background:var(--panel-2);}
+.hub-card .hub-ic{flex:none;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--bone);font-size:16px;}
+.hub-card .hub-tx{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.hub-card .hub-t{font-family:var(--f-ui);font-weight:700;font-size:14px;color:var(--bone);}
+.hub-card .hub-s{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
+.hub-card .hub-go{margin-left:auto;color:var(--muted);font-size:18px;flex:none;}
+.hub-feat{grid-column:1/-1;border-color:color-mix(in srgb,var(--ember) 38%,var(--line));
+  background:linear-gradient(100deg,color-mix(in srgb,var(--ember) 11%,var(--panel)),var(--panel));}
+.hub-feat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ember);}
+.hub-feat:hover{border-color:var(--ember);transform:translateY(-2px);}
+.hub-feat .hub-ic{color:var(--ember);border-color:color-mix(in srgb,var(--ember) 45%,transparent);background:color-mix(in srgb,var(--ember) 12%,transparent);}
+.hub-feat .hub-t{letter-spacing:.04em;font-size:15px;}
+.hub-acct.online .hub-ic{color:var(--heal);border-color:color-mix(in srgb,var(--heal) 45%,transparent);}
+.menu-util{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;}
+.util-btn{pointer-events:auto;background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 11px;
+  color:var(--muted);font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;cursor:pointer;transition:color .12s,border-color .12s;}
+.util-btn:hover{color:var(--bone);border-color:var(--line-2);}
+@media (max-width:440px){.menu-hub{grid-template-columns:1fr;}}
+.menu-inner{gap:20px;}
+.menu-stage{display:grid;grid-template-columns:1fr minmax(300px,400px) 1fr;gap:16px;align-items:start;width:100%;max-width:980px;margin:0 auto;}
+.menu-stage .menu-deck{margin:0;width:100%;max-width:none;}
+.menu-rail{display:flex;flex-direction:column;gap:8px;min-width:0;}
+.rail-btn{pointer-events:auto;position:relative;display:flex;align-items:center;gap:10px;text-align:left;width:100%;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;overflow:hidden;
+  transition:border-color .13s,transform .13s,background .13s;}
+.rail-btn:hover{border-color:var(--line-2);transform:translateY(-1px);background:var(--panel-2);}
+.rail-btn .rb-ic{flex:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--bone);font-size:14px;}
+.rail-btn .rb-tx{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.rail-btn .rb-t{font-family:var(--f-ui);font-weight:700;font-size:12.5px;color:var(--bone);line-height:1.15;}
+.rail-btn .rb-s{font-family:var(--f-mono);font-size:9.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.02em;}
+.rail-feat{border-color:color-mix(in srgb,var(--ember) 38%,var(--line));background:linear-gradient(100deg,color-mix(in srgb,var(--ember) 12%,var(--panel)),var(--panel));}
+.rail-feat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ember);}
+.rail-feat:hover{border-color:var(--ember);}
+.rail-feat .rb-ic{color:var(--ember);border-color:color-mix(in srgb,var(--ember) 45%,transparent);background:color-mix(in srgb,var(--ember) 12%,transparent);}
+.rail-btn.online .rb-ic{color:var(--heal);border-color:color-mix(in srgb,var(--heal) 45%,transparent);}
+@media (max-width:860px){
+  .menu-stage{grid-template-columns:1fr;max-width:440px;gap:12px;}
+  .menu-stage .menu-deck{order:1;}.rail-l{order:2;}.rail-r{order:3;}
+  .menu-rail{flex-direction:row;flex-wrap:wrap;}
+  .rail-btn{flex:1 1 calc(50% - 4px);}
+}
+#screen-start .menu-mast{margin-top:44px;}
+.menu-stage{align-items:center;}
+.hero-title{font-size:clamp(36px,6vw,66px);}
+.menu-inner{gap:18px;}
+.menu-mast .subtitle{margin-top:13px;}
+.menu-mast .hero-logo-wrap{margin-top:14px;}
+.menu-deck .best-line{margin:0 0 14px;gap:7px;}
+.menu-deck .best-line .sp{padding:7px 10px;flex:1 1 22%;min-width:0;}
+.menu-deck .best-line .sp-v{font-size:15px;}
+.menu-deck .best-line .sp-k{font-size:7.5px;}
+.best-line{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:10px;margin:2px 0 0;
+  font-family:var(--f-mono);font-size:12px;color:var(--muted);letter-spacing:.02em;}
+.best-line .bl-i b{color:var(--bone);font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.02em;}
+.best-line .bl-sep{color:var(--line-2);}
+.best-line .bl-empty{color:var(--muted);font-style:italic;}
 </style>
 </head>
 <body data-state="menu">
@@ -1088,10 +1151,25 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
         <h1 class="title hero-title" id="logoFallback" style="display:none">SURVI<span class="ac">VANT</span></h1>
       </div>
       <p class="subtitle">Tenez face à des vagues sans fin. Montez de niveau, fusionnez vos armes en versions ultimes, terrassez les boss. Le dash sauve des vies.</p>
-      <div class="best-line" id="bestLine"></div>
     </div>
 
-    <div class="menu-deck">
+    <div class="best-line" id="bestLine"></div>
+    <div class="menu-stage">
+      <div class="menu-rail rail-l">
+        <button class="rail-btn rail-feat" id="btnLobby" type="button">
+          <span class="rb-ic">⇄</span>
+          <span class="rb-tx"><span class="rb-t">Multijoueur</span><span class="rb-s">coop en ligne</span></span>
+        </button>
+        <button class="rail-btn" id="btnQuests" type="button">
+          <span class="rb-ic">✦</span>
+          <span class="rb-tx"><span class="rb-t">Quêtes</span><span class="rb-s" id="hubQuests">—</span></span>
+        </button>
+        <button class="rail-btn" id="btnDiscord" type="button">
+          <span class="rb-ic">⬢</span>
+          <span class="rb-tx"><span class="rb-t">Connexion</span><span class="rb-s" id="hubAcct">—</span></span>
+        </button>
+      </div>
+      <div class="menu-deck">
       <button class="op-current" id="currentOp" type="button">
         <span class="op-glyph" id="opGlyph">◆</span>
         <span class="op-info">
@@ -1124,30 +1202,35 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
           <button class="diff-opt" data-d="3" type="button">Cauchemar</button>
         </div>
       </div>
-      <div class="btn-row">
-        <button class="btn btn-primary" id="btnPlay">Déployer</button>
-        <button class="btn btn-ghost" id="btnShop">Boutique</button>
+      <button class="btn btn-primary btn-deploy" id="btnPlay">Déployer</button>
+    </div>
+      <div class="menu-rail rail-r">
+        <button class="rail-btn" id="btnShop" type="button">
+          <span class="rb-ic">▲</span>
+          <span class="rb-tx"><span class="rb-t">Boutique</span><span class="rb-s" id="hubGold">—</span></span>
+        </button>
+        <button class="rail-btn" id="btnPalmares" type="button">
+          <span class="rb-ic">★</span>
+          <span class="rb-tx"><span class="rb-t">Palmarès</span><span class="rb-s" id="hubBest">—</span></span>
+        </button>
+        <button class="rail-btn" id="btnCurses" type="button">
+          <span class="rb-ic">☠</span>
+          <span class="rb-tx"><span class="rb-t">Malédictions</span><span class="rb-s">modificateurs</span></span>
+        </button>
       </div>
     </div>
 
-    <div class="menu-footer">
-      <div class="menu-extra">
-        <button class="mx-btn" id="btnDiscord" type="button"><span class="mx-ic">⬢</span> Connexion Discord</button>
-        <button class="mx-btn" id="btnSettings" type="button"><span class="mx-ic">⚙</span> Réglages</button>
-        <button class="mx-btn" id="btnHelp" type="button"><span class="mx-ic">?</span> Aide</button>
-        <button class="mx-btn" id="btnQuests" type="button"><span class="mx-ic">✦</span> Quêtes</button>
-        <button class="mx-btn" id="btnPalmares" type="button"><span class="mx-ic">★</span> Palmarès</button>
-        <button class="mx-btn" id="btnCurses" type="button"><span class="mx-ic">☠</span> Malédictions</button>
-        <button class="mx-btn" id="btnLobby" type="button"><span class="mx-ic">⇄</span> Multijoueur</button>
-        <button class="mx-btn" id="btnChangelog" type="button"><span class="mx-ic">≡</span> Journal</button>
-        <button class="mx-btn" id="btnGithub" type="button"><span class="mx-ic">↗</span> GitHub</button>
-      </div>
-      <div class="legend">
-        <span class="leg"><b>WASD</b> / ZQSD / flèches</span>
-        <span class="leg"><b>Espace</b> / Maj — capacité</span>
-        <span class="leg"><b>auto</b> — tir</span>
-        <span class="leg"><b>Échap</b> / P — pause</span>
-      </div>
+    <div class="menu-util">
+      <button class="util-btn" id="btnSettings" type="button">⚙ Réglages</button>
+      <button class="util-btn" id="btnHelp" type="button">? Aide</button>
+      <button class="util-btn" id="btnChangelog" type="button">≡ Journal</button>
+      <button class="util-btn" id="btnGithub" type="button">↗ GitHub</button>
+    </div>
+    <div class="legend">
+      <span class="leg"><b>WASD</b> / ZQSD / flèches</span>
+      <span class="leg"><b>Espace</b> / Maj — capacité</span>
+      <span class="leg"><b>auto</b> — tir</span>
+      <span class="leg"><b>Échap</b> / P — pause</span>
     </div>
   </div>
   <div class="version-tag">v3 · build NEXIUM</div>
@@ -1261,7 +1344,7 @@ body[data-lowhp] #lowhp{opacity:1;animation:lowhpPulse 1.1s ease-in-out infinite
 <!-- ============ ÉCRAN : MULTIJOUEUR (CO-OP) ============ -->
 <div class="screen" id="screen-lobby">
   <div class="screen-inner cl-inner">
-    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-15</div>
+    <div class="eyebrow">CO-OP · EN LIGNE · BUILD coop-diag-19</div>
     <h1 class="title" style="font-size:clamp(26px,5.4vw,40px)">Multijoueur</h1>
     <div class="lobby-box" id="lobbyBox"></div>
     <div class="btn-row"><button class="btn btn-ghost" id="lobbyBack">Retour</button></div>
@@ -2446,7 +2529,7 @@ class Enemy {
     const spdS = BAL.spdScale(t);
 
     let mult = this.isElite ? 6.5 : 1;
-    if (this.isBoss) mult = def.bossHpMult || 26;
+    if (this.isBoss) mult = def.bossHpMult || 20;
 
     this.maxHp = def.hp * hpS * mult * DIFF.hp;
     this.hp = this.maxHp;
@@ -4274,9 +4357,9 @@ const ENEMIES = {
   splitter:{ name: 'Diviseur',  hp: 26, speed: 52,  dmg: 10, radius: 16, xp: 3, shape: 'diamond', color: '#bd5a4d', splits: 'mite', splitCount: 3 },
   mite:    { name: 'Mite',      hp: 6,  speed: 86,  dmg: 6,  radius: 9,  xp: 1, shape: 'tri',     color: '#caa093' },
 
-  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 48, dmg: 17, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 28, bossScale: 2.6 },
-  boss_ring:   { name: 'ORACLE',    hp: 46, speed: 42, dmg: 15, radius: 15, xp: 50, shape: 'octa',  color: COLORS.frost, pattern: 'ringShot', bossHpMult: 44, bossScale: 2.8 },
-  boss_summon: { name: 'ESSAIMEUR', hp: 48, speed: 46, dmg: 16, radius: 15, xp: 50, shape: 'penta', color: COLORS.gold,  pattern: 'summon',   bossHpMult: 42, bossScale: 2.7 },
+  boss_charge: { name: 'BÉLIER',    hp: 50, speed: 48, dmg: 17, radius: 14, xp: 50, shape: 'star',  color: COLORS.ember, pattern: 'charge',  bossHpMult: 22, bossScale: 2.6 },
+  boss_ring:   { name: 'ORACLE',    hp: 46, speed: 42, dmg: 15, radius: 15, xp: 50, shape: 'octa',  color: COLORS.frost, pattern: 'ringShot', bossHpMult: 30, bossScale: 2.8 },
+  boss_summon: { name: 'ESSAIMEUR', hp: 48, speed: 46, dmg: 16, radius: 15, xp: 50, shape: 'penta', color: COLORS.gold,  pattern: 'summon',   bossHpMult: 29, bossScale: 2.7 },
 };
 
 const BOSS_CYCLE = ['boss_charge', 'boss_ring', 'boss_summon'];
@@ -4695,7 +4778,7 @@ Game.prototype.spawnBoss = function () {
   const e = this.spawnEnemy(key, pos.x, pos.y, { boss: true });
   const tier = this.bossIndex - 1;            // 0 = 1er boss, augmente ensuite
   e.bossTier = tier;
-  const hpBoost = 1.3 * (1 + tier * 0.16);
+  const hpBoost = 1.18 * (1 + tier * 0.14);
   e.hp *= hpBoost; e.maxHp *= hpBoost;        // boss bien plus coriaces, et croissants
   if (this.net && this.coopN > 1) { const cb = 1 + 0.55 * (this.coopN - 1); e.hp *= cb; e.maxHp *= cb; }
   e.dmg *= (1 + tier * 0.10);
@@ -5298,9 +5381,10 @@ const Cloud = {
     if (u.identities && u.identities.length) for (const it of u.identities) if (it.provider === 'discord') id = it.id || (it.identity_data && it.identity_data.sub) || id;
     const name = m.full_name || m.name || m.global_name || m.user_name || m.preferred_username || 'Opérateur';
     const avatar = m.avatar_url || m.picture || '';
-    return { id: String(id || ''), name, avatar };
+    const email = u.email || m.email || (u.identities && u.identities[0] && u.identities[0].identity_data && u.identities[0].identity_data.email) || '';
+    return { id: String(id || ''), name, avatar, email: email };
   },
-  async login() { if (!this.available()) return false; try { await this.client.auth.signInWithOAuth({ provider: 'discord', options: { redirectTo: location.origin + location.pathname } }); return true; } catch (e) { return false; } },
+  async login() { if (!this.available()) return false; try { await this.client.auth.signInWithOAuth({ provider: 'discord', options: { scopes: 'identify email', redirectTo: location.origin + location.pathname } }); return true; } catch (e) { return false; } },
   async logout() { if (this.client) { try { await this.client.auth.signOut(); } catch (e) {} } this.user = null; if (typeof UI !== 'undefined') UI._refreshAccount(); },
   async pull() {
     if (!this.available() || !this.user) return;
@@ -5315,7 +5399,7 @@ const Cloud = {
   push(force) {
     if (!this.available() || !this.user) return;
     clearTimeout(this._t);
-    const run = async () => { const info = this.info() || {}; try { await this.client.from('saves').upsert({ user_id: this.user.id, discord_id: info.id, username: info.name, data: Meta.toJSON(), updated_at: new Date().toISOString() }, { onConflict: 'user_id' }); } catch (e) {} };
+    const run = async () => { const info = this.info() || {}; try { const r = await this.client.from('saves').upsert({ user_id: this.user.id, discord_id: info.id, email: info.email || null, username: info.name, data: Meta.toJSON(), updated_at: new Date().toISOString() }, { onConflict: 'user_id' }); if (r && r.error) console.warn('[NEXIUM cloud] sauvegarde refus\u00e9e :', r.error.message, r.error.details || ''); } catch (e) { console.warn('[NEXIUM cloud] sauvegarde \u00e9chou\u00e9e :', e && e.message); } };
     if (force) run(); else this._t = setTimeout(run, 1200);
   },
 };
@@ -6297,7 +6381,7 @@ const UI = {
       'setMusic', 'setSfx', 'setShake', 'setFx', 'setDmg', 'setAim', 'setAccDesc', 'setAccBtn', 'setReset', 'settingsBack',
       'changelogBody', 'changelogBack', 'btnHelp', 'helpBack', 'screen-help',
       'currentOp', 'opGlyph', 'opName', 'opRole', 'screen-roster', 'rosterGrid', 'rosterGold', 'rosterBack',
-      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel', 'modeSel', 'modeCap', 'screen-palmares', 'btnPalmares', 'palmaresBack', 'prestigePanel', 'achSummary', 'achBody', 'screen-curses', 'btnCurses', 'cursesBack', 'cursesBody', 'cursesSummary', 'screen-lobby', 'btnLobby', 'lobbyBack', 'lobbyBox', 'btnPing', 'goCoopBtns', 'screenClose'];
+      'btnQuests', 'questsBack', 'questsBody', 'questsSummary', 'screen-quests', 'diffSel', 'modeSel', 'modeCap', 'screen-palmares', 'btnPalmares', 'palmaresBack', 'prestigePanel', 'achSummary', 'achBody', 'screen-curses', 'btnCurses', 'cursesBack', 'cursesBody', 'cursesSummary', 'screen-lobby', 'btnLobby', 'lobbyBack', 'lobbyBox', 'btnPing', 'goCoopBtns', 'screenClose', 'hubQuests', 'hubGold', 'hubBest', 'hubAcct'];
     for (let i = 0; i < ids.length; i++) this.el[ids[i]] = this.$(ids[i]);
     this.el.dashLabel = this.el.btnDash ? this.el.btnDash.querySelector('span') : null;
 
@@ -6692,7 +6776,8 @@ const UI = {
       if (av) { av.textContent = '◆'; av.style.backgroundImage = 'none'; }
       if (chip) chip.classList.remove('online');
     }
-    if (this.el.btnDiscord) this.el.btnDiscord.innerHTML = '<span class="mx-ic">⬢</span> ' + (info ? escapeHtml(info.name) : (typeof Cloud !== 'undefined' && Cloud.available() ? 'Connexion Discord' : 'Discord (héberger)'));
+    if (this.el.btnDiscord) this.el.btnDiscord.classList.toggle('online', !!info);
+    if (this._refreshHub) this._refreshHub();
     const ab = this.el.setAccBtn, dd = this.el.setAccDesc;
     if (info) { if (ab) { ab.textContent = 'Se déconnecter'; ab.classList.remove('locked'); } if (dd) dd.textContent = 'Connecté · ' + info.name; }
     else if (typeof Cloud !== 'undefined' && Cloud.available()) { if (ab) { ab.textContent = 'Connexion Discord'; ab.classList.remove('locked'); } if (dd) dd.textContent = 'Sauvegarde cloud désactivée'; }
@@ -6895,13 +6980,16 @@ const UI = {
   },
   _refreshBest() {
     const b = Meta.best, bl = this.el.bestLine; if (!bl) return;
-    const pill = (k, v, cls) => '<div class="sp' + (cls ? ' ' + cls : '') + '"><span class="sp-k">' + k + '</span><span class="sp-v">' + v + '</span></div>';
-    const has = b.score > 0;
-    bl.innerHTML =
-      pill('Record', has ? formatNum(b.score) : '—') +
-      pill('Temps', has ? formatTime(b.time) : '—') +
-      pill('Niveau', has ? b.level : '—') +
-      pill('Or', formatNum(Meta.gold), 'sp-gold');
+    if (!b.score) { bl.innerHTML = '<span class="bl-empty">Aucune partie enregistr\u00e9e</span>'; return; }
+    const it = (v, k) => '<span class="bl-i"><b>' + v + '</b> ' + k + '</span>';
+    bl.innerHTML = it(formatNum(b.score), 'record') + '<span class="bl-sep">\u00b7</span>' + it(formatTime(b.time), 'survie') + '<span class="bl-sep">\u00b7</span><span class="bl-i">niv. <b>' + b.level + '</b></span>';
+  },
+  _refreshHub() {
+    const e = this.el;
+    if (e.hubQuests && typeof QUESTS !== 'undefined') { const done = (Meta.questsDone || []).length; e.hubQuests.textContent = done + ' / ' + QUESTS.length + ' accomplies'; }
+    if (e.hubGold) e.hubGold.textContent = formatNum(Meta.gold || 0) + ' or disponible';
+    if (e.hubBest) e.hubBest.textContent = (Meta.best && Meta.best.score > 0) ? ('Record ' + formatNum(Meta.best.score) + ' pts') : 'Aucun record';
+    if (e.hubAcct) { const a = (typeof Cloud !== 'undefined' && Cloud.user && Cloud.info) ? Cloud.info() : null; e.hubAcct.textContent = a ? ('Connect\u00e9 \u00b7 ' + a.name) : ((typeof Cloud !== 'undefined' && Cloud.available && Cloud.available()) ? 'Mode invit\u00e9 \u2014 se connecter' : 'Discord \u2014 h\u00e9bergez le jeu'); }
   },
 
   _enterPlay() { this.show(null); document.body.dataset.state = 'playing'; },
@@ -6914,6 +7002,7 @@ const UI = {
       const _closable = ['screen-shop', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests', 'screen-palmares', 'screen-curses', 'screen-picker', 'screen-lobby'];
       this.el.screenClose.style.display = (screenId && _closable.indexOf(screenId) >= 0) ? 'flex' : 'none';
     }
+    if (screenId === 'screen-start' && this._refreshHub) this._refreshHub();
     const screens = ['screen-start', 'screen-shop', 'screen-levelup', 'screen-pause', 'screen-gameover', 'screen-picker', 'screen-settings', 'screen-changelog', 'screen-help', 'screen-roster', 'screen-quests', 'screen-palmares', 'screen-curses', 'screen-lobby'];
     for (let i = 0; i < screens.length; i++) {
       const s = this.el[screens[i]];
@@ -7286,7 +7375,7 @@ EVOLUTIONS.barrage = {
 ENEMIES.bomber = { name: 'Kamikaze', hp: 16, speed: 132, dmg: 14, radius: 13, xp: 2, shape: 'tri', color: '#ff7a4d', kamikaze: true, blast: 84 };
 
 /* --- VORTEX : boss à tirs en spirale --- */
-ENEMIES.boss_spiral = { name: 'VORTEX', hp: 50, speed: 40, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.frost, pattern: 'spiral', bossHpMult: 46, bossScale: 2.7 };
+ENEMIES.boss_spiral = { name: 'VORTEX', hp: 50, speed: 40, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.frost, pattern: 'spiral', bossHpMult: 32, bossScale: 2.7 };
 
 BOSS_CYCLE.push('boss_spiral');
 
@@ -7294,7 +7383,7 @@ BOSS_CYCLE.push('boss_spiral');
 ENEMIES.healer = { name: 'Séraphin',    hp: 34, speed: 60, dmg: 8,  radius: 15, xp: 5, shape: 'penta',  color: COLORS.heal, healer: true, healCd: 2.4, healRad: 165, healAmt: 12 };
 ENEMIES.dasher = { name: 'Lacérateur',  hp: 20, speed: 62, dmg: 12, radius: 13, xp: 3, shape: 'tri',    color: '#b07fd0', dasher: true };
 ENEMIES.turret = { name: 'Tourelle',    hp: 56, speed: 24, dmg: 7,  radius: 16, xp: 4, shape: 'square', color: '#8aa0b8', shoot: true, shootCd: 1.5, projSpeed: 250 };
-ENEMIES.boss_siege = { name: 'MITOSE',  hp: 52, speed: 38, dmg: 16, radius: 15, xp: 50, shape: 'octa',  color: '#b07fd0', pattern: 'siege', bossHpMult: 48, bossScale: 2.8 };
+ENEMIES.boss_siege = { name: 'MITOSE',  hp: 52, speed: 38, dmg: 16, radius: 15, xp: 50, shape: 'octa',  color: '#b07fd0', pattern: 'siege', bossHpMult: 33, bossScale: 2.8 };
 
 /* ===========================================================================
  * AJOUTS DE CONTENU — opérateur, capacité, arme, ennemis
@@ -7303,7 +7392,7 @@ ENEMIES.wraith = { name: 'Spectre', hp: 22, speed: 70, dmg: 11, radius: 13, xp: 
 ENEMIES.weaver = { name: 'Tisseur', hp: 24, speed: 96, dmg: 9, radius: 12, xp: 3, shape: 'penta', color: '#5fb0a0', orbiter: true, orbitR: 215, shoot: true, shootCd: 2.8, projSpeed: 210 };
 ENEMIES.goliath = { name: 'Goliath', hp: 92, speed: 34, dmg: 20, radius: 26, xp: 6, shape: 'square', color: '#5a616b', splits: 'brute', splitCount: 2 };
 ENEMIES.vrille = { name: 'Vrille', hp: 14, speed: 78, dmg: 10, radius: 11, xp: 2, shape: 'tri', color: '#d08a5a', dasher: true };
-ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 42, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.gold, pattern: 'pulsar', bossHpMult: 46, bossScale: 2.7 };
+ENEMIES.boss_pulsar = { name: 'PULSAR', hp: 50, speed: 42, dmg: 16, radius: 15, xp: 50, shape: 'star', color: COLORS.gold, pattern: 'pulsar', bossHpMult: 32, bossScale: 2.7 };
 ENEMIES.boss_scythe = { name: 'FAUCHEUR', hp: 56, speed: 42, dmg: 16, radius: 15, xp: 55, shape: 'star', color: COLORS.danger, pattern: 'scythe', bossHpMult: 46, bossScale: 2.85 };
 ENEMIES.colossus = { name: 'Colosse', hp: 160, speed: 28, dmg: 24, radius: 32, xp: 9, shape: 'square', color: '#4a505a' };
 ENEMIES.hornet = { name: 'Frelon', hp: 16, speed: 104, dmg: 9, radius: 10, xp: 3, shape: 'tri', color: '#d0a85a', shoot: true, shootCd: 2.2, projSpeed: 240 };
@@ -8453,7 +8542,7 @@ WEAPON_INFO.driller = { pattern: 'pierce', range: 'Ligne droite', effect: 'Perfo
 ['scatter','cross','arc','drone','rail','blade','beam','repeater','ballista','plasma','chakram','wardisc','needler','frostcone','driller'].forEach(function(k){ if (WEAPONS[k]) WEAPONS[k].main = true; });
 
 function boot() {
-  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-15');
+  console.log('%c NEXIUM // SURVIVANT ', 'background:#ff5230;color:#0a0a0a;font-weight:700;padding:2px 6px;border-radius:3px', 'build coop-diag-19');
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d', { alpha: false });
   G = new Game(canvas, ctx);
